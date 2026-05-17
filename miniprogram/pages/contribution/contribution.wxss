@@ -1,0 +1,42 @@
+/* pages/contribution/contribution.wxss - 缴费水平测算样式 */
+.container { min-height: 100vh; background: #f8f9fa; }
+.nav-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  background: #1e3a5f; color: #fff; padding: 20rpx 24rpx;
+}
+.back-btn { font-size: 32rpx; width: 120rpx; }
+.nav-title { font-size: 34rpx; font-weight: 600; }
+.nav-placeholder { width: 120rpx; }
+.scroll-area { height: calc(100vh - 88rpx); }
+
+.card {
+  background: #fff; border-radius: 16rpx; padding: 28rpx; margin: 20rpx 24rpx;
+}
+.section-title {
+  display: block; font-size: 30rpx; font-weight: 600; color: #111827; margin-bottom: 20rpx;
+}
+.form-group {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16rpx 0; border-bottom: 1rpx solid #f3f4f6;
+}
+.label { font-size: 28rpx; color: #374151; }
+.input { text-align: right; font-size: 28rpx; color: #111827; }
+.picker-value { font-size: 28rpx; color: #2563eb; }
+
+.radio-label { margin-right: 24rpx; font-size: 28rpx; color: #374151; }
+
+.submit-section { padding: 20rpx 24rpx; }
+.submit-btn {
+  background: #2563eb; color: #fff; border-radius: 12rpx; font-size: 32rpx; padding: 20rpx 0;
+}
+
+.result-card { background: #f0f9ff; }
+.result-row {
+  display: flex; justify-content: space-between; padding: 14rpx 0;
+  border-bottom: 1rpx solid #e0f2fe;
+}
+.result-label { font-size: 26rpx; color: #0369a1; }
+.result-value { font-size: 26rpx; color: #0c4a6e; font-weight: 600; }
+
+.footer { text-align: center; padding: 30rpx 0 60rpx; }
+.footer-text { font-size: 22rpx; color: #9ca3af; }

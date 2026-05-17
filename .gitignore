@@ -1,22 +1,26 @@
+# AI工作记忆（不推送到仓库）
+.workbuddy/
+
+# 调试脚本
+debug-*.js
+push_to_github.py
+run_verify.bat
+
 # 依赖
 node_modules/
 package-lock.json
 
-# 测试结果
-test-verify-case.js
-test-verify-case2.js
-*.log
-
 # 系统文件
 .DS_Store
 Thumbs.db
+nul
+
+# 临时文件
+*.log
+*.tmp
+*.new
+.backup.*
 
 # IDE
 .vscode/
 .idea/
-*.swp
-*.swo
-
-# 临时文件
-*.tmp
-.cache/

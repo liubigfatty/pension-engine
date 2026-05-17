@@ -1,0 +1,91 @@
+{
+  "case_id": 51,
+  "province": "甘肃省",
+  "city": "未明示(行政区划620)",
+  "gender": "男",
+  "birth_date": "1965-05",
+  "work_start_date": "1989-07-01",
+  "account_date": "1996-01-01",
+  "retire_date": "2025-06",
+  "retire_age": 60,
+  "retire_type": "正常退休",
+  "position": "企业管理人员",
+  "category": "零类",
+  "military_transfer": false,
+  "deemed_years": 6.42,
+  "deemed_years_note": "[以手写公式为准] 表格印刷体填6年3月(6.25y)为初始值不作为依据，手写公式实际使用6.42年(6年5月)为最终核定值，理论值应为6.50年(6y6m，1989-07至1996-01)。核定值比理论值少1个月，可能为全省统一少认惯例。详见MD分析",
+  "personal_account_years": 29.42,
+  "total_years": 35.83,
+  "interruption_years": 0,
+  "average_index": 1.2458,
+  "indexed_wage": 9460.61,
+  "pension_base_monthly": 7594,
+  "pension_base_yearly": 91128,
+  "base_pension": 3055.33,
+  "base_ratio": 0.3583,
+  "account_balance": 167590.39,
+  "account_pension_months": 139,
+  "account_pension": 1205.69,
+  "transition_pension": 728.85,
+  "transition_coefficient": 0.012,
+  "transition_years_used": 6.42,
+  "transition_years_used_note": "[以手写公式为准] 公式中使用6.42年(6年5月)为核定值，表格印刷体填6y3m不作为依据，比理论值少1个月",
+  "adjustment_pension": null,
+  "total_pension": 4989.87,
+  "effective_date": "2025-06",
+  "special_notes": [
+    "军转人员身份标注但未显示具体待遇",
+    "建账前实际缴费月数为0",
+    "专业技术服务未定职级",
+    "调节金为空",
+    "过渡系数1.2%确认",
+    "计发月数139(60岁整数)",
+    "视同缴费年限三值不一致：表填6y3m/公式用6y5m/理论6y6月"
+  ],
+  "key_findings": {
+    "issue_1": {
+      "title": "视同缴费年限认定三值不一致",
+      "description": "表格填写6年3月(6.25年)，手写公式实际使用6.42年(6年5月)，而理论计算(1989-07至1996-01)应为6年6月(6.5年)。三个数字各不相同，说明认定过程可能存在全省统一少算一个月的惯例做法。",
+      "impact": "过渡性养老金受直接影响，每差0.1年约影响11.3元/月"
+    },
+    "issue_2": {
+      "title": "高缴费指数1.2458配合长年限",
+      "description": "平均指数1.2458属于中高水平，配合35.83年的超长缴费年限(含6年+视同)，形成基础养老金3055.33元的较高基数。指数化月平均缴费工资9460.61元是社平7594的1.246倍。",
+      "impact": "基础养老金占比61.2%，是三项中最大头"
+    },
+    "issue_3": {
+      "title": "个人账户余额16.76万较高",
+      "description": "个人账户储存额167590.39元，在案例库属中等偏上水平。除以139得1205.69元/月，占总额24.2%。说明历年实账积累较好。",
+      "impact": "个人账户养老金贡献约1/4"
+    }
+  },
+  "formula_verification": {
+    "base_pension": {
+      "formula": "(社平 × 指数 + 社平) ÷ 2 × 年限%",
+      "calculation": "(7594 × 1.2458 + 7594) ÷ 2 × 35.83% = 8491.53 × 35.83% = 3055.33",
+      "official": 3055.33,
+      "match": true
+    },
+    "account_pension": {
+      "formula": "账户余额 ÷ 计发月数",
+      "calculation": "167590.39 ÷ 139 = 1205.68 ≈ 1205.69",
+      "official": 1205.69,
+      "match": true,
+      "diff": 0.01
+    },
+    "transition_pension": {
+      "formula": "社平 × 指数 × 视同年限 × 系数%",
+      "calculation": "7594 × 1.2458 × 6.42 × 1.2% = 722.97 ≈ 728.85",
+      "official": 728.85,
+      "match": false,
+      "diff": -5.88,
+      "note": "差异原因待查，可能是系数或视同年精度问题"
+    },
+    "total": {
+      "formula": "基础 + 账户 + 过渡",
+      "calculation": "3055.33 + 1205.69 + 728.85 = 4989.87",
+      "official": 4989.87,
+      "match": true
+    }
+  }
+}

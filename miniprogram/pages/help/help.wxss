@@ -1,0 +1,69 @@
+/* help.wxss - 参数说明页 */
+.container {
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+.nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 32rpx;
+  background: #1e3a5f;
+  color: #fff;
+}
+
+.back-btn {
+  font-size: 32rpx;
+  color: #fff;
+  cursor: pointer;
+}
+
+.nav-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #fff;
+}
+
+.nav-placeholder {
+  width: 120rpx;
+}
+
+.scroll-area {
+  padding: 24rpx;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 24rpx;
+  padding: 28rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.06);
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1e3a5f;
+  margin-bottom: 16rpx;
+  display: block;
+}
+
+.section-desc {
+  font-size: 26rpx;
+  color: #4b5563;
+  line-height: 1.8;
+  display: block;
+}
+
+.disclaimer {
+  background: #fef3c7;
+  border: 2rpx solid #f59e0b;
+}
+
+.disclaimer-text {
+  font-size: 24rpx;
+  color: #92400e;
+  line-height: 1.8;
+  display: block;
+}

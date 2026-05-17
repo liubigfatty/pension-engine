@@ -1,0 +1,63 @@
+{
+  "case_id": "heilongjiang-pension-case",
+  "region": "黑龙江省（大庆市）",
+  "gender": "男",
+  "birth_date": "1965-05",
+  "employment_start_date": "1981-01",
+  "personal_account_established": "1996-01",
+  "retirement_date": "2025-07",
+  "retirement_type": "退休",
+  "employment_type": "工人",
+  "employer": "中国石油天然气股份有限公司大庆石化分公司",
+  "contribution_years": {
+    "total_months": 496,
+    "total_years": 41.33,
+    "deemed_months": 141,
+    "deemed_years": 11.75,
+    "intermediate_converted_months": 0,
+    "actual_months": 355,
+    "actual_years": 29.58
+  },
+  "calculation_parameters": {
+    "average_wage_index": 2.2307,
+    "previous_year_provincial_average_wage": 7570,
+    "index_sum": 66.9205,
+    "average_index_calculation_years": 30
+  },
+  "personal_account": {
+    "total_amount": 279086.12,
+    "payment_months": 137.8
+  },
+  "pension_breakdown": {
+    "basic_pension": 5054.32,
+    "personal_account_pension": 2025.3,
+    "transitional_pension": 2380.99,
+    "early_retirement_deduction": 0,
+    "other_adjustment": 0,
+    "total_basic_pension": 9460.6
+  },
+  "pension_ratio": {
+    "personal_account_ratio": 21.41
+  },
+  "policy_references": [
+    "国发[1978]104号文件"
+  ],
+  "benefit_start_date": "2025-08",
+  "notes": [
+    "养老金全国第二高：9460.60元，仅次于广东9632.76元",
+    "平均缴费指数极高：2.2307，全国最高（超过广东1.6707）",
+    "个人账户超高：279086.12元，全国第二高（仅次于广东248124.71元的旧案例）",
+    "计发月数137.8：非整数，说明退休年龄不是整60岁",
+    "视同缴费月数141个月（11.75年）：1981年1月至1996年1月建账前",
+    "实际缴费355个月（29.58年）",
+    "累计缴费496个月（41.33年）",
+    "过渡性养老金2380.99元：占基本养老金25.2%",
+    "个人账户养老金占比21.41%：比例正常",
+    "基础养老金5054.32元：占比53.4%，是最大组成部分",
+    "上年全省平均工资7570元：黑龙江省2024年标准",
+    "历年缴费工资指数之和66.9205：计算30年的平均值2.2307",
+    "无中断缴费、无提前退休扣减",
+    "单位为中国石油天然气股份有限公司大庆石化分公司：央企/国企背景",
+    "待遇从2025年8月起享受"
+  ]
+}

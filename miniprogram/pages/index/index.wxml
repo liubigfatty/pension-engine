@@ -1,0 +1,44 @@
+<!--pages/index/index.wxml - 首页-->
+<view class="container">
+  <view class="hero">
+    <text class="hero-title">国家企业职工</text>
+    <text class="hero-title">基本养老金测算</text>
+    <text class="hero-subtitle">零门槛 · 无需注册 · 即开即用</text>
+  </view>
+
+  <view class="menu">
+    <view class="menu-card" bindtap="goPension">
+      <view class="menu-icon">📊</view>
+      <view class="menu-text">
+        <text class="menu-title">基本养老金测算</text>
+        <text class="menu-desc">测算您的月基本养老金金额</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+
+    <view class="menu-card" bindtap="goContribution">
+      <view class="menu-icon">📈</view>
+      <view class="menu-text">
+        <text class="menu-title">缴费水平测算</text>
+        <text class="menu-desc">测算平均缴费指数与个人账户余额</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+
+    <view class="menu-card" bindtap="goRetireAge">
+      <view class="menu-icon">📅</view>
+      <view class="menu-text">
+        <text class="menu-title">法定退休年龄查询</text>
+        <text class="menu-desc">查询渐进式延迟退休年龄</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+  </view>
+
+  <view class="footer">
+    <text class="footer-text">基于国办发〔2025〕5号政策 · 仅供参考</text>
+    <view class="help-link" bindtap="goHelp">
+      <text>参数说明与帮助</text>
+    </view>
+  </view>
+</view>
