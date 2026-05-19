@@ -314,13 +314,8 @@ async function loadAndCalculate(provinceCode, formData, userType) {
       personalAccInput: formData.personalAccInput
     };
     
-    // 根据参保类型选择引擎入口
-    let result;
-    if (userType === 'flexible') {
-      result = window.pensionEngine.calculateFlexible(config, input);
-    } else {
-      result = window.pensionEngine.calculate(config, input);
-    }
+    // 调用引擎计算
+    const result = window.pensionEngine.calculate(config, input);
     displayResult(result);
   } catch(e) {
     console.error('计算失败:', e);
