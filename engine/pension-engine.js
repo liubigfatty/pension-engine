@@ -1003,7 +1003,6 @@ function formatResult(result) {
 module.exports = {
   // 核心入口
   calculate,
-  calculateFlexible, // 灵活就业人员养老金计算
 
   // 计算模块
   calcBasicPension,
@@ -1030,10 +1029,7 @@ module.exports = {
   parseInput,
   formatMoney,
   getModuleName,
-  formatResult,
-
-  // 灵活就业
-  calculateFlexible
+  formatResult
 }
 
 // ============================================================

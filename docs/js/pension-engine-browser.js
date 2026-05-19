@@ -367,4 +367,4 @@ function getDelayResult(birthYear, birthMonth, type) {
 }
 
 // ==================== 导出 ====================
-window.pensionEngine = { calculate, calculateFlexible, getDelayMonths, getDelayResult };
+window.pensionEngine = { calculate, getDelayMonths, getDelayResult };
