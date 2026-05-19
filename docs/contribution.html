@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>缴费水平测算 - 养老金测算平台</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .contribution-result {
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 20px 0;
+    }
+    
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin: 16px 0;
+    }
+    
+    .result-item {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .result-item .label {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 8px;
+    }
+    
+    .result-item .value {
+      font-size: 28px;
+      font-weight: bold;
+      color: #1e40af;
+    }
+    
+    .result-item .unit {
+      font-size: 12px;
+      color: #999;
+      margin-top: 4px;
+    }
+    
+    .detail-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 14px;
+    }
+    
+    .detail-table th,
+    .detail-table td {
+      padding: 12px;
+      text-align: center;
+      border: 1px solid #e5e7eb;
+    }
+    
+    .detail-table th {
+      background: #f3f4f6;
+      font-weight: 600;
+      color: #374151;
+    }
+    
+    .detail-table tr:hover {
+      background: #f9fafb;
+    }
+    
+    .input-cell input {
+      width: 80px;
+      padding: 6px;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      text-align: center;
+      font-size: 13px;
+    }
+    
+    .input-cell input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+    }
+    
+    .compare-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 16px 0;
+    }
+    
+    .compare-item {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+      border: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    
+    .compare-item.active {
+      background: #eff6ff;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+    }
+    
+    .compare-item .tier {
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 4px;
+    }
+    
+    .compare-item .val {
+      font-size: 20px;
+      font-weight: 700;
+      color: #374151;
+    }
+    
+    .index-low { color: #16a34a; font-weight: 600; }
+    .index-mid { color: #2563eb; font-weight: 600; }
+    .index-high { color: #dc2626; font-weight: 600; }
+    
+    .note {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      padding: 16px;
+      font-size: 13px;
+      color: #92400e;
+      border-radius: 8px;
+      margin: 16px 0;
+      line-height: 1.8;
+    }
+    
+    .actions {
+      text-align: center;
+      margin: 20px 0;
+    }
+    
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn:hover {
+      background: #2563eb;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .btn-sm {
+      padding: 8px 16px;
+      font-size: 13px;
+    }
+    
+    .btn-outline {
+      background: white;
+      border: 1.5px solid #d1d5db;
+      color: #4b5563;
+    }
+    
+    .btn-outline:hover {
+      background: #f9fafb;
+      border-color: #9ca3af;
+    }
+  </style>
+</head>
+<body>
+  <!-- 导航栏 -->
+  <nav class="navbar">
+    <div class="container nav-content">
+      <a href="index.html" class="nav-brand">养老金测算</a>
+      <ul class="nav-menu">
+        <li><a href="pension.html" class="nav-link">基本养老金</a></li>
+        <li><a href="contribution.html" class="nav-link active">缴费指数</a></li>
+        <li><a href="retire-age.html" class="nav-link">退休年龄</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- 主内容 -->
+  <main class="main">
+    <div class="container">
+      <!-- 页面标题 -->
+      <section class="hero">
+        <h1>缴费水平测算</h1>
+        <p class="hero-subtitle">计算平均缴费工资指数和个人账户累计存储额</p>
+        <p class="hero-desc">导入社保缴费记录或手动输入缴费基数，自动计算您的缴费水平</p>
+      </section>
+
+      <!-- 数据导入 -->
+      <section class="card">
+        <h2 class="card-title">📊 第一步：导入缴费数据</h2>
+        
+        <!-- Excel导入 -->
+        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+          <div class="icon">📁</div>
+          <p>点击上传 Excel 文件</p>
+          <p class="hint">支持微信/支付宝导出的社保缴费明细</p>
+        </div>
+        <input type="file" id="fileInput" accept=".xlsx,.xls" style="display:none;" />
+        <div class="import-status" id="importStatus"></div>
+
+        <!-- 手动输入 -->
+        <div class="manual-section" id="manualSection">
+          <h3 class="manual-title">✏️ 手动输入缴费基数</h3>
+          <div class="manual-row">
+            <label>起始年份</label>
+            <input type="number" id="manualStart" min="1995" max="2035" value="1995" onchange="generateManualFields()" />
+          </div>
+          <div class="manual-row">
+            <label>截止年份</label>
+            <input type="number" id="manualEnd" min="1995" max="2035" value="2025" onchange="generateManualFields()" />
+          </div>
+          <div id="manualFields"></div>
+          <div class="actions">
+            <button class="btn btn-sm" onclick="applyManualInput()">确认输入并计算</button>
+          </div>
+        </div>
+
+        <!-- 切换手动输入 -->
+        <div class="actions">
+          <button class="btn btn-sm btn-outline" id="btnToggle" onclick="toggleManual()">
+            切换手动输入
+          </button>
+        </div>
+      </section>
+
+      <!-- 计算结果 -->
+      <section class="card result-card" id="resultCard" style="display:none;">
+        <h2 class="card-title">📈 第二步：计算结果</h2>
+        
+        <div class="result-grid">
+          <div class="result-item">
+            <div class="label">平均缴费指数</div>
+            <div class="value" id="avgIndex">—</div>
+            <div class="unit" id="indexDesc"></div>
+          </div>
+          <div class="result-item">
+            <div class="label">个人账户存储额</div>
+            <div class="value" id="accountBalance">—</div>
+            <div class="unit">元</div>
+          </div>
+          <div class="result-item">
+            <div class="label">实际缴费年限</div>
+            <div class="value" id="totalYears">—</div>
+            <div class="unit">年</div>
+          </div>
+          <div class="result-item">
+            <div class="label">指数范围</div>
+            <div class="value" id="indexRange">—</div>
+          </div>
+        </div>
+
+        <!-- 标准档对比 -->
+        <h3 class="card-title" style="margin-top:24px;">⚖️ 与标准缴费档对比</h3>
+        <div class="compare-grid">
+          <div class="compare-item" id="cmp60">
+            <div class="tier">60% 最低档</div>
+            <div class="val" id="cmp60Val">—</div>
+          </div>
+          <div class="compare-item" id="cmp100">
+            <div class="tier">100% 社平档</div>
+            <div class="val" id="cmp100Val">—</div>
+          </div>
+          <div class="compare-item" id="cmp300">
+            <div class="tier">300% 最高档</div>
+            <div class="val" id="cmp300Val">—</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 明细表 -->
+      <section class="card result-card" id="detailCard" style="display:none;">
+        <h2 class="card-title">📋 历年缴费明细</h2>
+        <table class="detail-table">
+          <thead>
+            <tr>
+              <th>年份</th>
+              <th>全省基数<br>(元/月)</th>
+              <th>你的基数<br>(元/月)</th>
+              <th>当年指数</th>
+              <th>年入账户<br>(元)</th>
+              <th>账户累计<br>(元)</th>
+            </tr>
+          </thead>
+          <tbody id="detailBody"></tbody>
+        </table>
+        <div class="actions">
+          <button class="btn btn-sm btn-outline" onclick="resetAll()">清除数据，重新开始</button>
+        </div>
+      </section>
+
+      <!-- 说明 -->
+      <div class="note">
+        <strong>说明</strong><br>
+        · 平均缴费指数 = 各年（个人缴费基数 ÷ 全省计发基数）之和 ÷ 实际缴费年数<br>
+        · 计算期间为1995年起至退休上一年度，分母统一使用全省计发基数<br>
+        · 个人账户存储额按历年缴费基数 × 8% × 12 逐月计入，再按历年记账利率复利计算<br>
+        · 导入数据后可直接在明细表中修改数值，修改后自动重新计算<br>
+        · 数据仅供参考，实际以社保系统核定为准
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>本测算结果仅供参考，实际养老金以社保部门核定为准。</p>
+    </div>
+  </footer>
+
+  <script>
+    // ===== 全省历年计发基数（元/月） =====
+    const PROV_BASE = {
+      1995: 369.17, 1996: 447.50, 1997: 472.00, 1998: 545.92, 1999: 596.50,
+      2000: 660.33, 2001: 730.92, 2002: 832.50, 2003: 923.42, 2004: 1035.92,
+      2005: 1200.75, 2006: 1381.92, 2007: 1709.42, 2008: 1957.17, 2009: 2185.83,
+      2010: 2449.92, 2011: 2849.75, 2012: 3200.58, 2013: 3570.50, 2014: 3876.33,
+      2015: 4296.50, 2016: 4674.83, 2017: 5120.92, 2018: 5711.08, 2019: 6151.08,
+      2020: 5088.42, 2021: 6004.75, 2022: 6384.83, 2023: 6655.33, 2024: 7178.50,
+      2025: 7322.08,
+      2026: 7642.79, 2027: 7977.54, 2028: 8326.96, 2029: 8691.68, 2030: 9072.38,
+      2031: 9308.26, 2032: 9550.27, 2033: 9798.58, 2034: 10053.34, 2035: 10314.73
+    };
+
+    // ===== 历年记账利率 =====
+    const INTEREST_RATE = {
+      1995: 0.025, 1996: 0.025, 1997: 0.025, 1998: 0.025, 1999: 0.025,
+      2000: 0.025, 2001: 0.025, 2002: 0.025, 2003: 0.025, 2004: 0.025,
+      2005: 0.0226, 2006: 0.025, 2007: 0.025, 2008: 0.0393, 2009: 0.0225,
+      2010: 0.0230, 2011: 0.025, 2012: 0.025, 2013: 0.0325, 2014: 0.025,
+      2015: 0.025,
+      2016: 0.0831, 2017: 0.0712, 2018: 0.0829, 2019: 0.0761, 2020: 0.0604,
+      2021: 0.0669, 2022: 0.0397, 2023: 0.0397, 2024: 0.0262, 2025: 0.0150,
+      2026: 0.0150, 2027: 0.0150, 2028: 0.0150, 2029: 0.0150, 2030: 0.0150,
+      2031: 0.0150, 2032: 0.0150, 2033: 0.0150, 2034: 0.0150, 2035: 0.0150
+    };
+
+    let yearData = {};
+
+    // ===== Excel导入 =====
+    const uploadZone = document.getElementById('uploadZone');
+    const fileInput = document.getElementById('fileInput');
+
+    uploadZone.addEventListener('dragover', e => {
+      e.preventDefault();
+      uploadZone.classList.add('dragover');
+    });
+    uploadZone.addEventListener('dragleave', () => {
+      uploadZone.classList.remove('dragover');
+    });
+    uploadZone.addEventListener('drop', e => {
+      e.preventDefault();
+      uploadZone.classList.remove('dragover');
+      const file = e.dataTransfer.files[0];
+      if (file) parseExcel(file);
+    });
+    fileInput.addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (file) parseExcel(file);
+    });
+
+    function parseExcel(file) {
+      const status = document.getElementById('importStatus');
+      status.className = 'import-status';
+      status.style.display = 'none';
+
+      // 简化版Excel解析（实际应使用SheetJS）
+      status.textContent = 'Excel文件解析需要引入SheetJS库，当前仅支持手动输入模式';
+      status.style.color = '#f59e0b';
+      status.style.display = 'block';
+    }
+
+    // ===== 手动输入 =====
+    function toggleManual() {
+      const sec = document.getElementById('manualSection');
+      sec.classList.toggle('show');
+      if (sec.classList.contains('show')) generateManualFields();
+    }
+
+    function generateManualFields() {
+      const start = parseInt(document.getElementById('manualStart').value) || 1995;
+      const end = parseInt(document.getElementById('manualEnd').value) || 2025;
+      const container = document.getElementById('manualFields');
+      container.innerHTML = '';
+
+      if (start >= end) {
+        container.innerHTML = '<p style="color:#dc2626;font-size:13px;padding:4px 0;">起始年份必须小于截止年份</p>';
+        return;
+      }
+
+      for (let y = start; y <= end; y++) {
+        const row = document.createElement('div');
+        row.className = 'manual-row';
+        const baseHint = PROV_BASE[y] ? PROV_BASE[y].toFixed(2) + (y > 2025 ? '（预测）' : '') : '—';
+        row.innerHTML = `<label>${y}年</label><input type="number" id="manual_${y}" placeholder="缴费基数" step="0.01" /><span class="base-hint">全省 ${baseHint}</span>`;
+        container.appendChild(row);
+      }
+    }
+
+    function applyManualInput() {
+      const start = parseInt(document.getElementById('manualStart').value) || 1995;
+      const end = parseInt(document.getElementById('manualEnd').value) || 2025;
+      yearData = {};
+      let count = 0;
+
+      for (let y = start; y <= end; y++) {
+        const el = document.getElementById('manual_' + y);
+        if (el && el.value) {
+          const v = parseFloat(el.value);
+          if (v > 0) {
+            yearData[y] = v;
+            count++;
+          }
+        }
+      }
+
+      if (count === 0) {
+        alert('请至少输入一年的缴费基数');
+        return;
+      }
+
+      document.getElementById('importStatus').style.display = 'none';
+      calculate();
+    }
+
+    // ===== 核心计算 =====
+    function calculate() {
+      const years = Object.keys(yearData).map(Number).sort();
+      if (years.length === 0) return;
+
+      let indexSum = 0;
+      let validYears = 0;
+      const details = [];
+      let accountTotal = 0;
+
+      for (const yr of years) {
+        const base = PROV_BASE[yr];
+        const personal = yearData[yr];
+        if (!base) continue;
+
+        const idx = personal / base;
+        indexSum += idx;
+        validYears++;
+
+        const yearlyDeposit = personal * 0.08 * 12;
+        const rate = INTEREST_RATE[yr] !== undefined ? INTEREST_RATE[yr] : 0.015;
+        accountTotal = accountTotal * (1 + rate) + yearlyDeposit;
+
+        details.push({
+          year: yr,
+          base: base,
+          personal: personal,
+          index: idx,
+          yearlyDeposit: yearlyDeposit,
+          accountTotal: accountTotal
+        });
+      }
+
+      if (validYears === 0) return;
+
+      const avgIndex = indexSum / validYears;
+      const indices = details.map(d => d.index);
+      const minIdx = Math.min(...indices);
+      const maxIdx = Math.max(...indices);
+
+      // 指数描述
+      let desc = '';
+      if (avgIndex < 0.6) desc = '低于60%最低缴费档';
+      else if (avgIndex < 0.8) desc = '接近60%最低缴费档';
+      else if (avgIndex < 1.2) desc = '接近100%社平工资档';
+      else if (avgIndex < 2.0) desc = '高于社平工资，缴费水平较好';
+      else if (avgIndex < 3.0) desc = '远高于社平工资，属于高缴费水平';
+      else desc = '达到300%最高缴费上限';
+
+      document.getElementById('avgIndex').textContent = avgIndex.toFixed(4);
+      document.getElementById('indexDesc').textContent = desc;
+      document.getElementById('totalYears').textContent = validYears;
+      document.getElementById('accountBalance').textContent = formatMoney(accountTotal);
+      document.getElementById('indexRange').textContent = minIdx.toFixed(2) + ' ~ ' + maxIdx.toFixed(2);
+
+      // 标准档对比
+      document.getElementById('cmp60Val').textContent = '0.6000';
+      document.getElementById('cmp100Val').textContent = '1.0000';
+      document.getElementById('cmp300Val').textContent = '3.0000';
+
+      document.querySelectorAll('.compare-item').forEach(el => el.classList.remove('active'));
+      if (avgIndex >= 2.5) document.getElementById('cmp300').classList.add('active');
+      else if (avgIndex >= 0.8) document.getElementById('cmp100').classList.add('active');
+      else document.getElementById('cmp60').classList.add('active');
+
+      // 明细表
+      const tbody = document.getElementById('detailBody');
+      tbody.innerHTML = '';
+      for (const d of details) {
+        const tr = document.createElement('tr');
+        const idxClass = d.index < 0.8 ? 'index-low' : (d.index < 1.5 ? 'index-mid' : 'index-high');
+        tr.innerHTML = `
+          <td>${d.year}</td>
+          <td>${d.base.toFixed(2)}</td>
+          <td class="input-cell"><input type="number" value="${d.personal}" step="0.01" onchange="updateOne(${d.year}, this.value)" /></td>
+          <td class="${idxClass}">${d.index.toFixed(4)}</td>
+          <td>${formatMoney(d.yearlyDeposit)}</td>
+          <td>${formatMoney(d.accountTotal)}</td>
+        `;
+        tbody.appendChild(tr);
+      }
+
+      document.getElementById('resultCard').style.display = 'block';
+      document.getElementById('detailCard').style.display = 'block';
+
+      // 滚动到结果区域
+      setTimeout(() => {
+        document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+
+    function updateOne(year, value) {
+      const v = parseFloat(value);
+      if (v > 0) {
+        yearData[year] = v;
+        calculate();
+      }
+    }
+
+    function formatMoney(n) {
+      if (n >= 10000) return (n / 10000).toFixed(2) + '万';
+      return Math.round(n).toLocaleString();
+    }
+
+    function resetAll() {
+      yearData = {};
+      document.getElementById('resultCard').style.display = 'none';
+      document.getElementById('detailCard').style.display = 'none';
+      document.getElementById('importStatus').style.display = 'none';
+      document.getElementById('fileInput').value = '';
+    }
+
+    // 初始化
+    generateManualFields();
+  </script>
+</body>
+</html>
