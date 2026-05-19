@@ -108,14 +108,9 @@ Page({
 
     this.setData({ loading: true })
 
-    // 调用引擎计算
+    // 调用引擎计算（灵活就业由引擎内部处理）
     const engine = require('../../engine/pension-engine')
-    let result
-    if (isFlexible) {
-      result = engine.calculateFlexible(selectedProvince.config, input)
-    } else {
-      result = engine.calculate(selectedProvince.config, input)
-    }
+    const result = engine.calculate(selectedProvince.config, input)
 
     this.setData({ loading: false })
 
