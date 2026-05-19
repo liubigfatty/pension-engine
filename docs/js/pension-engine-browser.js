@@ -257,7 +257,8 @@ function parseInput(inputData) {
     cityType: inputData.cityType || 'prov',
     retireType: inputData.retireType || 'standard'
   };
-  data.genderType = data.gender === 'male' ? 'male' : data.retireType === 'fc' ? 'fc' : 'fw';
+  data.genderType = inputData.genderType
+    || (data.gender === 'male' ? 'male' : data.retireType === 'fc' ? 'fc' : 'fw');
   return data;
 }
 
@@ -365,12 +366,5 @@ function getDelayResult(birthYear, birthMonth, type) {
   };
 }
 
-/**
- * 灵活就业人员计算入口（与企业职工公式相同，退休年龄已通过 genderType 区分）
- */
-function calculateFlexible(config, inputData) {
-  return calculate(config, inputData);
-}
-
 // ==================== 导出 ====================
-window.pensionEngine = { calculate, calculateFlexible, getDelayMonths, getDelayResult };
+window.pensionEngine = { calculate, getDelayMonths, getDelayResult };
