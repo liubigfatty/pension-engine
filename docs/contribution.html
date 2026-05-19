@@ -175,6 +175,42 @@
       background: #f9fafb;
       border-color: #9ca3af;
     }
+    
+    .province-selector {
+      background: #f9fafb;
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+    
+    .form-group {
+      margin-bottom: 12px;
+    }
+    
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 6px;
+    }
+    
+    .form-group select,
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1.5px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+    }
+    
+    .form-group select:focus,
+    .form-group input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+    }
   </style>
 </head>
 <body>
@@ -197,12 +233,56 @@
       <section class="hero">
         <h1>缴费水平测算</h1>
         <p class="hero-subtitle">计算平均缴费工资指数和个人账户累计存储额</p>
-        <p class="hero-desc">导入社保缴费记录或手动输入缴费基数，自动计算您的缴费水平</p>
+        <p class="hero-desc">选择省份后，导入或手动输入缴费基数，自动计算您的缴费水平</p>
+      </section>
+
+      <!-- 省份选择 -->
+      <section class="card">
+        <h2 class="card-title">🌍 第一步：选择参保省份</h2>
+        <div class="province-selector">
+          <div class="form-group">
+            <label for="provinceSelect">参保地区</label>
+            <select id="provinceSelect" onchange="onProvinceChange()">
+              <option value="">— 请选择省份 —</option>
+              <option value="jilin">吉林省</option>
+              <option value="beijing">北京市</option>
+              <option value="shanghai">上海市</option>
+              <option value="guangdong">广东省</option>
+              <option value="jiangsu">江苏省</option>
+              <option value="zhejiang">浙江省</option>
+              <option value="shandong">山东省</option>
+              <option value="liaoning">辽宁省</option>
+              <option value="heilongjiang">黑龙江省</option>
+              <option value="anhui">安徽省</option>
+              <option value="fujian">福建省</option>
+              <option value="jiangxi">江西省</option>
+              <option value="henan">河南省</option>
+              <option value="hubei">湖北省</option>
+              <option value="hunan">湖南省</option>
+              <option value="sichuan">四川省</option>
+              <option value="chongqing">重庆市</option>
+              <option value="shaanxi">陕西省</option>
+              <option value="gansu">甘肃省</option>
+              <option value="qinghai">青海省</option>
+              <option value="neimenggu">内蒙古自治区</option>
+              <option value="guangxi">广西壮族自治区</option>
+              <option value="xizang">西藏自治区</option>
+              <option value="ningxia">宁夏回族自治区</option>
+              <option value="xinjiang">新疆维吾尔自治区</option>
+              <option value="yunnan">云南省</option>
+              <option value="guizhou">贵州省</option>
+              <option value="hainan">海南省</option>
+              <option value="tianjin">天津市</option>
+              <option value="shanxi">山西省</option>
+            </select>
+          </div>
+          <div id="provinceInfo" style="font-size:13px;color:#6b7280;margin-top:8px;"></div>
+        </div>
       </section>
 
       <!-- 数据导入 -->
-      <section class="card">
-        <h2 class="card-title">📊 第一步：导入缴费数据</h2>
+      <section class="card" id="dataImportCard" style="opacity:0.5;pointer-events:none;">
+        <h2 class="card-title">📊 第二步：导入缴费数据</h2>
         
         <!-- Excel导入 -->
         <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
@@ -240,7 +320,7 @@
 
       <!-- 计算结果 -->
       <section class="card result-card" id="resultCard" style="display:none;">
-        <h2 class="card-title">📈 第二步：计算结果</h2>
+        <h2 class="card-title">📈 第三步：计算结果</h2>
         
         <div class="result-grid">
           <div class="result-item">
@@ -307,7 +387,7 @@
       <div class="note">
         <strong>说明</strong><br>
         · 平均缴费指数 = 各年（个人缴费基数 ÷ 全省计发基数）之和 ÷ 实际缴费年数<br>
-        · 计算期间为1995年起至退休上一年度，分母统一使用全省计发基数<br>
+        · 计算期间从当地个人建账年度起至退休上一年度，分母统一使用全省计发基数<br>
         · 个人账户存储额按历年缴费基数 × 8% × 12 逐月计入，再按历年记账利率复利计算<br>
         · 导入数据后可直接在明细表中修改数值，修改后自动重新计算<br>
         · 数据仅供参考，实际以社保系统核定为准
@@ -322,20 +402,41 @@
   </footer>
 
   <script>
-    // ===== 全省历年计发基数（元/月） =====
-    const PROV_BASE = {
-      1995: 369.17, 1996: 447.50, 1997: 472.00, 1998: 545.92, 1999: 596.50,
-      2000: 660.33, 2001: 730.92, 2002: 832.50, 2003: 923.42, 2004: 1035.92,
-      2005: 1200.75, 2006: 1381.92, 2007: 1709.42, 2008: 1957.17, 2009: 2185.83,
-      2010: 2449.92, 2011: 2849.75, 2012: 3200.58, 2013: 3570.50, 2014: 3876.33,
-      2015: 4296.50, 2016: 4674.83, 2017: 5120.92, 2018: 5711.08, 2019: 6151.08,
-      2020: 5088.42, 2021: 6004.75, 2022: 6384.83, 2023: 6655.33, 2024: 7178.50,
-      2025: 7322.08,
-      2026: 7642.79, 2027: 7977.54, 2028: 8326.96, 2029: 8691.68, 2030: 9072.38,
-      2031: 9308.26, 2032: 9550.27, 2033: 9798.58, 2034: 10053.34, 2035: 10314.73
+    // ===== 省份配置列表 =====
+    const PROVINCES = {
+      'jilin': { name: '吉林省' },
+      'beijing': { name: '北京市' },
+      'shanghai': { name: '上海市' },
+      'guangdong': { name: '广东省' },
+      'jiangsu': { name: '江苏省' },
+      'zhejiang': { name: '浙江省' },
+      'shandong': { name: '山东省' },
+      'liaoning': { name: '辽宁省' },
+      'heilongjiang': { name: '黑龙江省' },
+      'anhui': { name: '安徽省' },
+      'fujian': { name: '福建省' },
+      'jiangxi': { name: '江西省' },
+      'henan': { name: '河南省' },
+      'hubei': { name: '湖北省' },
+      'hunan': { name: '湖南省' },
+      'sichuan': { name: '四川省' },
+      'chongqing': { name: '重庆市' },
+      'shaanxi': { name: '陕西省' },
+      'gansu': { name: '甘肃省' },
+      'qinghai': { name: '青海省' },
+      'neimenggu': { name: '内蒙古自治区' },
+      'guangxi': { name: '广西壮族自治区' },
+      'xizang': { name: '西藏自治区' },
+      'ningxia': { name: '宁夏回族自治区' },
+      'xinjiang': { name: '新疆维吾尔自治区' },
+      'yunnan': { name: '云南省' },
+      'guizhou': { name: '贵州省' },
+      'hainan': { name: '海南省' },
+      'tianjin': { name: '天津市' },
+      'shanxi': { name: '山西省' }
     };
 
-    // ===== 历年记账利率 =====
+    // ===== 记账利率（全国统一） =====
     const INTEREST_RATE = {
       1995: 0.025, 1996: 0.025, 1997: 0.025, 1998: 0.025, 1999: 0.025,
       2000: 0.025, 2001: 0.025, 2002: 0.025, 2003: 0.025, 2004: 0.025,
@@ -348,7 +449,61 @@
       2031: 0.0150, 2032: 0.0150, 2033: 0.0150, 2034: 0.0150, 2035: 0.0150
     };
 
+    let provConfig = null;    // 当前省份配置
+    let provBase = {};        // 全省历年基数 { year: base }
+    let accountStartYear = 1995; // 个人建账年度
     let yearData = {};
+
+    // ===== 省份选择 =====
+    function onProvinceChange() {
+      const code = document.getElementById('provinceSelect').value;
+      const infoEl = document.getElementById('provinceInfo');
+      const importCard = document.getElementById('dataImportCard');
+      
+      if (!code) {
+        infoEl.textContent = '';
+        importCard.style.opacity = '0.5';
+        importCard.style.pointerEvents = 'none';
+        return;
+      }
+
+      const config = PROVINCES[code];
+      infoEl.textContent = `已选择：${config.name} — 加载省份配置中...`;
+      
+      // 加载省份JSON配置
+      fetch(`js/provinces/${code}.json`)
+        .then(res => {
+          if (!res.ok) throw new Error('配置不存在');
+          return res.json();
+        })
+        .then(config => {
+          provConfig = config;
+          // 提取全省基数
+          if (config.base_rates && config.base_rates.prov) {
+            provBase = config.base_rates.prov;
+            accountStartYear = config.account_start ? (config.account_start.year || 1995) : 1995;
+            infoEl.innerHTML = `✅ <strong>${config.name}</strong> — 全省基数数据覆盖 ${getYearRange()} 年，个人建账年度：${accountStartYear}年`;
+          } else {
+            infoEl.innerHTML = `⚠️ <strong>${config.name}</strong> — 省份基数数据暂不完整`;
+          }
+          
+          // 解锁数据导入
+          importCard.style.opacity = '1';
+          importCard.style.pointerEvents = 'auto';
+        })
+        .catch(err => {
+          console.error('加载省份配置失败:', err);
+          infoEl.innerHTML = `❌ <strong>${config.name}</strong> — 配置加载失败，请刷新后重试`;
+          importCard.style.opacity = '0.5';
+          importCard.style.pointerEvents = 'none';
+        });
+    }
+
+    function getYearRange() {
+      const years = Object.keys(provBase).map(Number).sort((a,b) => a-b);
+      if (years.length === 0) return '—';
+      return `${years[0]} ~ ${years[years.length - 1]}`;
+    }
 
     // ===== Excel导入 =====
     const uploadZone = document.getElementById('uploadZone');
@@ -391,27 +546,37 @@
     }
 
     function generateManualFields() {
-      const start = parseInt(document.getElementById('manualStart').value) || 1995;
+      const start = parseInt(document.getElementById('manualStart').value) || accountStartYear;
       const end = parseInt(document.getElementById('manualEnd').value) || 2025;
       const container = document.getElementById('manualFields');
       container.innerHTML = '';
+
+      if (start < accountStartYear) {
+        container.innerHTML = `<p style="color:#dc2626;font-size:13px;padding:4px 0;">${PROVINCES[document.getElementById('provinceSelect').value]?.name || '当前省份'} 个人建账年度为 ${accountStartYear}年，最早可从该年起输入</p>`;
+        return;
+      }
 
       if (start >= end) {
         container.innerHTML = '<p style="color:#dc2626;font-size:13px;padding:4px 0;">起始年份必须小于截止年份</p>';
         return;
       }
 
-      for (let y = start; y <= end; y++) {
+      const availableYears = Object.keys(provBase).map(Number).sort((a,b) => a-b);
+      const minY = availableYears[0] || accountStartYear;
+      const maxY = availableYears[availableYears.length - 1] || 2035;
+
+      for (let y = Math.max(start, minY); y <= Math.min(end, maxY); y++) {
+        const base = provBase[y] || 0;
+        const baseHint = base > 0 ? base.toFixed(2) : '（预测值）';
         const row = document.createElement('div');
         row.className = 'manual-row';
-        const baseHint = PROV_BASE[y] ? PROV_BASE[y].toFixed(2) + (y > 2025 ? '（预测）' : '') : '—';
-        row.innerHTML = `<label>${y}年</label><input type="number" id="manual_${y}" placeholder="缴费基数" step="0.01" /><span class="base-hint">全省 ${baseHint}</span>`;
+        row.innerHTML = `<label>${y}年</label><input type="number" id="manual_${y}" placeholder="缴费基数" step="0.01" value="${base > 0 ? base : ''}" /><span class="base-hint">全省 ${base > 0 ? baseHint : '—'}</span>`;
         container.appendChild(row);
       }
     }
 
     function applyManualInput() {
-      const start = parseInt(document.getElementById('manualStart').value) || 1995;
+      const start = parseInt(document.getElementById('manualStart').value) || accountStartYear;
       const end = parseInt(document.getElementById('manualEnd').value) || 2025;
       yearData = {};
       let count = 0;
@@ -447,7 +612,7 @@
       let accountTotal = 0;
 
       for (const yr of years) {
-        const base = PROV_BASE[yr];
+        const base = provBase[yr];
         const personal = yearData[yr];
         if (!base) continue;
 
@@ -546,10 +711,9 @@
       document.getElementById('detailCard').style.display = 'none';
       document.getElementById('importStatus').style.display = 'none';
       document.getElementById('fileInput').value = '';
+      document.getElementById('manualFields').innerHTML = '';
+      generateManualFields();
     }
-
-    // 初始化
-    generateManualFields();
   </script>
 </body>
 </html>
