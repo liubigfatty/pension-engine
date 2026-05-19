@@ -233,6 +233,8 @@
       <section class="card">
         <h2 class="card-title">🌍 第一步：选择参保省份</h2>
         <div class="province-selector">
+          <button class="btn btn-sm btn-outline" onclick="resetAll()" style="margin-bottom:12px;">⟵ 返回重新选择</button>
+          
           <div class="form-group">
             <label for="provinceSelect">参保地区</label>
             <select id="provinceSelect" onchange="onProvinceChange()">
@@ -701,6 +703,8 @@
       document.getElementById('provinceInfo').innerHTML = '';
       document.getElementById('manualFields').innerHTML = '';
       generateManualFields();
+      // 滚动到顶部
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   </script>
 </body>
