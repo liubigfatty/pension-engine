@@ -6,13 +6,6 @@
   <title>缴费水平测算 - 养老金测算平台</title>
   <link rel="stylesheet" href="css/style.css">
   <style>
-    .contribution-result {
-      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-      border-radius: 12px;
-      padding: 24px;
-      margin: 20px 0;
-    }
-    
     .result-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -379,7 +372,7 @@
           <tbody id="detailBody"></tbody>
         </table>
         <div class="actions">
-          <button class="btn btn-sm btn-outline" onclick="resetAll()">清除数据，重新开始</button>
+          <button class="btn btn-sm btn-outline" onclick="resetAll()">返回重新选择</button>
         </div>
       </section>
 
@@ -468,10 +461,10 @@
       }
 
       const config = PROVINCES[code];
-      infoEl.textContent = `已选择：${config.name} — 加载省份配置中...`;
+      infoEl.textContent = '已选择：' + config.name + ' — 加载省份配置中...';
       
       // 加载省份JSON配置
-      fetch(`js/provinces/${code}.json`)
+      fetch('js/provinces/' + code + '.json')
         .then(res => {
           if (!res.ok) throw new Error('配置不存在');
           return res.json();
@@ -482,9 +475,9 @@
           if (config.base_rates && config.base_rates.prov) {
             provBase = config.base_rates.prov;
             accountStartYear = config.account_start ? (config.account_start.year || 1995) : 1995;
-            infoEl.innerHTML = `✅ <strong>${config.name}</strong> — 全省基数数据覆盖 ${getYearRange()} 年，个人建账年度：${accountStartYear}年`;
+            infoEl.innerHTML = '<strong>' + config.name + '</strong> — 全省基数数据覆盖 ' + getYearRange() + ' 年，个人建账年度：' + accountStartYear + '年';
           } else {
-            infoEl.innerHTML = `⚠️ <strong>${config.name}</strong> — 省份基数数据暂不完整`;
+            infoEl.innerHTML = '<strong>' + config.name + '</strong> — 省份基数数据暂不完整';
           }
           
           // 解锁数据导入
@@ -493,7 +486,7 @@
         })
         .catch(err => {
           console.error('加载省份配置失败:', err);
-          infoEl.innerHTML = `❌ <strong>${config.name}</strong> — 配置加载失败，请刷新后重试`;
+          infoEl.innerHTML = '<strong>' + config.name + '</strong> — 配置加载失败，请刷新后重试';
           importCard.style.opacity = '0.5';
           importCard.style.pointerEvents = 'none';
         });
@@ -502,7 +495,7 @@
     function getYearRange() {
       const years = Object.keys(provBase).map(Number).sort((a,b) => a-b);
       if (years.length === 0) return '—';
-      return `${years[0]} ~ ${years[years.length - 1]}`;
+      return years[0] + ' ~ ' + years[years.length - 1];
     }
 
     // ===== Excel导入 =====
@@ -552,7 +545,7 @@
       container.innerHTML = '';
 
       if (start < accountStartYear) {
-        container.innerHTML = `<p style="color:#dc2626;font-size:13px;padding:4px 0;">${PROVINCES[document.getElementById('provinceSelect').value]?.name || '当前省份'} 个人建账年度为 ${accountStartYear}年，最早可从该年起输入</p>`;
+        container.innerHTML = '<p style="color:#dc2626;font-size:13px;padding:4px 0;">' + PROVINCES[document.getElementById('provinceSelect').value]?.name + ' 个人建账年度为 ' + accountStartYear + '年，最早可从该年起输入</p>';
         return;
       }
 
@@ -570,7 +563,7 @@
         const baseHint = base > 0 ? base.toFixed(2) : '（预测值）';
         const row = document.createElement('div');
         row.className = 'manual-row';
-        row.innerHTML = `<label>${y}年</label><input type="number" id="manual_${y}" placeholder="缴费基数" step="0.01" value="${base > 0 ? base : ''}" /><span class="base-hint">全省 ${base > 0 ? baseHint : '—'}</span>`;
+        row.innerHTML = '<label>' + y + '年</label><input type="number" id="manual_' + y + '" placeholder="缴费基数" step="0.01" value="' + (base > 0 ? base : '') + '" /><span class="base-hint">全省 ' + baseHint + '</span>';
         container.appendChild(row);
       }
     }
@@ -672,14 +665,7 @@
       for (const d of details) {
         const tr = document.createElement('tr');
         const idxClass = d.index < 0.8 ? 'index-low' : (d.index < 1.5 ? 'index-mid' : 'index-high');
-        tr.innerHTML = `
-          <td>${d.year}</td>
-          <td>${d.base.toFixed(2)}</td>
-          <td class="input-cell"><input type="number" value="${d.personal}" step="0.01" onchange="updateOne(${d.year}, this.value)" /></td>
-          <td class="${idxClass}">${d.index.toFixed(4)}</td>
-          <td>${formatMoney(d.yearlyDeposit)}</td>
-          <td>${formatMoney(d.accountTotal)}</td>
-        `;
+        tr.innerHTML = '<td>' + d.year + '</td><td>' + d.base.toFixed(2) + '</td><td class="input-cell"><input type="number" value="' + d.personal + '" step="0.01" onchange="updateOne(' + d.year + ', this.value)" /></td><td class="' + idxClass + '">' + d.index.toFixed(4) + '</td><td>' + formatMoney(d.yearlyDeposit) + '</td><td>' + formatMoney(d.accountTotal) + '</td>';
         tbody.appendChild(tr);
       }
 
@@ -709,8 +695,10 @@
       yearData = {};
       document.getElementById('resultCard').style.display = 'none';
       document.getElementById('detailCard').style.display = 'none';
-      document.getElementById('importStatus').style.display = 'none';
-      document.getElementById('fileInput').value = '';
+      document.getElementById('manualSection').style.display = 'none';
+      document.getElementById('dataImportCard').style.opacity = '0.5';
+      document.getElementById('dataImportCard').style.pointerEvents = 'none';
+      document.getElementById('provinceInfo').innerHTML = '';
       document.getElementById('manualFields').innerHTML = '';
       generateManualFields();
     }
