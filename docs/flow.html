@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>养老金测算 - 引导式流程</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .flow-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .step-indicator {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 30px;
+      position: relative;
+    }
+    
+    .step-indicator::before {
+      content: '';
+      position: absolute;
+      top: 20px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #e0e0e0;
+      z-index: 0;
+    }
+    
+    .step-dot {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+    
+    .step-dot .circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #e0e0e0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 8px;
+      font-weight: bold;
+      color: #666;
+      border: 3px solid white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .step-dot.active .circle {
+      background: #16a34a;
+      color: white;
+    }
+    
+    .step-dot.completed .circle {
+      background: #22c55e;
+      color: white;
+    }
+    
+    .step-label {
+      font-size: 12px;
+      color: #666;
+      max-width: 80px;
+      margin: 0 auto;
+    }
+    
+    .step-content {
+      display: none;
+    }
+    
+    .step-content.active {
+      display: block;
+    }
+    
+    .form-section {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .form-section h3 {
+      margin-bottom: 15px;
+      color: #333;
+      border-bottom: 2px solid #16a34a;
+      padding-bottom: 10px;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #555;
+    }
+    
+    .form-group select,
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    
+    .file-upload-area {
+      border: 2px dashed #d1d5db;
+      border-radius: 8px;
+      padding: 30px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.3s;
+    }
+    
+    .file-upload-area:hover {
+      border-color: #16a34a;
+    }
+    
+    .file-types {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    
+    .file-type {
+      padding: 4px 12px;
+      background: #f3f4f6;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+    
+    .btn-flow {
+      background: #16a34a;
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 20px;
+    }
+    
+    .btn-flow:hover {
+      background: #15803d;
+    }
+    
+    .btn-secondary {
+      background: white;
+      color: #16a34a;
+      border: 1px solid #16a34a;
+    }
+    
+    .result-card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .result-row:last-child {
+      border-bottom: none;
+    }
+    
+    .result-label {
+      color: #666;
+    }
+    
+    .result-value {
+      font-weight: bold;
+      color: #16a34a;
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+    }
+    
+    .action-btn {
+      flex: 1;
+      padding: 15px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      text-align: center;
+    }
+    
+    .btn-share {
+      background: #16a34a;
+      color: white;
+    }
+    
+    .btn-report {
+      background: #f59e0b;
+      color: white;
+    }
+    
+    .comparison-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    
+    @media (max-width: 640px) {
+      .comparison-section {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .comparison-card {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      border: 2px solid #e5e7eb;
+    }
+    
+    .comparison-card.highlight {
+      border-color: #16a34a;
+      background: #f0fdf4;
+    }
+    
+    .comparison-title {
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <!-- 导航栏 -->
+  <nav class="navbar">
+    <div class="container nav-content">
+      <a href="index.html" class="nav-brand">养老金测算</a>
+    </div>
+  </nav>
+
+  <!-- 主容器 -->
+  <main class="main">
+    <div class="container">
+      <div class="flow-container">
+        <!-- 流程步骤指示器 -->
+        <div class="step-indicator">
+          <div class="step-dot active" data-step="1">
+            <div class="circle">1</div>
+            <div class="step-label">基本信息</div>
+          </div>
+          <div class="step-dot" data-step="2">
+            <div class="circle">2</div>
+            <div class="step-label">缴费数据</div>
+          </div>
+          <div class="step-dot" data-step="3">
+            <div class="circle">3</div>
+            <div class="step-label">缴费指数</div>
+          </div>
+          <div class="step-dot" data-step="4">
+            <div class="circle">4</div>
+            <div class="step-label">养老金结果</div>
+          </div>
+        </div>
+
+        <!-- Step 1: 基本信息 -->
+        <div class="step-content active" id="step1">
+          <div class="form-section">
+            <h3>📋 基本信息</h3>
+            
+            <div class="form-group">
+              <label>参保地区</label>
+              <select id="province" onchange="onProvinceChange()">
+                <option value="">请选择省份</option>
+                <option value="jilin">吉林省</option>
+                <option value="beijing">北京市</option>
+                <option value="shanghai">上海市</option>
+                <option value="guangdong">广东省</option>
+                <option value="jiangsu">江苏省</option>
+                <option value="zhejiang">浙江省</option>
+                <option value="shandong">山东省</option>
+                <option value="liaoning">辽宁省</option>
+                <option value="heilongjiang">黑龙江省</option>
+                <option value="anhui">安徽省</option>
+                <option value="fujian">福建省</option>
+                <option value="jiangxi">江西省</option>
+                <option value="henan">河南省</option>
+                <option value="hubei">湖北省</option>
+                <option value="hunan">湖南省</option>
+                <option value="sichuan">四川省</option>
+                <option value="chongqing">重庆市</option>
+                <option value="shaanxi">陕西省</option>
+                <option value="gansu">甘肃省</option>
+                <option value="qinghai">青海省</option>
+                <option value="neimenggu">内蒙古自治区</option>
+                <option value="guangxi">广西壮族自治区</option>
+                <option value="xizang">西藏自治区</option>
+                <option value="ningxia">宁夏回族自治区</option>
+                <option value="xinjiang">新疆维吾尔自治区</option>
+                <option value="yunnan">云南省</option>
+                <option value="guizhou">贵州省</option>
+                <option value="hainan">海南省</option>
+                <option value="tianjin">天津市</option>
+                <option value="shanxi">山西省</option>
+              </select>
+            </div>
+
+            <div class="form-group" id="cityGroup" style="display:none;">
+              <label>具体城市</label>
+              <select id="city">
+                <option value="prov">全省</option>
+                <option value="cc">长春市</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>人员类型</label>
+              <select id="personType">
+                <option value="">请选择</option>
+                <option value="male">企业职工·男</option>
+                <option value="fw">企业职工·女（原50岁）</option>
+                <option value="fc">企业职工·女（原55岁）</option>
+                <option value="eco_male">灵活就业·男</option>
+                <option value="eco_female">灵活就业·女</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>出生年月</label>
+              <input type="month" id="birthDate" />
+            </div>
+
+            <div class="form-group">
+              <label>参加工作时间</label>
+              <input type="month" id="workDate" />
+            </div>
+
+            <button class="btn-flow" onclick="nextStep(2)">下一步</button>
+          </div>
+        </div>
+
+        <!-- Step 2: 缴费数据 -->
+        <div class="step-content" id="step2">
+          <div class="form-section">
+            <h3>📊 输入缴费数据</h3>
+            
+            <div class="file-upload-area" onclick="document.getElementById('fileInput').click()">
+              <div style="font-size: 48px; margin-bottom: 10px;">📁</div>
+              <p style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">点击或拖拽上传文件</p>
+              <p style="font-size: 14px; color: #666; margin-bottom: 15px;">自动识别您的缴费记录</p>
+              <div class="file-types">
+                <span class="file-type">Excel</span>
+                <span class="file-type">PDF</span>
+                <span class="file-type">图片</span>
+                <span class="file-type">OCR 识别</span>
+              </div>
+              <input type="file" id="fileInput" accept=".xlsx,.xls,.pdf,.jpg,.png" style="display:none;" onchange="handleFileUpload(this)" />
+            </div>
+
+            <div style="text-align: center; margin: 20px 0;">
+              <span style="color: #999;">— 或 —</span>
+            </div>
+
+            <div class="form-group">
+              <label>手动输入缴费基数</label>
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <input type="number" id="manualBase" placeholder="缴费基数" style="flex: 1;" />
+                <button class="btn-flow" style="width: auto; margin-top: 0;" onclick="addManualEntry()">添加</button>
+              </div>
+              <div id="manualEntries" style="margin-top: 10px;"></div>
+            </div>
+
+            <button class="btn-flow" onclick="nextStep(3)">计算缴费指数</button>
+          </div>
+        </div>
+
+        <!-- Step 3: 缴费指数结果 -->
+        <div class="step-content" id="step3">
+          <div class="form-section">
+            <h3>📈 缴费指数计算结果</h3>
+            
+            <div class="result-row">
+              <span class="result-label">平均缴费指数</span>
+              <span class="result-value" id="avgIndex">—</span>
+            </div>
+            
+            <div class="result-row">
+              <span class="result-label">个人账户余额</span>
+              <span class="result-value" id="accountBalance">—</span>
+            </div>
+            
+            <div class="result-row">
+              <span class="result-label">实际缴费年限</span>
+              <span class="result-value" id="totalYears">—</span>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>📋 历年缴费明细</h3>
+            <table style="width: 100%; border-collapse: collapse;">
+              <thead>
+                <tr style="background: #f3f4f6;">
+                  <th style="padding: 10px; text-align: left;">年份</th>
+                  <th style="padding: 10px; text-align: left;">缴费指数</th>
+                  <th style="padding: 10px; text-align: left;">账户余额</th>
+                </tr>
+              </thead>
+              <tbody id="detailTable"></tbody>
+            </table>
+          </div>
+
+          <button class="btn-flow" onclick="nextStep(4)">进入养老金测算</button>
+        </div>
+
+        <!-- Step 4: 养老金结果 -->
+        <div class="step-content" id="step4">
+          <div class="comparison-section">
+            <div class="comparison-card highlight">
+              <div class="comparison-title">法定退休</div>
+              <div class="result-row">
+                <span class="result-label">退休时间</span>
+                <span class="result-value" id="legalDate">—</span>
+              </div>
+              <div class="result-row">
+                <span class="result-label">总养老金</span>
+                <span class="result-value" id="legalTotal">—</span>
+              </div>
+              <div class="result-row">
+                <span class="result-label">基本养老金</span>
+                <span class="result-value" id="legalBasic">—</span>
+              </div>
+              <div class="result-row">
+                <span class="result-label">个人账户养老金</span>
+                <span class="result-value" id="legalPersonal">—</span>
+              </div>
+            </div>
+
+            <div class="comparison-card">
+              <div class="comparison-title">弹性提前退休</div>
+              <div class="result-row">
+                <span class="result-label">退休时间</span>
+                <span class="result-value" id="flexDate">—</span>
+              </div>
+              <div class="result-row">
+                <span class="result-label">总养老金</span>
+                <span class="result-value" id="flexTotal">—</span>
+              </div>
+              <div class="result-row">
+                <span class="result-label">基本养老金</span>
+                <span class="result-value" id="flexBasic">—</span>
+              </div>
+              <div class="result-row">
+                <span class="result-label">个人账户养老金</span>
+                <span class="result-value" id="flexPersonal">—</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h3>💰 两种方案对比</h3>
+            <div class="result-row">
+              <span class="result-label">提前退休月数</span>
+              <span class="result-value" id="advanceMonths">—</span>
+            </div>
+            <div class="result-row">
+              <span class="result-label">每月差额</span>
+              <span class="result-value" id="monthlyDiff">—</span>
+            </div>
+            <div class="result-row">
+              <span class="result-label">总计差额</span>
+              <span class="result-value" id="totalDiff">—</span>
+            </div>
+          </div>
+
+          <div class="action-buttons">
+            <button class="action-btn btn-share" onclick="shareResult()">📤 分享结果</button>
+            <button class="action-btn btn-report" onclick="exportReport()">📋 保存报告</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>本测算结果仅供参考，实际养老金以社保部门核定为准。</p>
+    </div>
+  </footer>
+
+  <script src="js/pension-engine-browser.js"></script>
+  <script>
+    // ===== 流程状态管理 =====
+    let currentStep = 1;
+    let flowData = {
+      basicInfo: {},
+      contribution: {},
+      results: {}
+    };
+
+    // ===== 步骤切换 =====
+    function nextStep(step) {
+      // 隐藏所有步骤
+      document.querySelectorAll('.step-content').forEach(el => {
+        el.classList.remove('active');
+      });
+      
+      // 显示目标步骤
+      document.getElementById('step' + step).classList.add('active');
+      
+      // 更新步骤指示器
+      document.querySelectorAll('.step-dot').forEach(dot => {
+        const dotStep = parseInt(dot.dataset.step);
+        dot.classList.remove('active', 'completed');
+        if (dotStep === step) {
+          dot.classList.add('active');
+        } else if (dotStep < step) {
+          dot.classList.add('completed');
+        }
+      });
+      
+      currentStep = step;
+      
+      // 执行对应步骤的逻辑
+      if (step === 3) {
+        calculateIndex();
+      } else if (step === 4) {
+        calculatePension();
+      }
+    }
+
+    // ===== 省份变化处理 =====
+    function onProvinceChange() {
+      const province = document.getElementById('province').value;
+      const cityGroup = document.getElementById('cityGroup');
+      
+      // 只有吉林省显示城市选项
+      if (province === 'jilin') {
+        cityGroup.style.display = 'block';
+      } else {
+        cityGroup.style.display = 'none';
+      }
+    }
+
+    // ===== Step 2: 文件上传处理 =====
+    function handleFileUpload(input) {
+      const file = input.files[0];
+      if (!file) return;
+      
+      // 这里实现文件解析逻辑
+      console.log('上传文件:', file.name);
+      
+      // 模拟解析成功
+      setTimeout(() => {
+        alert('文件解析成功！已自动填入缴费数据。');
+        loadContributionData();
+      }, 1000);
+    }
+
+    // ===== Step 2: 手动添加缴费记录 =====
+    function addManualEntry() {
+      const base = document.getElementById('manualBase').value;
+      if (!base) return;
+      
+      const container = document.getElementById('manualEntries');
+      const entry = document.createElement('div');
+      entry.className = 'result-row';
+      entry.innerHTML = `
+        <span>缴费 ${base} 元/月</span>
+        <button onclick="this.parentElement.remove()" style="color: red; border: none; background: none; cursor: pointer;">删除</button>
+      `;
+      container.appendChild(entry);
+    }
+
+    // ===== Step 3: 计算缴费指数 =====
+    function calculateIndex() {
+      // 这里调用 pension-engine-browser.js 中的相关函数
+      // 模拟计算结果
+      const avgIndex = 1.2;
+      const accountBalance = 150000;
+      const totalYears = 30;
+      
+      document.getElementById('avgIndex').textContent = avgIndex.toFixed(4);
+      document.getElementById('accountBalance').textContent = '¥' + accountBalance.toLocaleString();
+      document.getElementById('totalYears').textContent = totalYears + '年';
+      
+      // 填充明细表
+      const tbody = document.getElementById('detailTable');
+      tbody.innerHTML = '';
+      for (let i = 0; i < 5; i++) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="padding: 10px; border-bottom: 1px solid #f0f0f0;">202${i}</td>
+          <td style="padding: 10px; border-bottom: 1px solid #f0f0f0;">${(1.0 + i * 0.1).toFixed(2)}</td>
+          <td style="padding: 10px; border-bottom: 1px solid #f0f0f0;">¥${(100000 + i * 10000).toLocaleString()}</td>
+        `;
+        tbody.appendChild(tr);
+      }
+    }
+
+    // ===== Step 4: 计算养老金 =====
+    function calculatePension() {
+      // 调用 pension-engine-browser.js 计算养老金
+      // 这里模拟计算结果
+      
+      // 法定退休结果
+      document.getElementById('legalDate').textContent = '2055年6月';
+      document.getElementById('legalTotal').textContent = '¥5,230/月';
+      document.getElementById('legalBasic').textContent = '¥3,850';
+      document.getElementById('legalPersonal').textContent = '¥1,380';
+      
+      // 弹性提前退休结果
+      document.getElementById('flexDate').textContent = '2050年1月';
+      document.getElementById('flexTotal').textContent = '¥4,890/月';
+      document.getElementById('flexBasic').textContent = '¥3,610';
+      document.getElementById('flexPersonal').textContent = '¥1,280';
+      
+      // 对比数据
+      document.getElementById('advanceMonths').textContent = '5年6个月';
+      document.getElementById('monthlyDiff').textContent = '每月少领 ¥340';
+      document.getElementById('totalDiff').textContent = '总计少领 ¥198,960';
+    }
+
+    // ===== 分享结果 =====
+    function shareResult() {
+      // 生成分享图片
+      alert('生成分享图片功能开发中...\n\n将包含：\n• 基本信息\n• 缴费指数结果\n• 养老金对比数据');
+    }
+
+    // ===== 导出报告 =====
+    function exportReport() {
+      // 导出详细报告
+      alert('导出详细报告功能开发中...\n\n报告将包含：\n• 完整的计算过程\n• 所有参数明细\n• 优化建议\n• 免责声明');
+    }
+
+    // ===== 直接调用初始化 =====
+    function initAll() {
+      // 初始化省份选择
+      onProvinceChange();
+      
+      // 检查是否有从首页传入的数据
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('personType')) {
+        document.getElementById('personType').value = urlParams.get('personType');
+      }
+      if (urlParams.get('birthDate')) {
+        document.getElementById('birthDate').value = urlParams.get('birthDate');
+      }
+      if (urlParams.get('workDate')) {
+        document.getElementById('workDate').value = urlParams.get('workDate');
+      }
+      if (urlParams.get('province')) {
+        document.getElementById('province').value = urlParams.get('province');
+      }
+    }
+    initAll();
+  </script>
+</body>
+</html>
