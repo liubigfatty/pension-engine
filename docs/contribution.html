@@ -169,40 +169,33 @@
       border-color: #9ca3af;
     }
     
-    .province-selector {
-      background: #f9fafb;
-      padding: 16px;
-      border-radius: 8px;
+    .btn-green {
+      background: #16a34a;
+      color: white;
+      border: none;
+    }
+    
+    .btn-green:hover {
+      background: #15803d;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 8px;
     }
     
-    .form-group {
-      margin-bottom: 12px;
+    .page-header h1 {
+      margin: 0;
     }
     
-    .form-group label {
-      display: block;
-      font-size: 14px;
-      font-weight: 600;
-      color: #374151;
-      margin-bottom: 6px;
-    }
-    
-    .form-group select,
-    .form-group input {
-      width: 100%;
-      padding: 10px;
-      border: 1.5px solid #d1d5db;
-      border-radius: 6px;
-      font-size: 14px;
-      font-family: inherit;
-    }
-    
-    .form-group select:focus,
-    .form-group input:focus {
-      outline: none;
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+    .header-buttons {
+      display: flex;
+      gap: 8px;
     }
   </style>
 </head>
@@ -222,11 +215,18 @@
   <!-- 主内容 -->
   <main class="main">
     <div class="container">
-      <!-- 页面标题 -->
+      <!-- 页面标题和导航按钮 -->
       <section class="hero">
-        <h1>缴费水平测算</h1>
-        <p class="hero-subtitle">计算平均缴费工资指数和个人账户累计存储额</p>
-        <p class="hero-desc">选择省份后，导入或手动输入缴费基数，自动计算您的缴费水平</p>
+        <div class="page-header">
+          <div>
+            <h1>缴费水平测算</h1>
+            <p class="hero-subtitle">计算平均缴费工资指数和个人账户累计存储额</p>
+            <p class="hero-desc">选择省份后，导入或手动输入缴费基数，自动计算您的缴费水平</p>
+          </div>
+          <div class="header-buttons">
+            <button class="btn btn-sm" onclick="window.location.href='index.html'">🏠 返回首页</button>
+          </div>
+        </div>
       </section>
 
       <!-- 省份选择 -->
@@ -355,6 +355,11 @@
             <div class="val" id="cmp300Val">—</div>
           </div>
         </div>
+
+        <!-- 结果操作按钮 -->
+        <div class="actions" style="margin-top:24px;">
+          <button class="btn btn-sm btn-green" onclick="goToPensionCalc()">➡️ 确认无误，带入养老金测算</button>
+        </div>
       </section>
 
       <!-- 明细表 -->
@@ -374,7 +379,7 @@
           <tbody id="detailBody"></tbody>
         </table>
         <div class="actions">
-          <button class="btn btn-sm btn-outline" onclick="resetAll()">返回重新选择</button>
+          <button class="btn btn-sm btn-outline" onclick="resetAll()">↺ 返回重新选择</button>
         </div>
       </section>
 
@@ -448,6 +453,7 @@
     let provBase = {};        // 全省历年基数 { year: base }
     let accountStartYear = 1995; // 个人建账年度
     let yearData = {};
+    let calcResult = null;    // 保存计算结果
 
     // ===== 省份选择 =====
     function onProvinceChange() {
@@ -674,10 +680,18 @@
       document.getElementById('resultCard').style.display = 'block';
       document.getElementById('detailCard').style.display = 'block';
 
-      // 滚动到结果区域
-      setTimeout(() => {
-        document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
+      // 保存计算结果
+      calcResult = {
+        avgIndex: avgIndex,
+        accountBalance: accountTotal,
+        totalYears: validYears,
+        province: PROVINES[document.getElementById('provinceSelect').value]?.name || '未选择',
+        minIndex: minIdx,
+        maxIndex: maxIdx,
+        details: details
+      };
+
+      // 不自动滚动，让用户自己查看
     }
 
     function updateOne(year, value) {
@@ -693,8 +707,23 @@
       return Math.round(n).toLocaleString();
     }
 
+    // ===== 跳转到养老金测算页，携带结果 =====
+    function goToPensionCalc() {
+      if (!calcResult) {
+        alert('请先进行计算');
+        return;
+      }
+      
+      // 将结果存入 sessionStorage，供养老金测算页读取
+      sessionStorage.setItem('contribution_result', JSON.stringify(calcResult));
+      
+      // 跳转到养老金测算页
+      window.location.href = 'pension.html';
+    }
+
     function resetAll() {
       yearData = {};
+      calcResult = null;
       document.getElementById('resultCard').style.display = 'none';
       document.getElementById('detailCard').style.display = 'none';
       document.getElementById('manualSection').style.display = 'none';
