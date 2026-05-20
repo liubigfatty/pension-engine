@@ -75,11 +75,57 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // 从 URL 参数填充表单（首页跳转过来时自动带入月收入和省份）
+// 也从 sessionStorage 读取缴费测算结果（contribution.html 跳转过来）
 function initFromUrlParams() {
   const params = new URLSearchParams(window.location.search);
   const monthlyIncome = params.get('monthlyIncome');
   const province = params.get('province');
   const avgIndex = params.get('avgIndex');
+
+  // 尝试从 sessionStorage 读取缴费水平测算结果
+  const saved = sessionStorage.getItem('contribution_result');
+  if (saved) {
+    try {
+      const r = JSON.parse(saved);
+      // 填充平均缴费指数
+      if (r.avgIndex) {
+        const el = document.getElementById('avgIndex');
+        if (el) el.value = r.avgIndex.toFixed(4);
+      }
+      // 填充省份
+      if (r.province) {
+        const el = document.getElementById('province');
+        if (el) {
+          const PROVINCES_ALL = {
+            'jilin': '吉林省', 'beijing': '北京市', 'shanghai': '上海市',
+            'guangdong': '广东省', 'jiangsu': '江苏省', 'zhejiang': '浙江省',
+            'shandong': '山东省', 'liaoning': '辽宁省', 'heilongjiang': '黑龙江省',
+            'anhui': '安徽省', 'fujian': '福建省', 'jiangxi': '江西省',
+            'henan': '河南省', 'hubei': '湖北省', 'hunan': '湖南省',
+            'sichuan': '四川省', 'chongqing': '重庆市', 'shaanxi': '陕西省',
+            'gansu': '甘肃省', 'qinghai': '青海省', 'neimenggu': '内蒙古自治区',
+            'guangxi': '广西壮族自治区', 'xizang': '西藏自治区',
+            'ningxia': '宁夏回族自治区', 'xinjiang': '新疆维吾尔自治区',
+            'yunnan': '云南省', 'guizhou': '贵州省', 'hainan': '海南省',
+            'tianjin': '天津市', 'shanxi': '山西省'
+          };
+          for (const [code, name] of Object.entries(PROVINCES_ALL)) {
+            if (name === r.province) { el.value = code; break; }
+          }
+          el.dispatchEvent(new Event('change'));
+        }
+      }
+      // 填充月收入（用平均缴费指数反推，基于吉林省2025年基数8644.5）
+      if (r.avgIndex && !monthlyIncome) {
+        const el = document.getElementById('monthlyIncome');
+        if (el) el.value = Math.round(8644.5 * r.avgIndex).toString();
+      }
+      // 清除 sessionStorage，防止刷新重复带入
+      sessionStorage.removeItem('contribution_result');
+    } catch(e) {
+      console.error('解析缴费结果失败:', e);
+    }
+  }
 
   if (monthlyIncome) {
     const el = document.getElementById('monthlyIncome');
