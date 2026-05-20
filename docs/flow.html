@@ -379,13 +379,13 @@
             <div class="form-group">
               <label>手动输入缴费基数</label>
               <div style="display: flex; gap: 10px; align-items: center;">
-                <input type="number" id="manualBase" placeholder="缴费基数" style="flex: 1;" />
+                <input type="number" id="manualYear" placeholder="年份" style="flex: 1; max-width: 100px;" />
+                <input type="number" id="manualBase" placeholder="缴费基数（元/月）" style="flex: 2;" />
                 <button class="btn-flow" style="width: auto; margin-top: 0;" onclick="addManualEntry()">添加</button>
               </div>
               <div id="manualEntries" style="margin-top: 10px;"></div>
+              <button class="btn-flow btn-secondary" style="width: auto; margin-top: 10px;" onclick="clearAllEntries()">清空所有数据</button>
             </div>
-
-            <button class="btn-flow" onclick="nextStep(3)">计算缴费指数</button>
           </div>
         </div>
 
@@ -561,90 +561,373 @@
       const file = input.files[0];
       if (!file) return;
       
-      // 这里实现文件解析逻辑
-      console.log('上传文件:', file.name);
+      // 检查文件类型
+      const validTypes = ['.xlsx', '.xls', '.pdf', '.jpg', '.png'];
+      const ext = file.name.substring(file.name.lastIndexOf('.'));
+      if (!validTypes.includes(ext.toLowerCase())) {
+        alert('不支持的文件格式！\n
+
+支持：Excel (.xlsx/.xls)、PDF、图片 (.jpg/.png)');
+        input.value = '';
+        return;
+      }
       
-      // 模拟解析成功
-      setTimeout(() => {
-        alert('文件解析成功！已自动填入缴费数据。');
-        loadContributionData();
-      }, 1000);
+      // TODO: 实现真实文件解析
+      // 当前显示提示，引导用户使用手动输入
+      alert('文件解析功能开发中...\n
+
+请暂时使用手动输入方式。\n
+
+支持格式：\n
+
+• Excel (.xlsx, .xls)\n
+
+• PDF\n
+
+• 图片 (.jpg, .png)');
+      input.value = '';
     }
 
-    // ===== Step 2: 手动添加缴费记录 =====
+    // ===== Step 2: 手动缴费数据管理 =====
+    let contributionData = []; // 存储缴费数据 [{year: 2020, base: 5000}, ...]
+
     function addManualEntry() {
-      const base = document.getElementById('manualBase').value;
-      if (!base) return;
+      const year = parseInt(document.getElementById('manualYear').value);
+      const base = parseFloat(document.getElementById('manualBase').value);
       
+      if (!year || !base) {
+        alert('请输入年份和缴费基数');
+        return;
+      }
+      
+      if (year < 1990 || year > 2030) {
+        alert('年份必须在 1990-2030 之间');
+        return;
+      }
+      
+      // 检查是否已存在该年份
+      const existing = contributionData.find(d => d.year === year);
+      if (existing) {
+        existing.base = base;
+      } else {
+        contributionData.push({ year, base });
+      }
+      
+      // 排序
+      contributionData.sort((a, b) => a.year - b.year);
+      
+      // 更新显示
+      updateManualEntries();
+      
+      // 清空输入
+      document.getElementById('manualYear').value = '';
+      document.getElementById('manualBase').value = '';
+      document.getElementById('manualYear').focus();
+    }
+
+    function removeEntry(index) {
+      contributionData.splice(index, 1);
+      updateManualEntries();
+    }
+
+    function updateManualEntries() {
       const container = document.getElementById('manualEntries');
-      const entry = document.createElement('div');
-      entry.className = 'result-row';
-      entry.innerHTML = `
-        <span>缴费 ${base} 元/月</span>
-        <button onclick="this.parentElement.remove()" style="color: red; border: none; background: none; cursor: pointer;">删除</button>
-      `;
-      container.appendChild(entry);
+      if (contributionData.length === 0) {
+        container.innerHTML = '<p style="color:#999;text-align:center;padding:10px;">暂无数据，请添加</p>';
+        return;
+      }
+      
+      container.innerHTML = contributionData.map((d, i) => `
+        <div class="result-row" style="align-items:center;">
+          <span>${d.year}年 - 缴费基数：¥${d.base.toLocaleString()}/月</span>
+          <button onclick="removeEntry(${i})" style="color: red; border: none; background: none; cursor: pointer; font-size:18px;">×</button>
+        </div>
+      `).join('');
+    }
+
+    function clearAllEntries() {
+      contributionData = [];
+      updateManualEntries();
     }
 
     // ===== Step 3: 计算缴费指数 =====
-    function calculateIndex() {
-      // 这里调用 pension-engine-browser.js 中的相关函数
-      // 模拟计算结果
-      const avgIndex = 1.2;
-      const accountBalance = 150000;
-      const totalYears = 30;
+    async function calculateIndex() {
+      // 验证输入
+      const province = document.getElementById('province').value;
+      const personType = document.getElementById('personType').value;
+      const birthDate = document.getElementById('birthDate').value;
+      const workDate = document.getElementById('workDate').value;
       
-      document.getElementById('avgIndex').textContent = avgIndex.toFixed(4);
-      document.getElementById('accountBalance').textContent = '¥' + accountBalance.toLocaleString();
-      document.getElementById('totalYears').textContent = totalYears + '年';
+      if (!province || !personType || !birthDate || !workDate) {
+        alert('请先填写完整的基本信息！');
+        goToStep(1);
+        return;
+      }
       
-      // 填充明细表
-      const tbody = document.getElementById('detailTable');
-      tbody.innerHTML = '';
-      for (let i = 0; i < 5; i++) {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td style="padding: 10px; border-bottom: 1px solid #f0f0f0;">202${i}</td>
-          <td style="padding: 10px; border-bottom: 1px solid #f0f0f0;">${(1.0 + i * 0.1).toFixed(2)}</td>
-          <td style="padding: 10px; border-bottom: 1px solid #f0f0f0;">¥${(100000 + i * 10000).toLocaleString()}</td>
-        `;
-        tbody.appendChild(tr);
+      if (contributionData.length === 0) {
+        alert('请至少输入一年的缴费数据！');
+        goToStep(2);
+        return;
+      }
+      
+      try {
+        // 加载省份配置
+        const response = await fetch(`js/provinces/${province}.json`);
+        if (!response.ok) throw new Error('省份配置加载失败');
+        const config = await response.json();
+        
+        // 计算缴费指数
+        const baseSalary = config.base_salary_2025 || 8000;
+        const minBase = baseSalary * 0.6;
+        const maxBase = baseSalary * 3.0;
+        
+        let indexSum = 0;
+        let accountTotal = 0;
+        const details = [];
+        
+        // 计算历年数据
+        for (const d of contributionData) {
+          // 计算当月缴费指数
+          const contribBase = Math.min(Math.max(d.base, minBase), maxBase);
+          const index = contribBase / baseSalary;
+          indexSum += index;
+          
+          // 个人账户累计（简化计算：每年缴费*8%*12）
+          const yearlyDeposit = d.base * 0.08 * 12;
+          accountTotal += yearlyDeposit;
+          
+          details.push({
+            year: d.year,
+            base: d.base,
+            index: index,
+            deposit: yearlyDeposit
+          });
+        }
+        
+        const avgIndex = indexSum / contributionData.length;
+        
+        // 更新显示
+        document.getElementById('avgIndex').textContent = avgIndex.toFixed(4);
+        document.getElementById('accountBalance').textContent = '¥' + (accountTotal / 10000).toFixed(2) + '万';
+        document.getElementById('totalYears').textContent = contributionData.length + '年';
+        
+        // 填充明细表
+        const tbody = document.getElementById('detailTable');
+        tbody.innerHTML = '';
+        for (const d of details) {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td style="padding: 10px; border-bottom: 1px solid #f0f0f0;">${d.year}年</td>
+            <td style="padding: 10px; border-bottom: 1px solid #f0f0f0;">${d.index.toFixed(4)}</td>
+            <td style="padding: 10px; border-bottom: 1px solid #f0f0f0;">¥${d.deposit.toLocaleString()}</td>
+          `;
+          tbody.appendChild(tr);
+        }
+        
+        // 保存计算结果
+        flowData.contribution = {
+          avgIndex: avgIndex,
+          accountBalance: accountTotal,
+          years: contributionData.length
+        };
+        
+      } catch(e) {
+        console.error('计算失败:', e);
+        alert('计算失败：' + e.message);
       }
     }
 
     // ===== Step 4: 计算养老金 =====
-    function calculatePension() {
-      // 调用 pension-engine-browser.js 计算养老金
-      // 这里模拟计算结果
-      
-      // 法定退休结果
-      document.getElementById('legalDate').textContent = '2055年6月';
-      document.getElementById('legalTotal').textContent = '¥5,230/月';
-      document.getElementById('legalBasic').textContent = '¥3,850';
-      document.getElementById('legalPersonal').textContent = '¥1,380';
-      
-      // 弹性提前退休结果
-      document.getElementById('flexDate').textContent = '2050年1月';
-      document.getElementById('flexTotal').textContent = '¥4,890/月';
-      document.getElementById('flexBasic').textContent = '¥3,610';
-      document.getElementById('flexPersonal').textContent = '¥1,280';
-      
-      // 对比数据
-      document.getElementById('advanceMonths').textContent = '5年6个月';
-      document.getElementById('monthlyDiff').textContent = '每月少领 ¥340';
-      document.getElementById('totalDiff').textContent = '总计少领 ¥198,960';
+    async function calculatePension() {
+      try {
+        // 收集所有信息
+        const province = document.getElementById('province').value;
+        const city = document.getElementById('city').value;
+        const personType = document.getElementById('personType').value;
+        const birthDate = document.getElementById('birthDate').value;
+        const workDate = document.getElementById('workDate').value;
+        
+        if (!province || !personType || !birthDate || !workDate) {
+          alert('请先填写完整的基本信息！');
+          goToStep(1);
+          return;
+        }
+        
+        // 加载省份配置
+        const response = await fetch(`js/provinces/${province}.json`);
+        if (!response.ok) throw new Error('省份配置加载失败');
+        const config = await response.json();
+        
+        // 准备引擎输入参数
+        const [birthYear, birthMonth] = birthDate.split('-').map(Number);
+        const [workYear, workMonth] = workDate.split('-').map(Number);
+        
+        // 人员类型映射
+        const PERSON_TYPE_MAP = {
+          'male': { gender: 'male', type: 'standard', genderType: 'male' },
+          'fw': { gender: 'female', type: 'standard', genderType: 'fw' },
+          'fc': { gender: 'female', type: 'standard', genderType: 'fc' },
+          'eco_male': { gender: 'male', type: 'flexible', genderType: 'male' },
+          'eco_female': { gender: 'female', type: 'flexible', genderType: 'fw55' }
+        };
+        
+        const typeMap = PERSON_TYPE_MAP[personType] || PERSON_TYPE_MAP['male'];
+        
+        // 计算视同缴费年限（企业职工才有）
+        let sightYears = 0;
+        if (typeMap.type !== 'flexible') {
+          const accountStart = { year: 1995, month: 7 }; // 吉林省
+          const monthsDiff = (accountStart.year - workYear) * 12 + (accountStart.month - workMonth);
+          sightYears = Math.max(0, monthsDiff / 12);
+        }
+        
+        // 计算平均缴费指数
+        let avgIndex;
+        if (flowData.contribution.avgIndex) {
+          avgIndex = flowData.contribution.avgIndex;
+        } else {
+          const baseSalary = config.base_salary_2025 || 8000;
+          let indexSum = 0;
+          for (const d of contributionData) {
+            const contribBase = Math.min(Math.max(d.base, baseSalary * 0.6), baseSalary * 3.0);
+            indexSum += contribBase / baseSalary;
+          }
+          avgIndex = indexSum / contributionData.length;
+        }
+        
+        // 调用养老金引擎计算
+        const result = window.pensionEngine.calculate(config, {
+          gender: typeMap.gender,
+          genderType: typeMap.genderType,
+          birthYear: birthYear,
+          birthMonth: birthMonth,
+          workYear: workYear,
+          workMonth: workMonth,
+          cityType: city,
+          userType: typeMap.type,
+          sightYears: sightYears,
+          avgIndex: avgIndex,
+          personalAccInput: flowData.contribution.accountBalance || null
+        });
+        
+        // 显示法定退休结果
+        const L = result.legal;
+        document.getElementById('legalDate').textContent = L.date ? 
+          `${L.date.year}年${L.date.month}月` : '—';
+        document.getElementById('legalTotal').textContent = L.total ? 
+          `¥${L.total.toFixed(2)}/月` : '—';
+        document.getElementById('legalBasic').textContent = L.basicPension?.amount ? 
+          `¥${L.basicPension.amount.toFixed(2)}` : '—';
+        document.getElementById('legalPersonal').textContent = L.personalAccount?.amount ? 
+          `¥${L.personalAccount.amount.toFixed(2)}` : '—';
+        
+        // 显示弹性提前退休结果
+        if (result.comparison?.canFlex) {
+          const F = result.flex;
+          document.getElementById('flexDate').textContent = F.date ? 
+            `${F.date.year}年${F.date.month}月` : '—';
+          document.getElementById('flexTotal').textContent = F.total ? 
+            `¥${F.total.toFixed(2)}/月` : '—';
+          document.getElementById('flexBasic').textContent = F.basicPension?.amount ? 
+            `¥${F.basicPension.amount.toFixed(2)}` : '—';
+          document.getElementById('flexPersonal').textContent = F.personalAccount?.amount ? 
+            `¥${F.personalAccount.amount.toFixed(2)}` : '—';
+          
+          // 对比数据
+          document.getElementById('advanceMonths').textContent = 
+            `${result.comparison.flexAdvance}个月`;
+          document.getElementById('monthlyDiff').textContent = 
+            `每月差额 ¥${result.comparison.amountDiff.toFixed(2)}`;
+          document.getElementById('totalDiff').textContent = 
+            `总计差额 ¥${result.comparison.totalDiff.toFixed(2)}`;
+        }
+        
+        // 保存结果
+        flowData.results = result;
+        
+      } catch(e) {
+        console.error('计算失败:', e);
+        alert('养老金计算失败：' + e.message);
+      }
     }
 
     // ===== 分享结果 =====
     function shareResult() {
       // 生成分享图片
-      alert('生成分享图片功能开发中...\n\n将包含：\n• 基本信息\n• 缴费指数结果\n• 养老金对比数据');
+      if (!flowData.results || !flowData.results.legal) {
+        alert('请先完成养老金计算！');
+        return;
+      }
+      
+      const L = flowData.results.legal;
+      const shareData = {
+        title: '我的养老金测算结果',
+        province: document.getElementById('province').value,
+        personType: document.getElementById('personType').value,
+        birthDate: document.getElementById('birthDate').value,
+        workDate: document.getElementById('workDate').value,
+        legalDate: L.date ? `${L.date.year}年${L.date.month}月` : '—',
+        legalTotal: L.total ? `¥${L.total.toFixed(2)}/月` : '—',
+        flexDate: flowData.results.flex?.date ? 
+          `${flowData.results.flex.date.year}年${flowData.results.flex.date.month}月` : '—',
+        flexTotal: flowData.results.flex?.total ? 
+          `¥${flowData.results.flex.total.toFixed(2)}/月` : '—'
+      };
+      
+      // 模拟分享功能（实际应该调用微信分享API或生成图片）
+      alert('分享功能开发中...\n\n将生成包含以下信息的图片：\n\n• 基本信息\n• 缴费指数结果\n• 养老金对比数据\n\n支持微信、QQ、短信分享。');
+      console.log('分享数据:', shareData);
     }
 
     // ===== 导出报告 =====
     function exportReport() {
       // 导出详细报告
-      alert('导出详细报告功能开发中...\n\n报告将包含：\n• 完整的计算过程\n• 所有参数明细\n• 优化建议\n• 免责声明');
+      if (!flowData.results || !flowData.results.legal) {
+        alert('请先完成养老金计算！');
+        return;
+      }
+      
+      const L = flowData.results.legal;
+      const reportContent = `
+========================================
+  养老金测算详细报告
+  生成时间：${new Date().toLocaleDateString('zh-CN')}
+========================================
+
+一、基本信息
+  参保地区：${document.getElementById('province').value}
+  人员类型：${document.getElementById('personType').value}
+  出生年月：${document.getElementById('birthDate').value}
+  参加工作时间：${document.getElementById('workDate').value}
+
+二、法定退休信息
+  退休时间：${L.date ? L.date.year + '年' + L.date.month + '月' : '-'}
+  总养老金：${L.total ? '¥' + L.total.toFixed(2) + '/月' : '-'}
+  基本养老金：${L.basicPension?.amount ? '¥' + L.basicPension.amount.toFixed(2) : '-'}
+  个人账户养老金：${L.personalAccount?.amount ? '¥' + L.personalAccount.amount.toFixed(2) : '-'}
+
+三、弹性提前退休信息
+  退休时间：${flowData.results.flex?.date ? flowData.results.flex.date.year + '年' + flowData.results.flex.date.month + '月' : '-'}
+  总养老金：${flowData.results.flex?.total ? '¥' + flowData.results.flex.total.toFixed(2) + '/月' : '-'}
+
+四、对比分析
+  提前月数：${flowData.results.comparison?.flexAdvance || 0}个月
+  每月差额：¥${flowData.results.comparison?.amountDiff?.toFixed(2) || '0.00'}
+  总计差额：¥${flowData.results.comparison?.totalDiff?.toFixed(2) || '0.00'}
+
+========================================
+  免责声明：本报告仅供参考，实际养老金以社保部门核定为准。
+========================================
+      `;
+      
+      // 模拟导出功能
+      const blob = new Blob([reportContent], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `养老金测算报告_${new Date().toISOString().slice(0,10)}.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
     }
 
     // ===== 直接调用初始化 =====
