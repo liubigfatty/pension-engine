@@ -1,14 +1,8 @@
 // website/js/app.js - 网页端应用逻辑
 
-// 省份配置列表
+// 省份配置列表（当前仅测试吉林省）
 const PROVINCES = {
-  'jilin': { name: '吉林省' },
-  'liaoning': { name: '辽宁省' },
-  'heilongjiang': { name: '黑龙江省' },
-  'shandong': { name: '山东省' },
-  'henan': { name: '河南省' },
-  'hebei': { name: '河北省' },
-  'jiangsu': { name: '江苏省' }
+  'jilin': { name: '吉林省' }
 };
 
 // 表单字段配置
@@ -164,7 +158,7 @@ function initFromUrlParams() {
   }
 
   // 清除 URL 参数（不影响浏览器历史）
-  if (monthlyIncome || province || avgIndex) {
+  if (personType || birthDate || workDate || monthlyIncome || province || avgIndex) {
     const cleanUrl = window.location.pathname;
     history.replaceState(null, '', cleanUrl);
   }
