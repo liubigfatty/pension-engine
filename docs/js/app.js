@@ -60,20 +60,13 @@ const FIELD_CONFIG = {
   }
 };
 
-// 页面加载时初始化
+// ===== 直接调用（不依赖 DOMContentLoaded，因为 <script> 在 body 末尾）=====
 function initAll() {
   initProvinceSelect();
-  initGenderWatch();
   initFormValidation();
   initFromUrlParams();
 }
-
-// 如果 DOMContentLoaded 已触发，直接执行；否则监听
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initAll);
-} else {
-  initAll();
-}
+initAll();
 
 // 从 URL 参数填充表单（首页跳转过来时自动带入人员信息和省份）
 // 也从 sessionStorage 读取缴费测算结果（contribution.html 跳转过来）
@@ -91,7 +84,6 @@ function initFromUrlParams() {
     const el = document.getElementById('personType');
     if (el) {
       el.value = personType;
-      el.dispatchEvent(new Event('change'));
     }
   }
   if (birthDate) {
@@ -133,7 +125,6 @@ function initFromUrlParams() {
           for (const [code, name] of Object.entries(PROVINCES_ALL)) {
             if (name === r.province) { el.value = code; break; }
           }
-          el.dispatchEvent(new Event('change'));
         }
       }
       // 填充月收入（用平均缴费指数反推，基于吉林省2025年基数8644.5）
@@ -154,10 +145,7 @@ function initFromUrlParams() {
   }
   if (province) {
     const el = document.getElementById('province');
-    if (el) {
-      el.value = province;
-      el.dispatchEvent(new Event('change')); // 触发省份变更事件
-    }
+    if (el) el.value = province;
   }
   if (avgIndex) {
     const el = document.getElementById('avgIndex');
@@ -268,8 +256,6 @@ function initProvinceSelect() {
     select.appendChild(option);
   });
 }
-
-// 监听人员类型变化（灵活就业无视同缴费年限，由引擎自动处理）
 
 // 省份变化时更新城市列表
 function onProvinceChange() {
