@@ -706,6 +706,17 @@
       // 滚动到顶部
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
+    // 直接调用（不依赖 DOMContentLoaded，因为 <script> 在 body 末尾）
+    function initAll() {
+      // 初始化省份选择
+      const provSelect = document.getElementById('provinceSelect');
+      if (provSelect) {
+        provSelect.value = 'jilin';
+        provSelect.dispatchEvent(new Event('change'));
+      }
+    }
+    initAll();
   </script>
 </body>
 </html>
