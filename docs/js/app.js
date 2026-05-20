@@ -61,12 +61,19 @@ const FIELD_CONFIG = {
 };
 
 // 页面加载时初始化
-document.addEventListener('DOMContentLoaded', function() {
+function initAll() {
   initProvinceSelect();
   initGenderWatch();
   initFormValidation();
   initFromUrlParams();
-});
+}
+
+// 如果 DOMContentLoaded 已触发，直接执行；否则监听
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initAll);
+} else {
+  initAll();
+}
 
 // 从 URL 参数填充表单（首页跳转过来时自动带入人员信息和省份）
 // 也从 sessionStorage 读取缴费测算结果（contribution.html 跳转过来）

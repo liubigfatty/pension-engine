@@ -146,21 +146,21 @@
       </section>
 
       <section class="feature-grid">
-        <a href="pension.html" class="feature-card" data-target="pension">
+        <div class="feature-card" onclick="goToPage('pension.html')">
           <div class="feature-icon">🍎</div>
           <h2>基本养老金测算</h2>
           <p>四部分 + 弹性提前退休测算，覆盖全国各省份</p>
-        </a>
-        <a href="contribution.html" class="feature-card" data-target="contribution">
+        </div>
+        <div class="feature-card" onclick="goToPage('contribution.html')">
           <div class="feature-icon">🔵</div>
           <h2>缴费水平测算</h2>
           <p>计算平均缴费工资指数和个人账户累计存储额</p>
-        </a>
-        <a href="retire-age.html" class="feature-card" data-target="retire">
+        </div>
+        <div class="feature-card" onclick="goToPage('retire-age.html')">
           <div class="feature-icon">🎂</div>
           <h2>法定退休年龄查询</h2>
           <p>渐进式延迟法定退休年龄计算器</p>
-        </a>
+        </div>
       </section>
 
       <section class="about-card">
@@ -183,7 +183,6 @@
 
   <script src="js/pension-engine-browser.js"></script>
   <script>
-    // 保存快速填写的人员信息到 sessionStorage
     function applyQuickInfo() {
       const personType = document.getElementById('quickPersonType').value;
       const birthDate = document.getElementById('quickBirthDate').value;
@@ -195,7 +194,6 @@
         return;
       }
 
-      // 存入 sessionStorage
       sessionStorage.setItem('quick_info', JSON.stringify({
         personType,
         birthDate,
@@ -203,41 +201,27 @@
         province
       }));
 
-      // 提示成功，不自动跳转
-      alert('信息已保存！点击下方卡片选择要使用的功能，将自动带入人员信息。');
+      alert('✅ 信息已保存！点击下方卡片选择功能，将自动带入人员信息。');
     }
 
-    // 点击功能卡片时，自动跳转并带入数据
-    document.querySelectorAll('.feature-card').forEach(card => {
-      card.addEventListener('click', function(e) {
-        e.preventDefault(); // 阻止 <a> 标签默认跳转
-        const target = this.dataset.target;
-        const saved = sessionStorage.getItem('quick_info');
-        
-        if (saved) {
-          try {
-            const info = JSON.parse(saved);
-            const url = document.querySelector(`[data-target="${target}"]`).href;
-            
-            // 在URL中携带参数
-            const params = new URLSearchParams();
-            if (info.personType) params.set('personType', info.personType);
-            if (info.birthDate) params.set('birthDate', info.birthDate);
-            if (info.workDate) params.set('workDate', info.workDate);
-            if (info.province) params.set('province', info.province);
-            
-            const newUrl = url + (url.includes('?') ? '&' : '?') + params.toString();
-            window.location.href = newUrl;
-          } catch(err) {
-            // 解析失败，正常跳转
-            window.location.href = this.href;
-          }
-        } else {
-          // 没有保存信息，正常跳转
-          window.location.href = this.href;
+    function goToPage(url) {
+      const saved = sessionStorage.getItem('quick_info');
+      if (saved) {
+        try {
+          const info = JSON.parse(saved);
+          const params = new URLSearchParams();
+          params.set('personType', info.personType);
+          params.set('birthDate', info.birthDate);
+          params.set('workDate', info.workDate);
+          params.set('province', info.province);
+          window.location.href = url + '?' + params.toString();
+          return;
+        } catch(e) {
+          console.error('解析失败:', e);
         }
-      });
-    });
+      }
+      window.location.href = url;
+    }
   </script>
 </body>
 </html>
