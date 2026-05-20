@@ -74,13 +74,33 @@ document.addEventListener('DOMContentLoaded', function() {
   initFromUrlParams();
 });
 
-// 从 URL 参数填充表单（首页跳转过来时自动带入月收入和省份）
+// 从 URL 参数填充表单（首页跳转过来时自动带入人员信息和省份）
 // 也从 sessionStorage 读取缴费测算结果（contribution.html 跳转过来）
 function initFromUrlParams() {
   const params = new URLSearchParams(window.location.search);
-  const monthlyIncome = params.get('monthlyIncome');
+  const personType = params.get('personType');
+  const birthDate = params.get('birthDate');
+  const workDate = params.get('workDate');
   const province = params.get('province');
+  const monthlyIncome = params.get('monthlyIncome');
   const avgIndex = params.get('avgIndex');
+
+  // 填充人员信息
+  if (personType) {
+    const el = document.getElementById('personType');
+    if (el) {
+      el.value = personType;
+      el.dispatchEvent(new Event('change'));
+    }
+  }
+  if (birthDate) {
+    const el = document.getElementById('birthDate');
+    if (el) el.value = birthDate;
+  }
+  if (workDate) {
+    const el = document.getElementById('workDate');
+    if (el) el.value = workDate;
+  }
 
   // 尝试从 sessionStorage 读取缴费水平测算结果
   const saved = sessionStorage.getItem('contribution_result');

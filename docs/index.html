@@ -5,6 +5,87 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>国家企业职工基本养老金测算平台</title>
   <link rel="stylesheet" href="css/style.css">
+  <style>
+    .quick-info {
+      background: #f0fdf4;
+      border: 1.5px solid #86efac;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    
+    .quick-info h2 {
+      font-size: 18px;
+      color: #166534;
+      margin: 0 0 16px 0;
+    }
+    
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .info-item label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 6px;
+    }
+    
+    .info-item select,
+    .info-item input {
+      width: 100%;
+      padding: 10px;
+      border: 1.5px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+    }
+    
+    .info-item select:focus,
+    .info-item input:focus {
+      outline: none;
+      border-color: #16a34a;
+      box-shadow: 0 0 0 3px rgba(22,163,74,0.1);
+    }
+    
+    .info-actions {
+      text-align: center;
+    }
+    
+    .btn-info {
+      background: #16a34a;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 12px 32px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-info:hover {
+      background: #15803d;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .btn-info:disabled {
+      background: #d1d5db;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    @media (max-width: 640px) {
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
   <!-- 导航栏 -->
@@ -28,18 +109,54 @@
         <p class="hero-desc">零门槛 · 无需注册 · 无需填报个人信息 · 即开即用</p>
       </section>
 
+      <!-- 人员信息快速入口 -->
+      <section class="quick-info">
+        <h2>📝 快速填写人员信息（可选）</h2>
+        <div class="info-grid">
+          <div class="info-item">
+            <label>人员类型</label>
+            <select id="quickPersonType">
+              <option value="">请选择</option>
+              <option value="male">企业职工·男</option>
+              <option value="fw">企业职工·女（原50岁）</option>
+              <option value="fc">企业职工·女（原55岁）</option>
+              <option value="eco_male">灵活就业·男</option>
+              <option value="eco_female">灵活就业·女</option>
+            </select>
+          </div>
+          <div class="info-item">
+            <label>出生年月</label>
+            <input type="month" id="quickBirthDate" />
+          </div>
+          <div class="info-item">
+            <label>参加工作时间</label>
+            <input type="month" id="quickWorkDate" />
+          </div>
+          <div class="info-item">
+            <label>参保地区</label>
+            <select id="quickProvince">
+              <option value="">请选择</option>
+              <option value="jilin" selected>吉林省</option>
+            </select>
+          </div>
+        </div>
+        <div class="info-actions">
+          <button class="btn-info" onclick="applyQuickInfo()">保存信息，继续选择功能</button>
+        </div>
+      </section>
+
       <section class="feature-grid">
-        <a href="pension.html" class="feature-card">
+        <a href="pension.html" class="feature-card" data-target="pension">
           <div class="feature-icon">🍎</div>
           <h2>基本养老金测算</h2>
           <p>四部分 + 弹性提前退休测算，覆盖全国各省份</p>
         </a>
-        <a href="contribution.html" class="feature-card">
+        <a href="contribution.html" class="feature-card" data-target="contribution">
           <div class="feature-icon">🔵</div>
           <h2>缴费水平测算</h2>
           <p>计算平均缴费工资指数和个人账户累计存储额</p>
         </a>
-        <a href="retire-age.html" class="feature-card">
+        <a href="retire-age.html" class="feature-card" data-target="retire">
           <div class="feature-icon">🎂</div>
           <h2>法定退休年龄查询</h2>
           <p>渐进式延迟法定退休年龄计算器</p>
@@ -65,5 +182,57 @@
   </footer>
 
   <script src="js/pension-engine-browser.js"></script>
+  <script>
+    // 保存快速填写的人员信息到 sessionStorage
+    function applyQuickInfo() {
+      const personType = document.getElementById('quickPersonType').value;
+      const birthDate = document.getElementById('quickBirthDate').value;
+      const workDate = document.getElementById('quickWorkDate').value;
+      const province = document.getElementById('quickProvince').value;
+
+      if (!personType || !birthDate || !workDate || !province) {
+        alert('请填写完整人员信息后再保存');
+        return;
+      }
+
+      // 存入 sessionStorage
+      sessionStorage.setItem('quick_info', JSON.stringify({
+        personType,
+        birthDate,
+        workDate,
+        province
+      }));
+
+      // 提示成功，不自动跳转
+      alert('信息已保存！点击下方卡片选择要使用的功能，将自动带入人员信息。');
+    }
+
+    // 点击功能卡片时，自动跳转并带入数据
+    document.querySelectorAll('.feature-card').forEach(card => {
+      card.addEventListener('click', function(e) {
+        const target = this.dataset.target;
+        const saved = sessionStorage.getItem('quick_info');
+        
+        if (saved) {
+          try {
+            const info = JSON.parse(saved);
+            const url = document.querySelector(`[data-target="${target}"]`).href;
+            
+            // 在URL中携带参数
+            const params = new URLSearchParams();
+            if (info.personType) params.set('personType', info.personType);
+            if (info.birthDate) params.set('birthDate', info.birthDate);
+            if (info.workDate) params.set('workDate', info.workDate);
+            if (info.province) params.set('province', info.province);
+            
+            const newUrl = url + (url.includes('?') ? '&' : '?') + params.toString();
+            window.location.href = newUrl;
+          } catch(err) {
+            // 解析失败，正常跳转
+          }
+        }
+      });
+    });
+  </script>
 </body>
 </html>
