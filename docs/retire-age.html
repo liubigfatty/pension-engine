@@ -80,6 +80,26 @@
 
   <script src="js/pension-engine-browser.js"></script>
   <script>
+    // 页面加载时从 URL 参数自动填充
+    window.addEventListener('DOMContentLoaded', function() {
+      const params = new URLSearchParams(window.location.search);
+      const birthDate = params.get('birthDate');
+      const gender = params.get('gender');
+      
+      if (birthDate) {
+        const el = document.getElementById('birthDate');
+        if (el) el.value = birthDate;
+      }
+      if (gender) {
+        const radios = document.querySelectorAll('input[name="gender"]');
+        radios.forEach(radio => {
+          if (radio.value === gender) {
+            radio.checked = true;
+          }
+        });
+      }
+    });
+
     function queryRetireAge() {
       const birthDate = document.getElementById('birthDate').value;
       if (!birthDate) { alert('请选择出生年月'); return; }
