@@ -197,7 +197,7 @@
     // 扫描表头，查找社保网站导出格式的列
     function findSheBaoColumns(header) {
       const periodKeywords = ['缴费所属期', '所属期', '月份', '年月', '缴费月份', '缴费时期', '期别'];
-      const baseKeywords = ['缴费基数', '缴费工资', '工资基数', '缴费工资基数', '缴费工资额'];
+      const baseKeywords = ['缴费基数', '工资基数', '缴费工资基数'];
       let periodCol = -1, baseCol = -1;
       for (let i = 0; i < header.length; i++) {
         const name = String(header[i] || '').trim();
