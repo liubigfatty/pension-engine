@@ -185,6 +185,38 @@
       input.value = '';
     }
 
+    // 从缴费所属期文本中提取年份
+    function extractYearFromPeriod(value) {
+      if (value === null || value === undefined) return null;
+      const s = String(value).trim();
+      if (!s) return null;
+      const m = s.match(/(\d{4})/);
+      return m ? parseInt(m[1]) : null;
+    }
+
+    // 扫描表头，查找社保网站导出格式的列
+    function findSheBaoColumns(header) {
+      const periodKeywords = ['缴费所属期', '所属期', '月份', '年月', '缴费月份', '缴费时期', '期别'];
+      const baseKeywords = ['缴费基数', '缴费工资', '工资基数', '缴费工资基数', '缴费工资额'];
+      let periodCol = -1, baseCol = -1;
+      for (let i = 0; i < header.length; i++) {
+        const name = String(header[i] || '').trim();
+        if (!name) continue;
+        if (periodCol === -1) {
+          for (const k of periodKeywords) {
+            if (name.includes(k) || k.includes(name)) { periodCol = i; break; }
+          }
+        }
+        if (baseCol === -1) {
+          for (const k of baseKeywords) {
+            if (name.includes(k) || k.includes(name)) { baseCol = i; break; }
+          }
+        }
+        if (periodCol !== -1 && baseCol !== -1) break;
+      }
+      return periodCol !== -1 && baseCol !== -1 ? { periodCol, baseCol } : null;
+    }
+
     function processExcelFile(file) {
       const reader = new FileReader();
       reader.onload = function(e) {
@@ -194,6 +226,8 @@
           const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
           const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
           let parsedData = [];
+
+          // 尝试1：标准格式（第一列年份，第二列基数）
           for (let i = 0; i < jsonData.length; i++) {
             const row = jsonData[i];
             if (row && row.length >= 2) {
@@ -203,7 +237,25 @@
               }
             }
           }
-          if (parsedData.length === 0) { alert('未能识别有效的缴费数据！\n\n请确保 Excel 包含：\n• 第一列：年份\n• 第二列：缴费基数（元/月）'); return; }
+
+          // 尝试2：社保网站导出格式（缴费所属期 + 缴费基数）
+          if (parsedData.length === 0 && jsonData.length >= 2) {
+            const headerRow = jsonData[0] || [];
+            const sheBao = findSheBaoColumns(headerRow);
+            if (sheBao) {
+              for (let r = 1; r < jsonData.length; r++) {
+                const row = jsonData[r];
+                if (!row) continue;
+                const year = extractYearFromPeriod(row[sheBao.periodCol]);
+                const base = parseFloat(row[sheBao.baseCol]);
+                if (!isNaN(year) && !isNaN(base) && year > 1990 && year < 2030 && base > 0) {
+                  parsedData.push({ year, base });
+                }
+              }
+            }
+          }
+
+          if (parsedData.length === 0) { alert('未能识别有效的缴费数据！\n\n支持格式：\n• 标准格式：第一列年份，第二列缴费基数\n• 社保导出格式：缴费所属期 + 缴费基数\n（自动识别，无需处理）'); return; }
           parsedData.forEach(newD => { const existing = contributionData.find(d => d.year === newD.year); if (existing) existing.base = newD.base; else contributionData.push(newD); });
           contributionData.sort((a, b) => a.year - b.year);
           updateManualEntries();
