@@ -81,6 +81,12 @@
         <!-- Step 2: 缴费数据 -->
         <div class="step-content" id="step2">
           <div class="form-section">
+            <h3>📋 已填基本信息</h3>
+            <div id="step2-basic-info" style="font-size:14px;color:#666;">
+              <p style="color:#ef4444;font-weight:bold;">⚠️ 请先返回第一步填写完整基本信息（参保地区、人员类型、出生年月、参加工作时间）</p>
+            </div>
+          </div>
+          <div class="form-section">
             <h3>📊 输入缴费数据</h3>
             <div class="file-upload-area" onclick="document.getElementById('fileInput').click()">
               <div style="font-size: 48px; margin-bottom: 10px;">📁</div>
@@ -163,9 +169,30 @@
         else if (dotStep < step) dot.classList.add('completed');
       });
       currentStep = step;
+      if (step === 2) updateStep2BasicInfo();
       if (step === 3) calculateIndex();
       else if (step === 4) calculatePension();
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function updateStep2BasicInfo() {
+      const province = document.getElementById('province').value;
+      const personType = document.getElementById('personType').value;
+      const birthDate = document.getElementById('birthDate').value;
+      const workDate = document.getElementById('workDate').value;
+      const container = document.getElementById('step2-basic-info');
+      if (province && personType && birthDate && workDate) {
+        const typeMap = { 'male': '企业职工·男', 'fw': '企业职工·女（原50岁）', 'fc': '企业职工·女（原55岁）', 'eco_male': '灵活就业·男', 'eco_female': '灵活就业·女' };
+        container.innerHTML = `
+          <p>✅ 参保地区：${province}</p>
+          <p>✅ 人员类型：${typeMap[personType] || personType}</p>
+          <p>✅ 出生年月：${birthDate}</p>
+          <p>✅ 参加工作时间：${workDate}</p>
+          <p style="color:#10b981;margin-top:10px;">✓ 所有信息已填写，可继续计算</p>
+        `;
+      } else {
+        container.innerHTML = '<p style="color:#ef4444;font-weight:bold;">⚠️ 请先返回第一步填写完整基本信息（参保地区、人员类型、出生年月、参加工作时间）</p>';
+      }
     }
 
     function onProvinceChange() {
@@ -291,8 +318,17 @@
       const personType = document.getElementById('personType').value;
       const birthDate = document.getElementById('birthDate').value;
       const workDate = document.getElementById('workDate').value;
-      if (!province || !personType || !birthDate || !workDate) { alert('请先填写完整的基本信息！'); goToStep(1); return; }
-      if (contributionData.length === 0) { alert('请至少输入一年的缴费数据！'); goToStep(2); return; }
+      if (!province || !personType || !birthDate || !workDate) {
+        var missing = [];
+        if (!province) missing.push('参保地区');
+        if (!personType) missing.push('人员类型');
+        if (!birthDate) missing.push('出生年月');
+        if (!workDate) missing.push('参加工作时间');
+        alert('缺少必填信息：\n\n- ' + missing.join('\n- ') + '\n\n请返回第一步补充完整后再计算。');
+        goToStep(1);
+        return;
+      }
+      if (contributionData.length === 0) { alert('暂无缴费数据，请先上传Excel文件或手动添加'); return; }
       try {
         const response = await fetch(`js/provinces/${province}.json`);
         if (!response.ok) throw new Error('省份配置加载失败');
