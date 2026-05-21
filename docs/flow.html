@@ -333,17 +333,27 @@
         const response = await fetch(`js/provinces/${province}.json`);
         if (!response.ok) throw new Error('省份配置加载失败');
         const config = await response.json();
-        const baseSalary = config.base_salary_2025 || 8000;
-        const minBase = baseSalary * 0.6, maxBase = baseSalary * 3.0;
+
+        // 使用各省实际计发基数计算指数
         let indexSum = 0, accountTotal = 0, details = [];
         for (const d of contributionData) {
-          const contribBase = Math.min(Math.max(d.base, minBase), maxBase);
-          const index = contribBase / baseSalary;
-          indexSum += index;
+          // 用各省当年计发基数计算指数
+          let yearIndex;
+          if (config.base_rates && config.base_rates.prov && config.base_rates.prov[String(d.year)]) {
+            const provBase = config.base_rates.prov[String(d.year)];
+            yearIndex = d.base / provBase;
+          } else {
+            // 该年份无计发基数数据，用 2025 年基数做近似
+            const baseSalary = config.base_salary_2025 || (config.base_rates && config.base_rates.prov && config.base_rates.prov['2025']) || 8000;
+            yearIndex = d.base / baseSalary;
+          }
+          indexSum += yearIndex;
           accountTotal += d.base * 0.08 * 12;
-          details.push({ year: d.year, base: d.base, index, deposit: d.base * 0.08 * 12 });
+          details.push({ year: d.year, base: d.base, index: yearIndex, deposit: d.base * 0.08 * 12 });
         }
         const avgIndex = indexSum / contributionData.length;
+
+        // 页面显示结果
         document.getElementById('avgIndex').textContent = avgIndex.toFixed(4);
         document.getElementById('accountBalance').textContent = '¥' + (accountTotal / 10000).toFixed(2) + '万';
         document.getElementById('totalYears').textContent = contributionData.length + '年';
@@ -372,7 +382,20 @@
         let sightYears = 0;
         if (typeMap.type !== 'flexible') { const monthsDiff = (1995 - workYear) * 12 + (7 - workMonth); sightYears = Math.max(0, monthsDiff / 12); }
         let avgIndex = flowData.contribution.avgIndex;
-        if (!avgIndex) { const baseSalary = config.base_salary_2025 || 8000; let indexSum = 0; contributionData.forEach(d => { const contribBase = Math.min(Math.max(d.base, baseSalary * 0.6), baseSalary * 3.0); indexSum += contribBase / baseSalary; }); avgIndex = indexSum / contributionData.length; }
+        if (!avgIndex) { // 兜底：用各省实际基数计算指数
+          let indexSum = 0;
+          contributionData.forEach(d => {
+            let yearIndex;
+            if (config.base_rates && config.base_rates.prov && config.base_rates.prov[String(d.year)]) {
+              yearIndex = d.base / config.base_rates.prov[String(d.year)];
+            } else {
+              const baseSalary = config.base_salary_2025 || (config.base_rates && config.base_rates.prov && config.base_rates.prov['2025']) || 8000;
+              yearIndex = d.base / baseSalary;
+            }
+            indexSum += yearIndex;
+          });
+          avgIndex = indexSum / contributionData.length;
+        }
         const result = window.pensionEngine.calculate(config, { gender: typeMap.gender, genderType: typeMap.genderType, birthYear, birthMonth, workYear, workMonth, cityType: city, userType: typeMap.type, sightYears, avgIndex, personalAccInput: flowData.contribution.accountBalance || null });
         const L = result.legal;
         document.getElementById('legalDate').textContent = L.date ? `${L.date.year}年${L.date.month}月` : '—';
