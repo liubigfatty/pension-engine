@@ -665,6 +665,9 @@ function parseInput(inputData) {
   // skipDelay: 跳过延迟退休，直接用原法定年龄（用于官方核定表验证场景）
   const skipDelay = inputData.skipDelay === true
 
+  // monthsInput: 用户可显式指定计发月数（覆盖自动计算，用于提前退休验证场景）
+  const monthsInput = inputData.months != null ? parseInt(inputData.months) : null
+
   return {
     name,
     gender,
@@ -680,6 +683,7 @@ function parseInput(inputData) {
     retireType,
     cityType,
     skipDelay,
+    monthsInput,     // 用户显式指定的计发月数（可为null，覆盖自动计算）
     // 性别映射到人员类型（支持外部传入，支持中英文）
     // 外部可传：male/fc/fw/fw55；未传入时按gender推断（female→fw）
     genderType: inputData.genderType
@@ -778,7 +782,7 @@ function calculate(config, inputData) {
   }
 
   const retireAgeExact = legalTotalMonths / 12
-  const months = getRetireMonths(retireAgeExact, config)
+  const months = data.monthsInput || getRetireMonths(retireAgeExact, config)
 
   // 基础养老金
   const basicPension = calcBasicPension({
