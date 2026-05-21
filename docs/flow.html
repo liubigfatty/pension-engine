@@ -350,6 +350,7 @@
         const tbody = document.getElementById('detailTable');
         tbody.innerHTML = details.map(d => `<tr><td style="padding:10px;border-bottom:1px solid #f0f0f0;">${d.year}年</td><td style="padding:10px;border-bottom:1px solid #f0f0f0;">${d.index.toFixed(4)}</td><td style="padding:10px;border-bottom:1px solid #f0f0f0;">¥${d.deposit.toLocaleString()}</td></tr>`).join('');
         flowData.contribution = { avgIndex, accountBalance: accountTotal, years: contributionData.length };
+        goToStep(3);
       } catch(e) { alert('计算失败：' + e.message); }
     }
 
