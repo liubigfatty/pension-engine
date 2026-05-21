@@ -4,6 +4,13 @@ App({
     engine: null
   },
   onLaunch() {
+    // 初始化云开发
+    if (wx.cloud) {
+      wx.cloud.init({
+        env: 'pension-calculato-6es590ea35e2f3',
+        traceUser: true
+      })
+    }
     // 加载省份配置
     this.loadProvinces()
   },

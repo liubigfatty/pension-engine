@@ -1,131 +1,293 @@
-<!--pension.wxml - 基本信息填报页-->
 <view class="container">
-  <!-- 返回按钮 -->
-  <view class="nav-bar">
-    <text class="back-btn" bindtap="goBack">‹ 返回</text>
-    <text class="nav-title">基本信息</text>
-    <view class="nav-placeholder"></view>
+
+  <!-- ===== Step 1：基本信息（5个问题同时出现）===== -->
+  <view class="step-panel" wx:if="{{currentStep === 1}}">
+
+    <view class="panel-header">
+      <view class="panel-step">1</view>
+      <text class="panel-title">基本信息</text>
+    </view>
+
+    <!-- Q1：缴费地区 -->
+    <view class="field-block">
+      <view class="field-label">缴费地区</view>
+      <view class="field-row">
+        <picker bindchange="onProvinceChange" range="{{provinceList}}" value="{{provinceIndex}}">
+          <view class="picker-box {{provinceIndex >= 0 ? 'filled' : ''}}">
+            <text>{{provinceIndex >= 0 ? provinceList[provinceIndex] : '选择省份'}}</text>
+            <text class="picker-arrow">▼</text>
+          </view>
+        </picker>
+        <picker bindchange="onCityChange" range="{{cityList}}" value="{{cityIndex}}">
+          <view class="picker-box {{cityIndex >= 0 ? 'filled' : ''}}">
+            <text>{{cityIndex >= 0 ? cityList[cityIndex] : '选择城市'}}</text>
+            <text class="picker-arrow">▼</text>
+          </view>
+        </picker>
+      </view>
+    </view>
+
+    <!-- Q2：人员类型 -->
+    <view class="field-block">
+      <view class="field-label">人员类型</view>
+      <picker bindchange="onPersonTypeChange" range="{{personTypeLabels}}" value="{{personTypeIndex}}">
+        <view class="picker-box {{personTypeIndex >= 0 ? 'filled' : ''}}">
+          <text>{{personTypeIndex >= 0 ? personTypeLabels[personTypeIndex] : '选择人员类型'}}</text>
+          <text class="picker-arrow">▼</text>
+        </view>
+      </picker>
+    </view>
+
+    <!-- Q3：出生年月 -->
+    <view class="field-block">
+      <view class="field-label">出生年月</view>
+      <picker mode="date" fields="month" start="1940-01" end="2010-12" value="{{birthDate}}" bindchange="onBirthDateChange">
+        <view class="picker-box {{birthDate ? 'filled' : ''}}">
+          <text>{{birthDate || '选择出生年月'}}</text>
+          <text class="picker-arrow">▼</text>
+        </view>
+      </picker>
+    </view>
+
+    <!-- Q4：参保时间 -->
+    <view class="field-block">
+      <view class="field-label">参保时间</view>
+      <picker mode="date" fields="month" start="1970-01" end="2030-12" value="{{workDate}}" bindchange="onWorkDateChange">
+        <view class="picker-box {{workDate ? 'filled' : ''}}">
+          <text>{{workDate || '选择参保时间'}}</text>
+          <text class="picker-arrow">▼</text>
+        </view>
+      </picker>
+    </view>
+
+    <!-- Q5：其他加发（选填，改用选择器） -->
+    <view class="field-block">
+      <view class="field-label">其他加发<text class="field-tag-optional">选填</text></view>
+      <view class="field-hint">仅适用于1998年7月1日前获得相应荣誉或职称的人员，该日期之后获得的不再享受退休加发待遇。</view>
+      <picker bindchange="onBonusChange" range="{{bonusLabels}}" value="{{bonusIndex}}" range-key="label">
+        <view class="picker-box {{bonusIndex >= 0 ? 'filled' : ''}}">
+          <text>{{bonusIndex >= 0 ? bonusLabels[bonusIndex] : '选择其他加发情况'}}</text>
+          <text class="picker-arrow">▼</text>
+        </view>
+      </picker>
+    </view>
+
+    <!-- 填写缴费信息 -->
+    <view class="action-row">
+      <button class="btn-primary btn-lg" bindtap="onStartCalc">填写缴费信息</button>
+    </view>
   </view>
 
-  <scroll-view scroll-y class="scroll-area">
-    <!-- 参保地区 -->
-    <view class="card">
-      <text class="section-title">参保信息</text>
-      
-      <view class="form-group">
-        <text class="label">参保地区</text>
-        <picker bindchange="onProvinceChange" value="{{provinceIndex}}" range="{{provinceList}}">
-          <view class="picker-value">
-            {{selectedProvince ? selectedProvince.name : '请选择参保地区'}}
+  <!-- ===== Step 2：缴费信息 ===== -->
+  <view class="step-panel" wx:if="{{currentStep === 2}}">
+
+    <view class="panel-header">
+      <view class="panel-step">2</view>
+      <text class="panel-title">缴费信息</text>
+    </view>
+
+    <!-- 模式A：导入数据 -->
+    <view class="mode-panel">
+      <view class="mode-title">导入缴费数据</view>
+      <button class="btn-excel" bindtap="onChooseExcel">📄 从聊天文件导入 Excel</button>
+      <text class="excel-hint">支持社保大厅年度对账单Excel文件</text>
+      <view class="import-ok" wx:if="{{importSource === 'excel'}}">
+        <text class="import-ok-icon">✓</text>
+        <text>已导入 {{yearFields.length}} 年数据，可到「手动输入」查看或修改</text>
+      </view>
+    </view>
+
+    <!-- 模式B：手动输入 -->
+    <view class="mode-panel">
+      <view class="mode-title">输入缴费基数</view>
+      <view class="manual-header">
+        <text class="manual-title">历年缴费基数</text>
+      </view>
+      <view class="year-table" wx:if="{{yearFields.length > 0}}">
+        <view class="year-thead">
+          <text class="year-th">年份</text>
+          <text class="year-th">缴费基数（元）</text>
+          <text class="year-th">缴费指数</text>
+        </view>
+        <scroll-view scroll-y class="year-tbody">
+          <view class="year-tr" wx:for="{{yearFields}}" wx:key="year">
+            <text class="year-td">{{item.year}}年</text>
+            <input class="year-input" type="digit" placeholder="0" value="{{item.base}}" data-idx="{{index}}" bindinput="onYearBaseInput" />
+            <text class="year-td {{item.indexClass}}">{{item.indexText}}</text>
           </view>
-        </picker>
+        </scroll-view>
+        <view class="year-tfoot">
+          <text class="year-tf">平均指数</text>
+          <text class="year-tf"></text>
+          <text class="year-tf {{avgIndexClass}}">{{avgIndexText || '--'}}</text>
+        </view>
       </view>
 
-      <view class="form-group">
-        <text class="label">退休地</text>
-        <picker bindchange="onCityChange" value="{{cityIndex}}" range="{{cityList}}">
-          <view class="picker-value">
-            {{selectedCity ? selectedCity.name : '自动识别（默认全省）'}}
+      <!-- 或输入档位 -->
+      <view class="tier-section">
+        <text class="tier-label">或输入档位</text>
+        <text class="tier-hint">输入60～300之间任意整数，按此档位估算所有年份</text>
+        <view class="tier-input-row">
+          <input class="tier-input" type="number" placeholder="60-300" value="{{customTier}}" bindinput="onCustomTierInput" />
+          <text class="tier-unit">%</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部按钮 -->
+    <view class="action-row">
+      <button class="btn-ghost" bindtap="onBackToStep1">返回修改</button>
+      <button class="btn-primary" bindtap="onCalculate">开始计算</button>
+    </view>
+  </view>
+
+  <!-- ===== Step 3：缴费指数计算结果 ===== -->
+  <view class="step-panel" wx:if="{{currentStep === 3}}">
+
+    <view class="panel-header">
+      <view class="panel-step">3</view>
+      <text class="panel-title">缴费指数计算结果</text>
+    </view>
+
+    <!-- 核心数字卡片 -->
+    <view class="result-cards">
+      <view class="result-card">
+        <text class="result-card-label">平均缴费指数</text>
+        <text class="result-card-value {{avgIndexClass}}">{{avgIndexText || '--'}}</text>
+      </view>
+      <view class="result-card">
+        <text class="result-card-label">个人账户余额</text>
+        <text class="result-card-value">{{personalAccText || '--'}}</text>
+      </view>
+      <view class="result-card">
+        <text class="result-card-label">实际缴费年限</text>
+        <text class="result-card-value">{{actualYearsText || '--'}}</text>
+      </view>
+    </view>
+
+    <!-- 历年缴费明细 -->
+    <view class="detail-section">
+      <text class="detail-title">📋 历年缴费明细</text>
+      <view class="detail-table">
+        <view class="detail-thead">
+          <text class="detail-th">年份</text>
+          <text class="detail-th">缴费基数</text>
+          <text class="detail-th">社平工资</text>
+          <text class="detail-th">缴费指数</text>
+          <text class="detail-th">账户余额</text>
+        </view>
+        <view class="detail-tbody">
+          <view class="detail-tr" wx:for="{{yearDetailList}}" wx:key="year">
+            <text class="detail-td">{{item.year}}年</text>
+            <text class="detail-td">{{item.baseText}}</text>
+            <text class="detail-td">{{item.avgWageText}}</text>
+            <text class="detail-td {{item.indexClass}}">{{item.indexText}}</text>
+            <text class="detail-td">{{item.accText}}</text>
           </view>
-        </picker>
+        </view>
       </view>
     </view>
 
-    <!-- 人员基本信息 -->
-    <view class="card">
-      <text class="section-title">人员信息</text>
-      
-      <view class="form-group">
-        <text class="label">姓名</text>
-        <input class="input" placeholder="请输入姓名" bindinput="onNameInput" value="{{name}}" />
-      </view>
+    <!-- 底部按钮 -->
+    <view class="action-row">
+      <button class="btn-ghost" bindtap="onBackToStep2">返回修改</button>
+      <button class="btn-primary" bindtap="onShowPensionResult">养老金测算</button>
+    </view>
+  </view>
 
-      <view class="form-group">
-        <text class="label">性别</text>
-        <radio-group bindchange="onGenderChange">
-          <label class="radio-label">
-            <radio value="male" checked="{{gender === 'male'}}" /> 男
-          </label>
-          <label class="radio-label">
-            <radio value="female" checked="{{gender === 'female'}}" /> 女
-          </label>
-        </radio-group>
-      </view>
+  <!-- ===== Step 4：养老金计算结果 ===== -->
+  <view class="step-panel" wx:if="{{currentStep === 4}}">
 
-      <view class="form-group">
-        <text class="label">出生年月</text>
-        <picker mode="date" fields="month" bindchange="onBirthChange" value="{{birthDate}}">
-          <view class="picker-value">
-            {{birthDate || '请选择出生年月'}}
-          </view>
-        </picker>
-      </view>
+    <!-- Hero 区 -->
+    <view class="pension-hero">
+      <text class="pension-hero-label">每月可领取养老金（估算）</text>
+      <text class="pension-hero-value">¥{{totalPensionText || '0.00'}}</text>
+      <text class="pension-hero-note">基于当前政策测算，实际金额以社保局核定为准</text>
+    </view>
 
-      <view class="form-group">
-        <text class="label">参保类型</text>
-        <radio-group bindchange="onTypeChange">
-          <label class="radio-label">
-            <radio value="standard" checked="{{retireType === 'standard'}}" /> 企业职工
-          </label>
-          <label class="radio-label">
-            <radio value="flexible" checked="{{retireType === 'flexible'}}" /> 灵活就业人员
-          </label>
-        </radio-group>
-      </view>
-
-      <!-- 企业职工显示女干部/女工人，灵活就业不显示 -->
-      <view class="form-group" wx:if="{{gender === 'female' && retireType === 'standard'}}">
-        <text class="label">退休类型</text>
-        <radio-group bindchange="onRetireTypeChange">
-          <label class="radio-label">
-            <radio value="fc" checked="{{femaleRetireType === 'fc'}}" /> 女干部
-          </label>
-          <label class="radio-label">
-            <radio value="fw" checked="{{femaleRetireType === 'fw'}}" /> 女工人
-          </label>
-        </radio-group>
+    <!-- 分项明细（顺序：基础→个人账户→过渡性→其它加发） -->
+    <view class="breakdown-section">
+      <view class="breakdown-item" wx:for="{{breakdownList}}" wx:key="label">
+        <view class="breakdown-header" bindtap="onToggleBreakdown" data-idx="{{index}}">
+          <text class="breakdown-label">{{item.label}}</text>
+          <text class="breakdown-value">¥{{item.valueText}}</text>
+          <text class="breakdown-arrow">{{item.expanded ? '▲' : '▼'}}</text>
+        </view>
+        <view class="breakdown-formula" wx:if="{{item.expanded}}">
+          <text>{{item.formula}}</text>
+        </view>
       </view>
     </view>
 
-    <!-- 缴费信息 -->
-    <view class="card">
-      <text class="section-title">缴费信息</text>
-      
-      <view class="form-group">
-        <text class="label">参加工作时间</text>
-        <picker mode="date" fields="month" bindchange="onWorkChange" value="{{workDate}}">
-          <view class="picker-value">
-            {{workDate || '请选择参加工作时间'}}
-          </view>
-        </picker>
+    <!-- 法定 vs 弹性对比 -->
+    <view class="compare-section">
+      <text class="compare-title">法定退休 vs 弹性提前退休</text>
+      <view class="compare-detail">
+        <view class="compare-row">
+          <text class="compare-label">法定退休年龄</text>
+          <text class="compare-value">{{normalRetireAge}}岁</text>
+        </view>
+        <view class="compare-row">
+          <text class="compare-label">弹性提前退休年龄</text>
+          <text class="compare-value">{{earlyRetireAge}}岁</text>
+        </view>
+        <view class="compare-row">
+          <text class="compare-label">提前月数</text>
+          <text class="compare-value">{{earlyMonths}}个月</text>
+        </view>
+        <view class="compare-row">
+          <text class="compare-label">每月差额</text>
+          <text class="compare-value compare-diff">¥{{monthlyDiffText}}</text>
+        </view>
       </view>
-
-      <view class="form-group">
-        <text class="label">平均缴费指数</text>
-        <input class="input" type="digit" placeholder="如 1.0 表示按100%缴费" bindinput="onIndexInput" value="{{avgIndex}}" />
+      <view class="compare-bar-row">
+        <text class="compare-bar-label">法定退休</text>
+        <view class="compare-bar-track">
+          <view class="compare-bar-fill compare-bar-normal" style="width:{{normalBarWidth}}%"></view>
+        </view>
+        <text class="compare-bar-value">¥{{normalPensionText}}</text>
       </view>
-
-      <view class="form-group" wx:if="{{hasSight && retireType !== 'flexible'}}">
-        <text class="label">视同缴费年限（年）</text>
-        <input class="input" type="number" placeholder="如无视同缴费请输入0" bindinput="onSightInput" value="{{sightYears}}" />
-      </view>
-
-      <view class="form-group">
-        <text class="label">个人账户余额（元）</text>
-        <input class="input" type="digit" placeholder="可查询社保APP获取，留空自动估算" bindinput="onBalanceInput" value="{{personalAccInput}}" />
+      <view class="compare-bar-row">
+        <text class="compare-bar-label">弹性提前</text>
+        <view class="compare-bar-track">
+          <view class="compare-bar-fill compare-bar-early" style="width:{{earlyBarWidth}}%"></view>
+        </view>
+        <text class="compare-bar-value">¥{{earlyPensionText}}</text>
       </view>
     </view>
 
-    <!-- 提交按钮 -->
-    <view class="submit-section">
-      <button class="submit-btn" bindtap="handleSubmit" loading="{{loading}}" disabled="{{loading}}">
-        开始测算
-      </button>
+    <!-- 底部行动卡片（加图标） -->
+    <view class="action-cards">
+      <view class="action-card" bindtap="onShareImage">
+        <view class="action-card-icon">📤</view>
+        <view class="action-card-left">
+          <text class="action-card-title">分享结果</text>
+          <text class="action-card-desc">¥0.00 · 一键生成养老金结果分享图</text>
+        </view>
+        <text class="action-card-arrow">▶</text>
+      </view>
+      <view class="action-card" bindtap="onExportReport">
+        <view class="action-card-icon">📊</view>
+        <view class="action-card-left">
+          <text class="action-card-title">导出报告</text>
+          <text class="action-card-desc">¥1.99 · 详细计算报告，含政策依据和测算明细</text>
+        </view>
+        <text class="action-card-arrow">▶</text>
+      </view>
+      <view class="action-card" bindtap="onCustomConsult">
+        <view class="action-card-icon">💬</view>
+        <view class="action-card-left">
+          <text class="action-card-title">定制咨询</text>
+          <text class="action-card-desc">¥9.90 · 一对一养老金规划定制服务</text>
+        </view>
+        <text class="action-card-arrow">▶</text>
+      </view>
     </view>
 
-    <!-- 底部说明 -->
-    <view class="footer">
-      <text class="footer-text">测算结果仅供参考，实际养老金以社保部门核定为准</text>
+    <!-- 底部按钮 -->
+    <view class="action-row">
+      <button class="btn-ghost" bindtap="onRestart">重新测算</button>
     </view>
-  </scroll-view>
+  </view>
+
 </view>
