@@ -1,7 +1,10 @@
 App({
   globalData: {
     provinces: [],
-    engine: null
+    engine: null,
+    calcResult: null,   // 养老金计算结果（传给报告页）
+    pensionInput: null, // 输入参数（传给报告页）
+    PROV_BASE: null,      // 社平基数（传给报告页）
   },
   onLaunch() {
     // 初始化云开发

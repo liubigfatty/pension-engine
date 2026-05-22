@@ -461,7 +461,7 @@ Page({
     wx.removeStorageSync('pension_data_v3')
   },
 
-  // ── 计算 ──
+    // ── 计算 ──
   onCalculate() {
     const d = this.data
     const cityType = d.cityIndex === 1 ? 'cc' : 'prov'
@@ -518,6 +518,19 @@ Page({
         bonusMid:        d.bonusMid,
         bonusHigh:       d.bonusHigh,
       })
+
+      // 存入 globalData 供报告页读取
+      const app = getApp()
+      app.globalData.calcResult  = result
+      app.globalData.pensionInput = {
+        personType: personVal,
+        city:       cityType,
+        birthYear,  birthMonth,
+        workYear,   workMonth,
+        avgIndex:   d.avgIndex,
+        yearData,
+      }
+      app.globalData.PROV_BASE = PROV_BASE
 
       this.setData({ _calcResult: result, currentStep: 3 })
       this._fillStep3(result, yearData, personalAcc)
@@ -674,9 +687,16 @@ Page({
     this.setData({ [k]: !this.data.breakdownList[idx].expanded })
   },
 
-  // ── Step 4 行动卡片 ──
+    // ── Step 4 行动卡片 ──
   onShareImage() {
     this._drawShareImage()
+  },
+  onExportReport() {
+    // 跳转到报告页（数据已通过 globalData 传递）
+    wx.navigateTo({ url: '/pages/report/index' })
+  },
+  onCustomConsult() {
+    wx.showToast({ title: '定制咨询功能评估中，敬请期待', icon: 'none' })
   },
   onCloseSharePreview() {
     this.setData({ showSharePreview: false, shareImagePath: '' })

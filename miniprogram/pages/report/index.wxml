@@ -1,0 +1,146 @@
+<!--pages/report/index.wxml-->
+<view class="container">
+
+  <!-- 报告头部 -->
+  <view class="report-header">
+    <view class="header-bg">
+      <text class="header-title">养老金测算报告</text>
+      <text class="header-sub">现实调音师 · 吉林省社保政策解读</text>
+      <text class="header-date">测算时间：{{reportDate}}</text>
+    </view>
+  </view>
+
+  <!-- 核心结果卡片 -->
+  <view class="hero-card">
+    <text class="hero-label">每月可领取养老金（估算）</text>
+    <text class="hero-value">¥{{totalPensionText}}</text>
+    <text class="hero-note">基于当前政策测算，实际金额以社保局核定为准</text>
+    <!-- 限时特惠标签 -->
+    <view class="promo-tag">限时特惠 ¥0.99（原价 ¥9.90）</view>
+  </view>
+
+  <!-- 人员信息 -->
+  <view class="section">
+    <text class="section-title">👤 人员信息</text>
+    <view class="info-grid">
+      <view class="info-item">
+        <text class="info-label">人员类型</text>
+        <text class="info-value">{{personTypeLabel}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">出生年月</text>
+        <text class="info-value">{{birthDate}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">参保时间</text>
+        <text class="info-value">{{workDate}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">退休年龄</text>
+        <text class="info-value">{{retireAge}}岁</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">缴费地区</text>
+        <text class="info-value">{{cityLabel}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">累计缴费</text>
+        <text class="info-value">{{totalYears}}年</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 养老金分项明细 -->
+  <view class="section">
+    <text class="section-title">💰 养老金分项明细</text>
+    <view class="breakdown-list">
+      <view class="breakdown-item" wx:for="{{breakdownList}}" wx:key="label">
+        <view class="breakdown-row">
+          <text class="breakdown-label">{{item.label}}</text>
+          <text class="breakdown-value">¥{{item.valueText}}</text>
+        </view>
+        <view class="breakdown-bar-track">
+          <view class="breakdown-bar-fill" style="width:{{item.pct}}%;background:{{item.color}}"></view>
+        </view>
+        <text class="breakdown-formula">{{item.formula}}</text>
+      </view>
+    </view>
+    <view class="breakdown-total">
+      <text class="total-label">每月合计</text>
+      <text class="total-value">¥{{totalPensionText}}</text>
+    </view>
+  </view>
+
+  <!-- 平均缴费指数 -->
+  <view class="section">
+    <text class="section-title">📊 缴费指数</text>
+    <view class="index-card">
+      <view class="index-main">
+        <text class="index-value {{avgIndexClass}}">{{avgIndexText}}</text>
+        <text class="index-desc">平均缴费指数</text>
+      </view>
+      <view class="index-legend">
+        <text class="legend-item legend-red">● &lt;1.0 偏低</text>
+        <text class="legend-item legend-blue">● 1.0~2.0 正常</text>
+        <text class="legend-item legend-green">● &gt;2.0 偏高</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 历年缴费明细（折叠）-->
+  <view class="section">
+    <text class="section-title">📋 历年缴费明细</text>
+    <view class="year-table">
+      <view class="year-thead">
+        <text class="year-th">年份</text>
+        <text class="year-th">缴费基数</text>
+        <text class="year-th">社平工资</text>
+        <text class="year-th">指数</text>
+      </view>
+      <scroll-view scroll-y class="year-tbody">
+        <view class="year-tr" wx:for="{{yearDetailList}}" wx:key="year">
+          <text class="year-td">{{item.year}}年</text>
+          <text class="year-td">{{item.baseText}}</text>
+          <text class="year-td">{{item.avgWageText}}</text>
+          <text class="year-td {{item.indexClass}}">{{item.indexText}}</text>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <!-- 政策依据 -->
+  <view class="section">
+    <text class="section-title">📜 政策依据</text>
+    <view class="policy-list">
+      <view class="policy-item">
+        <text class="policy-text">基础养老金：吉政发〔2004〕28号</text>
+      </view>
+      <view class="policy-item">
+        <text class="policy-text">过渡性养老金：吉政发〔2004〕28号</text>
+      </view>
+      <view class="policy-item">
+        <text class="policy-text">个人账户养老金：国发〔1997〕26号</text>
+      </view>
+      <view class="policy-item">
+        <text class="policy-text">增发养老金：吉劳社养〔2008〕251号</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部行动区 -->
+  <view class="report-actions">
+    <button class="btn-primary btn-lg" bindtap="onPayReport">支付 ¥0.99 查看完整报告</button>
+    <view class="action-row">
+      <button class="btn-ghost" bindtap="onShareReport">分享报告</button>
+      <button class="btn-ghost" bindtap="onCustomConsult">定制咨询 ¥19.9</button>
+    </view>
+  </view>
+
+  <!-- 备注 -->
+  <view class="report-footer">
+    <text class="footer-text">本报告由「现实调音师」养老金计算平台生成</text>
+    <text class="footer-text">数据仅供参考，实际待遇以社保局核定为准</text>
+    <text class="footer-text">咨询微信：现实调音师</text>
+  </view>
+
+</view>

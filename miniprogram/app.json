@@ -2,6 +2,7 @@
   "pages": [
     "pages/index/index",
     "pages/pension/pension",
+    "pages/report/index",
     "pages/contribution/contribution",
     "pages/result/result",
     "pages/retire-age/retire-age",
