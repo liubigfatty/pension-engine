@@ -613,9 +613,29 @@ Page({
     const normalBarWidth = Math.min(100, (legalTotal / maxBar) * 100)
     const earlyBarWidth  = Math.min(100, (flexTotal  / maxBar) * 100)
 
+    // 分项占比条形图
+    const chartColors = ['#3b82f6','#8b5cf6','#059669','#f59e0b','#ec4899']
+    const chartLabels = ['基础','个人','过渡','增发','其它']
+    const breakdownChartList = breakdownList
+      .filter(it => it.label !== '合计' && it.value > 0)
+      .map((it, i) => {
+        const pct = legalTotal > 0 ? (it.value / legalTotal * 100).toFixed(1) : '0.0'
+        const width = legalTotal > 0 ? Math.max(8, it.value / legalTotal * 100) : 0
+        return {
+          label: it.label,
+          short: chartLabels[i] || '其它',
+          value: it.value,
+          valueText: it.valueText,
+          pct,
+          width,
+          color: chartColors[i] || '#6b7280',
+        }
+      })
+
     this.setData({
       totalPensionText,
       breakdownList,
+      breakdownChartList,
       normalRetireAge: normalAge,
       earlyRetireAge:  earlyAge,
       earlyMonths:      earlyMonths,

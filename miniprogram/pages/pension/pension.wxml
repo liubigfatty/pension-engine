@@ -219,6 +219,20 @@
       </view>
     </view>
 
+    <!-- 分项占比条形图 -->
+    <view class="chart-section">
+      <text class="chart-title">养老金分项占比</text>
+      <view class="chart-row" wx:for="{{breakdownChartList}}" wx:key="label">
+        <text class="chart-label">{{item.short}}</text>
+        <view class="chart-track">
+          <view class="chart-fill" style="width:{{item.width}}%; background:{{item.color}}">
+            <text class="chart-num" wx:if="{{item.width >= 20}}">{{item.pct}}%</text>
+          </view>
+        </view>
+        <text class="chart-value">¥{{item.valueText}}</text>
+      </view>
+    </view>
+
     <!-- 法定 vs 弹性对比（仅弹性退休有效时显示） -->
     <view class="compare-section" wx:if="{{showCompare}}">
       <text class="compare-title">法定退休 vs 弹性提前退休</text>
