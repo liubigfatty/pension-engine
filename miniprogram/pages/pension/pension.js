@@ -624,6 +624,7 @@ Page({
       earlyPensionText:  flexTotal.toFixed(2),
       normalBarWidth,
       earlyBarWidth,
+      showCompare: flexTotal > 0 && flex.retireAgeExact > 0,
     })
   },
 

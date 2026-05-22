@@ -219,8 +219,8 @@
       </view>
     </view>
 
-    <!-- 法定 vs 弹性对比 -->
-    <view class="compare-section">
+    <!-- 法定 vs 弹性对比（仅弹性退休有效时显示） -->
+    <view class="compare-section" wx:if="{{showCompare}}">
       <text class="compare-title">法定退休 vs 弹性提前退休</text>
       <view class="compare-detail">
         <view class="compare-row">
@@ -243,16 +243,18 @@
       <view class="compare-bar-row">
         <text class="compare-bar-label">法定退休</text>
         <view class="compare-bar-track">
-          <view class="compare-bar-fill compare-bar-normal" style="width:{{normalBarWidth}}%"></view>
+          <view class="compare-bar-fill compare-bar-normal" style="width:{{normalBarWidth}}%">
+            <text class="compare-bar-num" wx:if="{{normalBarWidth >= 25}}">¥{{normalPensionText}}</text>
+          </view>
         </view>
-        <text class="compare-bar-value">¥{{normalPensionText}}</text>
       </view>
       <view class="compare-bar-row">
         <text class="compare-bar-label">弹性提前</text>
         <view class="compare-bar-track">
-          <view class="compare-bar-fill compare-bar-early" style="width:{{earlyBarWidth}}%"></view>
+          <view class="compare-bar-fill compare-bar-early" style="width:{{earlyBarWidth}}%">
+            <text class="compare-bar-num" wx:if="{{earlyBarWidth >= 25}}">¥{{earlyPensionText}}</text>
+          </view>
         </view>
-        <text class="compare-bar-value">¥{{earlyPensionText}}</text>
       </view>
     </view>
 
