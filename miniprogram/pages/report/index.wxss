@@ -1,43 +1,18 @@
 /* pages/report/index.wxss */
-.container { padding:0 0 40rpx 0; background:#f1f5f9; min-height:100vh; }
+/* 全局 */
+.container { padding:0 0 60rpx 0; background:#f1f5f9; min-height:100vh; font-size:26rpx; color:#1e293b; }
 
-/* 头部 */
-.report-header { position:relative; overflow:hidden; }
-.header-bg {
+/* ── 头部 ── */
+.rpt-header {
   background:linear-gradient(135deg,#1e3a5f 0%,#2563eb 100%);
-  padding:60rpx 40rpx 80rpx;
+  padding:56rpx 40rpx 72rpx;
   text-align:center;
 }
-.header-title { display:block; font-size:36rpx; font-weight:bold; color:#fff; }
-.header-sub { display:block; font-size:22rpx; color:rgba(255,255,255,0.7); margin-top:8rpx; }
-.header-date { display:block; font-size:20rpx; color:rgba(255,255,255,0.5); margin-top:6rpx; }
+.rpt-title { display:block; font-size:38rpx; font-weight:bold; color:#fff; }
+.rpt-sub   { display:block; font-size:22rpx; color:rgba(255,255,255,0.7); margin-top:8rpx; }
+.rpt-date  { display:block; font-size:20rpx; color:rgba(255,255,255,0.5); margin-top:6rpx; }
 
-/* 核心结果卡片 */
-.hero-card {
-  margin:-40rpx 32rpx 0;
-  background:#fff;
-  border-radius:20rpx;
-  padding:48rpx 40rpx;
-  text-align:center;
-  box-shadow:0 8rpx 32rpx rgba(0,0,0,0.08);
-  position:relative;
-  z-index:2;
-}
-.hero-label { display:block; font-size:24rpx; color:#64748b; }
-.hero-value { display:block; font-size:64rpx; font-weight:bold; color:#1e3a5f; margin:16rpx 0; }
-.hero-note { display:block; font-size:20rpx; color:#94a3b8; }
-.promo-tag {
-  display:inline-block;
-  margin-top:20rpx;
-  background:#fef3c7;
-  color:#92400e;
-  font-size:22rpx;
-  padding:8rpx 24rpx;
-  border-radius:20rpx;
-  font-weight:600;
-}
-
-/* 区块 */
+/* ── 区块 ── */
 .section {
   margin:32rpx 32rpx 0;
   background:#fff;
@@ -45,61 +20,121 @@
   padding:32rpx;
   box-shadow:0 2rpx 12rpx rgba(0,0,0,0.04);
 }
-.section-title { display:block; font-size:28rpx; font-weight:bold; color:#1e3a5f; margin-bottom:24rpx; }
-
-/* 人员信息 */
-.info-grid { display:flex; flex-wrap:wrap; }
-.info-item { width:50%; box-sizing:border-box; padding:0 16rpx 20rpx 0; }
-.info-label { display:block; font-size:20rpx; color:#94a3b8; }
-.info-value { display:block; font-size:26rpx; color:#1e293b; font-weight:600; margin-top:4rpx; }
-
-/* 分项明细 */
-.breakdown-list { }
-.breakdown-item { margin-bottom:20rpx; }
-.breakdown-row { display:flex; justify-content:space-between; align-items:center; }
-.breakdown-label { font-size:24rpx; color:#475569; }
-.breakdown-value { font-size:26rpx; color:#1e3a5f; font-weight:600; }
-.breakdown-bar-track {
-  height:12rpx;
-  background:#f1f5f9;
-  border-radius:6rpx;
-  margin:8rpx 0 4rpx;
-  overflow:hidden;
+.section-title {
+  display:block;
+  font-size:30rpx;
+  font-weight:bold;
+  color:#1e3a5f;
+  margin-bottom:24rpx;
+  padding-bottom:16rpx;
+  border-bottom:2rpx solid #e2e8f0;
 }
-.breakdown-bar-fill { height:100%; border-radius:6rpx; transition:width 0.3s; }
-.breakdown-formula { font-size:18rpx; color:#94a3b8; margin-top:2rpx; }
-.breakdown-total {
+
+/* ── 人员信息/缴费信息（两列） ── */
+.info-grid { display:flex; flex-direction:column; }
+.info-row {
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin-top:24rpx;
-  padding-top:20rpx;
-  border-top:2rpx solid #e2e8f0;
+  padding:14rpx 0;
+  border-bottom:1rpx solid #f1f5f9;
 }
-.total-label { font-size:26rpx; color:#1e3a5f; font-weight:bold; }
-.total-value { font-size:30rpx; color:#2563eb; font-weight:bold; }
+.info-label { font-size:24rpx; color:#64748b; }
+.info-value  { font-size:26rpx; color:#1e293b; font-weight:600; }
 
-/* 缴费指数 */
-.index-card {
-  display:flex;
-  align-items:center;
-  background:linear-gradient(135deg,#eff6ff 0%,#dbeafe 100%);
+/* ── 计算过程区块 ── */
+.calc-block {
+  background:#f8fafc;
   border-radius:12rpx;
-  padding:24rpx;
+  padding:20rpx 24rpx;
+  margin-bottom:20rpx;
+  border-left:6rpx solid #2563eb;
 }
-.index-main { flex:1; }
-.index-value { display:block; font-size:48rpx; font-weight:bold; }
-.index-value.index-low { color:#ef4444; }
-.index-value.index-mid { color:#2563eb; }
-.index-value.index-high { color:#059669; }
-.index-desc { display:block; font-size:20rpx; color:#64748b; margin-top:4rpx; }
-.index-legend { margin-left:24rpx; }
-.legend-item { display:block; font-size:18rpx; margin-bottom:6rpx; }
-.legend-red { color:#ef4444; }
-.legend-blue { color:#2563eb; }
-.legend-green { color:#059669; }
+.calc-label {
+  display:block;
+  font-size:26rpx;
+  font-weight:bold;
+  color:#1e3a5f;
+  margin-bottom:10rpx;
+}
+.calc-formula {
+  display:block;
+  font-size:22rpx;
+  color:#475569;
+  background:#fff;
+  border-radius:8rpx;
+  padding:10rpx 16rpx;
+  margin-bottom:8rpx;
+  border:1rpx solid #e2e8f0;
+  font-family:monospace;
+}
+.calc-substitute {
+  display:block;
+  font-size:22rpx;
+  color:#1e3a5f;
+  background:#eff6ff;
+  border-radius:8rpx;
+  padding:10rpx 16rpx;
+  margin-bottom:8rpx;
+  border:1rpx solid #dbeafe;
+  font-family:monospace;
+}
+.calc-result {
+  display:block;
+  font-size:28rpx;
+  font-weight:bold;
+  color:#1d4ed8;
+  margin-top:4rpx;
+}
 
-/* 历年缴费明细 */
+/* ── 合计行 ── */
+.calc-total {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:28rpx;
+  padding-top:20rpx;
+  border-top:3rpx solid #1e3a5f;
+}
+.total-label { font-size:28rpx; color:#1e3a5f; font-weight:bold; }
+.total-value { font-size:36rpx; color:#1d4ed8; font-weight:bold; }
+
+/* ── 弹性提前退休 ── */
+.flex-note {
+  display:block;
+  font-size:22rpx;
+  color:#92400e;
+  background:#fffbeb;
+  border-radius:8rpx;
+  padding:12rpx 20rpx;
+  margin-bottom:20rpx;
+  border:1rpx solid #fde68a;
+}
+.flex-total {
+  border-top-color:#059669;
+}
+.flex-total .total-label { color:#059669; }
+.flex-total .total-value { color:#059669; }
+
+.flex-compare {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:16rpx;
+  padding:16rpx 20rpx;
+  background:#f0fdf4;
+  border-radius:10rpx;
+  border:1rpx solid #bbf7d0;
+}
+.compare-label { font-size:24rpx; color:#166534; font-weight:600; }
+.compare-value { font-size:26rpx; color:#15803d; font-weight:bold; }
+
+/* ── 缴费指数颜色 ── */
+.index-low  { color:#ef4444; }
+.index-mid  { color:#2563eb; }
+.index-high { color:#059669; }
+
+/* ── 历年缴费明细 ── */
 .year-table { }
 .year-thead {
   display:flex;
@@ -107,22 +142,33 @@
   padding-bottom:12rpx;
   margin-bottom:8rpx;
 }
-.year-th { flex:1; font-size:20rpx; color:#64748b; font-weight:600; }
+.year-th { flex:1; font-size:22rpx; color:#64748b; font-weight:600; }
 .year-tbody { max-height:600rpx; }
 .year-tr { display:flex; padding:10rpx 0; border-bottom:1rpx solid #f1f5f9; }
-.year-td { flex:1; font-size:20rpx; color:#1e293b; }
-.year-td.index-low { color:#ef4444; }
-.year-td.index-mid { color:#2563eb; }
+.year-td { flex:1; font-size:22rpx; color:#1e293b; }
+.year-td.index-low  { color:#ef4444; }
+.year-td.index-mid  { color:#2563eb; }
 .year-td.index-high { color:#059669; }
 
-/* 政策依据 */
+/* ── 重要说明/政策依据 ── */
 .policy-list { }
-.policy-item { margin-bottom:12rpx; }
-.policy-text { font-size:22rpx; color:#475569; line-height:1.6; }
+.policy-item { margin-bottom:14rpx; }
+.policy-text { font-size:23rpx; color:#475569; line-height:1.7; }
 
-/* 底部行动区 */
+/* ── 免责条款 ── */
+.disclaimer { }
+.disclaimer-item { margin-bottom:14rpx; }
+.disclaimer-text { font-size:22rpx; color:#94a3b8; line-height:1.7; }
+
+/* ── 底部行动区 ── */
 .report-actions { margin:32rpx 32rpx 0; }
-.btn-lg { width:100%; height:96rpx; line-height:96rpx; font-size:30rpx; border-radius:16rpx; }
+.btn-lg {
+  width:100%;
+  height:96rpx;
+  line-height:96rpx;
+  font-size:30rpx;
+  border-radius:16rpx;
+}
 .btn-primary {
   background:linear-gradient(135deg,#2563eb 0%,#1d4ed8 100%);
   color:#fff;
@@ -136,9 +182,9 @@
 .action-row { display:flex; gap:20rpx; margin-top:20rpx; }
 .action-row .btn-ghost { flex:1; }
 
-/* 备注 */
+/* ── 页脚 ── */
 .report-footer {
   margin:40rpx 32rpx 0;
   text-align:center;
 }
-.footer-text { display:block; font-size:18rpx; color:#94a3b8; line-height:1.8; }
+.footer-text { display:block; font-size:20rpx; color:#94a3b8; line-height:1.8; }
