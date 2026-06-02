@@ -936,7 +936,9 @@ function calculate(config, inputData) {
       actualYears,
       sightYears,
       months,
-      flexMonths
+      flexMonths,
+      // 个人账户余额（用于前端展示）
+      personalAccBalance: personalAccount.balance || data.personalAccInput || 0
     },
 
     // 工具函数
