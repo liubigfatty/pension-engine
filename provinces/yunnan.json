@@ -418,6 +418,32 @@
         },
         "officialDocument": "云人社发〔2024〕?号（2024年计发基数8183元/月）；云劳社〔2002〕76号（独生子女补贴）",
         "note": "建账前缴费年限12.3333年（12年4月）= 视同11.8333年 + 建账前实际缴费0.5年；过渡性养老金用建账前缴费年限，不用视同缴费年限；此为预核定表，用2024年计发基数8183元/月"
+      },
+      {
+        "name": "云南案例3（2025年退休，男，60岁，昆明）",
+        "birthYear": 1965,
+        "birthMonth": 9,
+        "workYear": 1985,
+        "workMonth": 10,
+        "retireYear": 2025,
+        "retireMonth": 9,
+        "cityType": "prov",
+        "sightYears": 10.0,
+        "totalYears": 35.8333,
+        "personalAcc": 83946,
+        "avgIndex": 0.6925,
+        "baseRetire": 8183,
+        "isPreApproval": true,
+        "results": {
+          "basePension": 2481.41,
+          "personalPension": 603.93,
+          "transitionalPension": 736.67,
+          "totalPension": 3822.01,
+          "oneChildSubsidy": 177.65,
+          "finalPension": 3999.66
+        },
+        "officialDocument": "云人社发〔2024〕?号（2024年度计发基数8183元/月，预核定）",
+        "note": "此案例来源为网友整理说明，非官方核定表截图；说明文字中过渡性养老金写726元（8183×0.6925×10×1.3%=726），但实际计算应为736.67元，说明文字有误；独生子女补贴按全省人均养老金3553元×5%=177元；引擎计算结果与正确公式一致"
       }
     ],
     "special_notes": [
