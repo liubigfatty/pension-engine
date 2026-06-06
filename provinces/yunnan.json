@@ -472,6 +472,33 @@
         },
         "officialDocument": "云人社发〔2023〕41号（2023年度计发基数8023元/月）；云人社发〔2023〕41号（2022年度企业退休人员人均养老金3293元/月）",
         "note": "楚雄彝族自治州审批；视同缴费年限仅0.5年极短，建账前缴费年限3.25年（1992-07至1995-10）；平均缴费指数0.9726由公式反推；待遇从2024-01起享受"
+      },
+      {
+        "name": "云南案例6（2023年退休，女，50岁）",
+        "birthYear": 1973,
+        "birthMonth": 4,
+        "workYear": 1992,
+        "workMonth": 9,
+        "retireYear": 2023,
+        "retireMonth": 4,
+        "cityType": "prov",
+        "sightYears": 0,
+        "preAccountYears": 3.0833,
+        "totalYears": 30.6667,
+        "personalAcc": 87022.27,
+        "avgIndex": 0.783,
+        "baseRetire": 7767,
+        "isPreApproval": false,
+        "results": {
+          "basePension": 2123.45,
+          "personalPension": 446.27,
+          "transitionalPension": 243.77,
+          "totalPension": 2813.49,
+          "oneChildSubsidy": 157.9,
+          "finalPension": 2971.39
+        },
+        "officialDocument": "云人社发〔2022〕44号（2022年度计发基数7767元/月；2021年度企业退休人员人均养老金3158元/月）",
+        "note": "2023-04退休，当时2023年基数8023尚未公布（11月才公布），故用2022年基数7767；独生子女补贴也用2021年数据3158；无视同缴费年限，建账前3.0833年（1992-09至1995-10）；平均缴费指数0.783由公式反推"
       }
     ],
     "special_notes": [
