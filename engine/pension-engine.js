@@ -344,6 +344,28 @@ function calcSpecialAddition(params) {
   return { amount: 0, description: '未满足增发条件' }
 }
 
+/**
+ * 计算调节金（如甘肃省：建账前视同缴费年限≥15年，+15元/月）
+ * @param {Object} params - { mod, sightYears }
+ * @returns {Object} { amount, description }
+ */
+function calcAdjustmentFund(params) {
+  const mod = params?.mod
+  if (!mod || !mod.enabled) return { amount: 0, description: '未启用' }
+
+  const sightYears = params?.sightYears || 0
+  const threshold = mod.threshold_years || 15
+  const amount = mod.amount || 15
+
+  if (sightYears >= threshold) {
+    return {
+      amount: amount,
+      description: `调节金：建账前视同缴费年限${sightYears.toFixed(2)}年≥${threshold}年，月增${amount}元`
+    }
+  }
+  return { amount: 0, description: `调节金：建账前视同缴费年限${sightYears.toFixed(2)}年<${threshold}年，不增发` }
+}
+
 // ==================== 退休时间计算 ====================
 
 /**
@@ -866,8 +888,14 @@ function calculate(config, inputData) {
     context: { retireAge: retireAgeExact, location: data.cityType }
   })
 
+  // 调节金（如甘肃省：建账前视同缴费年限≥15年，+15元/月）
+  const adjustmentFund = calcAdjustmentFund({
+    mod: config.modules?.adjustment_fund || { enabled: false },
+    sightYears
+  })
+
   // ===== 合计 =====
-  const total = Math.round((basicPension.amount + extraPension.amount + personalAccount.amount + transPension.amount + specialAddition.amount) * 100) / 100
+  const total = Math.round((basicPension.amount + extraPension.amount + personalAccount.amount + transPension.amount + specialAddition.amount + adjustmentFund.amount) * 100) / 100
 
   // ===== 弹性提前退休测算 =====
   const flexAge = flexTotalMonths / 12
@@ -910,7 +938,7 @@ function calculate(config, inputData) {
     preAccountYears
   })
 
-  const flexTotal = Math.round((flexBasic.amount + flexExtra.amount + flexPersonal.amount + flexTrans.amount + specialAddition.amount) * 100) / 100
+  const flexTotal = Math.round((flexBasic.amount + flexExtra.amount + flexPersonal.amount + flexTrans.amount + specialAddition.amount + adjustmentFund.amount) * 100) / 100
 
   // ===== 构建返回结果 =====
   const canFlex = flexTotalMonths < legalTotalMonths
@@ -928,6 +956,7 @@ function calculate(config, inputData) {
       personalAccount: personalAccount,
       transitionalPension: transPension,
       specialAddition: specialAddition,
+      adjustmentFund: adjustmentFund,
       total: total,
       totalYears,
       actualYears,
@@ -950,6 +979,7 @@ function calculate(config, inputData) {
       personalAccount: flexPersonal,
       transitionalPension: flexTrans,
       specialAddition: specialAddition,
+      adjustmentFund: adjustmentFund,
       total: flexTotal,
       totalYears,
       actualYears,
@@ -1059,6 +1089,7 @@ module.exports = {
   calcPersonalAccountPension,
   calcTransitionalPension,
   calcSpecialAddition,
+  calcAdjustmentFund,
 
   // 退休时间计算
   getRetireMonths,
