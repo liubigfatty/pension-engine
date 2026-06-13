@@ -145,7 +145,39 @@ async function loadProvince(id) {
   } catch(e) { console.error("Load province error:", e); currentConfig = null; }
 }
 
+function onProvinceChange() {
+  var id = document.getElementById("province").value;
+  loadProvince(id);
+}
 
+function calculate() {
+  var errEl = document.getElementById("error-msg");
+  errEl.style.display = "none";
+  if (!currentConfig) { errEl.textContent = "省份配置加载中，请稍候再试"; errEl.style.display = "block"; return; }
+  try {
+    var by = parseInt(document.getElementById("birthYear").value);
+    var bm = parseInt(document.getElementById("birthMonth").value);
+    var wy = parseInt(document.getElementById("workYear").value);
+    var wm = parseInt(document.getElementById("workMonth").value);
+    if (!by || !bm || !wy || !wm) { errEl.textContent = "请填写完整的出生和参工年月"; errEl.style.display = "block"; return; }
+    var input = {
+      name: "测算用户",
+      gender: document.getElementById("genderType").value === "male" ? "男" : "女",
+      genderType: document.getElementById("genderType").value,
+      cityType: document.getElementById("city").value,
+      retireType: document.getElementById("retireType").value,
+      birthYear: by, birthMonth: bm, workYear: wy, workMonth: wm,
+      avgIndex: parseFloat(document.getElementById("avgIndex").value) || 1.0,
+      personalAccInput: parseFloat(document.getElementById("personalAcc").value) || 0,
+      skipDelay: false
+    };
+    var result = window.PensionEngine.calculate(currentConfig, input);
+    displayResult(result);
+  } catch(e) {
+    errEl.textContent = "计算出错: " + e.message;
+    errEl.style.display = "block";
+  }
+}
 
 function displayResult(result) {
   var r = result.legal;
