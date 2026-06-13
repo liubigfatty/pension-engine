@@ -94,15 +94,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </div>
 </div>
 
-<div class="adv-toggle" onclick="document.getElementById('adv-panel').classList.toggle('show');this.textContent=this.textContent.includes('展开')?'▲ 收起高级参数':'▼ 展开高级参数'">▼ 展开高级参数</div>
+<div class="adv-toggle" onclick="document.getElementById('adv-panel').classList.toggle('show');this.textContent=this.textContent.includes('展开')?'▲ 收起高级参数':'▼ 高级参数（核定表验证用）'">▼ 高级参数（核定表验证用）</div>
 <div class="adv-panel" id="adv-panel">
+<div class="note-text" style="margin-bottom:12px">以下字段均留空时由系统自动计算。仅当需要精确匹配官方核定表数值时才填入。</div>
 <div class="row">
-<div class="field"><label>视同缴费年限</label><input type="number" id="sightYears" placeholder="自动计算" step="0.01"></div>
-<div class="field"><label>建账前缴费年限</label><input type="number" id="preAccountYears" placeholder="自动计算" step="0.01"></div>
-<div class="field"><label>累计缴费年限</label><input type="number" id="totalYears" placeholder="自动计算" step="0.01"></div>
-<div class="field"><label>计发月数</label><input type="number" id="months" placeholder="自动计算"></div>
-<div class="field"><label>退休地计发基数</label><input type="number" id="baseRetire" placeholder="自动查询" step="0.01"></div>
-<div class="field"><label>全省计发基数</label><input type="number" id="baseProv" placeholder="自动查询" step="0.01"></div>
+<div class="field"><label>视同缴费年限</label><input type="number" id="sightYears" placeholder="留空则自动" step="0.01"></div>
+<div class="field"><label>建账前缴费年限</label><input type="number" id="preAccountYears" placeholder="留空则自动" step="0.01"></div>
+<div class="field"><label>累计缴费年限</label><input type="number" id="totalYears" placeholder="留空则自动" step="0.01"></div>
+<div class="field"><label>计发月数</label><input type="number" id="months" placeholder="留空则自动"></div>
+<div class="field"><label>退休地计发基数</label><input type="number" id="baseRetire" placeholder="留空则自动" step="0.01"></div>
+<div class="field"><label>全省计发基数</label><input type="number" id="baseProv" placeholder="留空则自动" step="0.01"></div>
 <div class="field"><label>过渡指数</label><input type="number" id="transIndex" placeholder="=avgIndex" step="0.0001"></div>
 <div class="field"><label>特殊标记</label>
   <select id="specialFlags"><option value="">根据省份自动判断</option></select>
