@@ -35,10 +35,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .result-grid .item .label{font-size:13px;color:var(--sub)}.result-grid .item .val{font-size:18px;font-weight:600}
 .info-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
 .info-tag{background:#f0f0f5;padding:4px 12px;border-radius:20px;font-size:13px;color:var(--sub)}
-.adv-toggle{cursor:pointer;color:var(--accent);font-size:14px;text-align:center;padding:8px;user-select:none}
-.adv-toggle:hover{opacity:.8}
-.adv-panel{display:none;margin-top:12px}
-.adv-panel.show{display:block}
 .error-msg{background:#fff0f0;color:var(--red);padding:12px 16px;border-radius:10px;font-size:14px;margin-bottom:12px;display:none}
 .loading{text-align:center;padding:40px;color:var(--sub)}
 .flex-compare{margin-top:12px;padding:12px;background:#f8f8fa;border-radius:10px;font-size:14px}
@@ -91,25 +87,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div class="field">
 <label>平均缴费指数</label>
 <input type="number" id="avgIndex" value="1.0" step="0.0001" min="0.6" max="3.0">
-</div>
-</div>
-
-<div class="adv-toggle" onclick="document.getElementById('adv-panel').classList.toggle('show');this.textContent=this.textContent.includes('展开')?'▲ 收起高级参数':'▼ 高级参数（核定表验证用）'">▼ 高级参数（核定表验证用）</div>
-<div class="adv-panel" id="adv-panel">
-<div class="note-text" style="margin-bottom:12px">以下字段均留空时由系统自动计算。仅当需要精确匹配官方核定表数值时才填入。</div>
-<div class="row">
-<div class="field"><label>视同缴费年限</label><input type="number" id="sightYears" placeholder="留空则自动" step="0.01"></div>
-<div class="field"><label>建账前缴费年限</label><input type="number" id="preAccountYears" placeholder="留空则自动" step="0.01"></div>
-<div class="field"><label>累计缴费年限</label><input type="number" id="totalYears" placeholder="留空则自动" step="0.01"></div>
-<div class="field"><label>计发月数</label><input type="number" id="months" placeholder="留空则自动"></div>
-<div class="field"><label>退休地计发基数</label><input type="number" id="baseRetire" placeholder="留空则自动" step="0.01"></div>
-<div class="field"><label>全省计发基数</label><input type="number" id="baseProv" placeholder="留空则自动" step="0.01"></div>
-<div class="field"><label>过渡指数</label><input type="number" id="transIndex" placeholder="=avgIndex" step="0.0001"></div>
-<div class="field"><label>特殊标记</label>
-  <select id="specialFlags"><option value="">根据省份自动判断</option></select>
-  <small style="color:var(--sub)">选省份后自动显示该省支持的特殊增发</small>
-</div>
-</div>
 </div>
 
 <button class="btn btn-primary" onclick="calculate()">计算养老金</button>
@@ -165,71 +142,10 @@ async function loadProvince(id) {
     var citySel = document.getElementById("city");
     var cities = currentConfig.cities || [{code:"prov",name:"全省默认"}];
     citySel.innerHTML = cities.map(function(c){return "<option value="+c.code+">"+c.name+"</option>";}).join("");
-    updateSpecialFlags(currentConfig);
   } catch(e) { console.error("Load province error:", e); currentConfig = null; }
 }
 
-function updateSpecialFlags(config) {
-  var sel = document.getElementById("specialFlags");
-  var opts = [{v:"",t:"无"}];
-  var hasOneChild = config.modules && config.modules.special_addition && config.modules.special_addition.enabled;
-  var hasTrans = config.modules && config.modules.transitional_pension && config.modules.transitional_pension.enabled;
-  var notes = (config.modules && config.modules.transitional_pension && config.modules.transitional_pension.notes) || "";
-  var hasIntellectual = notes.indexOf("知识分子") > -1 || notes.indexOf("intellectual") > -1;
-  // Check notes for oneChild capability
-  var allNotes = typeof config.notes === "string" ? config.notes : JSON.stringify(config.notes || {});
-  hasOneChild = hasOneChild || allNotes.indexOf("独子") > -1 || allNotes.indexOf("oneChild") > -1;
-  if (hasOneChild) opts.push({v:"oneChild",t:"独生子女"});
-  if (hasIntellectual) opts.push({v:"intellectual",t:"知识分子"});
-  if (hasOneChild && hasIntellectual) opts.push({v:"both",t:"独生+知识分子"});
-  sel.innerHTML = opts.map(function(o){return "<option value="+o.v+">"+o.t+"</option>";}).join("");
-}
 
-function onProvinceChange() {
-  var id = document.getElementById("province").value;
-  loadProvince(id);
-}
-
-function nv(id) { var v = document.getElementById(id).value; return v ? parseFloat(v) : null; }
-
-function calculate() {
-  var errEl = document.getElementById("error-msg");
-  errEl.style.display = "none";
-  if (!currentConfig) { errEl.textContent = "省份配置加载中，请稍候再试"; errEl.style.display = "block"; return; }
-  try {
-    var by = parseInt(document.getElementById("birthYear").value);
-    var bm = parseInt(document.getElementById("birthMonth").value);
-    var wy = parseInt(document.getElementById("workYear").value);
-    var wm = parseInt(document.getElementById("workMonth").value);
-    if (!by || !bm || !wy || !wm) { errEl.textContent = "请填写完整的出生和参工年月"; errEl.style.display = "block"; return; }
-    var input = {
-      name: "测算用户",
-      gender: document.getElementById("genderType").value === "male" ? "男" : "女",
-      genderType: document.getElementById("genderType").value,
-      cityType: document.getElementById("city").value,
-      retireType: document.getElementById("retireType").value,
-      birthYear: by, birthMonth: bm, workYear: wy, workMonth: wm,
-      avgIndex: parseFloat(document.getElementById("avgIndex").value) || 1.0,
-      personalAccInput: parseFloat(document.getElementById("personalAcc").value) || 0,
-      skipDelay: false
-    };
-    var sy = nv("sightYears"); if (sy != null) input.sightYears = sy;
-    var pa = nv("preAccountYears"); if (pa != null) input.preAccountYears = pa;
-    var ty = nv("totalYears"); if (ty != null) input.totalYears = ty;
-    var mo = nv("months"); if (mo != null) input.months = mo;
-    var br = nv("baseRetire"); if (br != null) input.baseRetireInput = br;
-    var bp = nv("baseProv"); if (bp != null) input.baseProvInput = bp;
-    var ti = nv("transIndex"); if (ti != null) input.transIndex = ti;
-    var sf = document.getElementById("specialFlags").value;
-    if (sf === "oneChild" || sf === "both") input.oneChild = true;
-    if (sf === "intellectual" || sf === "both") input.intellectual = true;
-    var result = window.PensionEngine.calculate(currentConfig, input);
-    displayResult(result);
-  } catch(e) {
-    errEl.textContent = "计算出错: " + e.message;
-    errEl.style.display = "block";
-  }
-}
 
 function displayResult(result) {
   var r = result.legal;
