@@ -490,6 +490,17 @@ function calcSpecialAddition(params) {
       amount: addition,
       description: `艰苦边远地区增发：月增 ${addition} 元`
     }
+  } else if (mod.type === 'intellectual') {
+    // 知识分子补贴（宁夏）：工龄补贴 + 地区补贴
+    // 仅在输入中标记 intellectual=true 时生效
+    if (!params?.context?.intellectual) return { amount: 0, description: '非知识分子，不享受此补贴' }
+    const workAmount = mod.intellectual_work || 10
+    const areaAmount = mod.intellectual_area || 8.5
+    const total = workAmount + areaAmount
+    return {
+      amount: total,
+      description: `知识分子补贴：工龄${workAmount}元/月 + 地区${areaAmount}元/月 = ${total}元/月`
+    }
   } else if (mod.type === 'fixed') {
     // 固定金额补贴（如黑龙江御寒津贴）
     const amount = mod.amount || 0
@@ -1198,7 +1209,7 @@ function calculate(config, inputData) {
   // 特殊增发
   let specialAddition = calcSpecialAddition({
     mod: config.modules?.special_addition || { enabled: false },
-    context: { retireAge: retireAgeExact, location: data.cityType, retireYear: legalDate.year }
+    context: { retireAge: retireAgeExact, location: data.cityType, retireYear: legalDate.year, intellectual: data.intellectual }
   })
 
   // 重庆独生子女增发：3% × (基础+个人+过渡)
@@ -1414,29 +1425,6 @@ function formatResult(result) {
 }
 
 
-// Browser global
 if(typeof window!=="undefined"){
-window.PensionEngine = {
-  calculate,
-  calcBasicPension,
-  calcExtraPension,
-  calcPersonalAccountPension,
-  calcTransitionalPension,
-  calcSpecialAddition,
-  calcAdjustmentFund,
-  getRetireMonths,
-  getDelayMonths,
-  getRetireTotalMonths,
-  getRetireDate,
-  getAgeStr,
-  getDateStr,
-  getMinYears,
-  getBase,
-  getAccRate,
-  calcYears,
-  parseInput,
-  formatMoney,
-  getModuleName,
-  formatResult,
-};
+window.PensionEngine = {calculate,calcBasicPension,calcExtraPension,calcPersonalAccountPension,calcTransitionalPension,calcSpecialAddition,calcAdjustmentFund,getRetireMonths,getDelayMonths,getRetireTotalMonths,getRetireDate,getAgeStr,getDateStr,getMinYears,getBase,getAccRate,calcYears,parseInput,formatMoney,getModuleName,formatResult};
 }

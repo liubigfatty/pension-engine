@@ -111,12 +111,15 @@
     "transitional_pension": {
       "enabled": true,
       "coefficient": 0.013,
-      "coefficient_intellectual": 0.0143,
-      "notes": "宁夏过渡系数：普通人员1.3%，知识分子(大中专以上/中级以上职称)1.43%(+0.13%)。建账1996-01，usePreAccountYears=true。"
+      "coefficient_intellectual": 0.0149,
+      "notes": "知识分子过渡系数1.49%(1.3%+0.19%)。建账1996-01。案例3确认。"
     },
     "special_addition": {
-      "enabled": false,
-      "notes": "艰苦边远地区补贴：一类区+10元/月，三类区+15元/月（待加入）"
+      "enabled": true,
+      "type": "intellectual",
+      "intellectual_work": 10,
+      "intellectual_area": 8.5,
+      "notes": "知识分子工龄补贴10元/月+地区补贴8.5元/月=18.5元/月。案例3确认。"
     }
   },
   "cities": [
