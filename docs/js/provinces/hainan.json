@@ -114,7 +114,10 @@
       "notes": "琼府〔2022〕40号：过渡=计发基数×Q×1997年底前年限×1.4%。建账1998-01，视同截止1997-12。视同指数=1。usePreAccountYears=true。"
     },
     "special_addition": {
-      "enabled": false
+      "enabled": true,
+      "type": "one_child",
+      "rate": 0.05,
+      "notes": "独生子女父母加发5%基础养老金"
     }
   },
   "cities": [

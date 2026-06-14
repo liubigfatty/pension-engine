@@ -117,7 +117,10 @@
       "notes": "贵州过渡系数1.4%！建账1998-10-01，过渡用1997-12-31前年限（精确值由案例传入pre_account_years）。"
     },
     "special_addition": {
-      "enabled": false
+      "enabled": true,
+      "type": "one_child",
+      "rate": 0.05,
+      "notes": "独生子女父母加发5%基础养老金"
     }
   },
   "cities": [

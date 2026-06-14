@@ -119,7 +119,10 @@
       "notes": "渝办发〔2006〕205号：过渡=(A+A×Q)/2×M1×1.4%。A=计发基数，M1=建账前年限(1996-01前)。1996年1月1日前参加工作为中人。"
     },
     "special_addition": {
-      "enabled": false
+      "enabled": true,
+      "type": "one_child",
+      "rate": 0.03,
+      "notes": "独生子女父母加发3%基础养老金"
     }
   },
   "cities": [
