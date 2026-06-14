@@ -1124,7 +1124,10 @@ function calculate(config, inputData) {
   // 如果配置中启用了 usePreAccountYears，则计算建账前缴费年限
   let preAccountYears = null
   if (config.usePreAccountYears === true) {
-    preAccountYears = calcYears(data.work, accountStartConfigured)
+    // 优先使用 viewing_start（视同截止时间），否则回退到 account_start（建账时间）
+    // 江西等省份：viewing_start(1995-10) ≠ account_start(1996-01)
+    const preEnd = config.viewing_start || accountStartConfigured
+    preAccountYears = calcYears(data.work, preEnd)
   }
   // 也支持用户显式指定（用于官方核定表验证场景）
   if (data.preAccountYearsInput != null) {

@@ -9,6 +9,7 @@
     "year": 1995,
     "month": 10
   },
+  "usePreAccountYears": true,
   "base_rates": {
     "_source": "赣人社发/赣人社函〔2022〕~〔2025〕48号",
     "prov": {
