@@ -70,9 +70,13 @@ function calcBasicPension(params) {
     amount = Math.round((socialAvg + socialAvg * avgIndex) / 2 * totalYears * rate * 100) / 100
     description = `(¥${socialAvg.toLocaleString()} + ¥${socialAvg.toLocaleString()} × ${avgIndex.toFixed(2)}) / 2 × ${totalYears.toFixed(2)}年 × ${(rate * 100).toFixed(2)}% = ${amount.toFixed(2)}元`
   } else {
-    // 默认公式：(退休地计发基数 + 全省计发基数 × 指数) / 2 × 累计缴费年限 × 1%
-    amount = Math.round((retireBase + provBase * avgIndex) / 2 * totalYears * rate * 100) / 100
-    description = `(${retireBase.toLocaleString()} + ${provBase.toLocaleString()} × ${avgIndex.toFixed(2)}) / 2 × ${totalYears.toFixed(2)}年 × ${(rate * 100).toFixed(2)}% = ${amount.toFixed(2)}元`
+    // 默认公式：(退休地计发基数 × a + 退休地计发基数 × 指数) / 2 × 累计缴费年限 × 1%
+    // a系数（国发[2005]38号）：avgIndex≥0.6时a=1; avgIndex<0.6时a=avgIndex/0.6
+    const aCoeff = avgIndex >= 0.6 ? 1 : avgIndex / 0.6
+    const indexSalary = retireBase * avgIndex
+    amount = Math.round((retireBase * aCoeff + indexSalary) / 2 * totalYears * rate * 100) / 100
+    const aDesc = aCoeff !== 1 ? `(a=${aCoeff.toFixed(4)})` : ''
+    description = `(${retireBase.toLocaleString()}×${aCoeff.toFixed(4)}${aDesc} + ${indexSalary.toLocaleString(undefined, {maximumFractionDigits:2})}) / 2 × ${totalYears.toFixed(2)}年 × ${(rate * 100).toFixed(2)}% = ${amount.toFixed(2)}元`
   }
 
   return { amount, description }
@@ -315,7 +319,6 @@ function calcTransitionalPension(params) {
   }
   // 云南特色：用建账前缴费年限替代视同缴费年限
   const effectiveYears = (preAccountYears != null && preAccountYears > 0) ? preAccountYears : sightYears
-  if (!effectiveYears || effectiveYears <= 0) return { amount: 0, description: '无视同缴费年限' }
 
   // 北京特殊公式：过渡性养老金 = G同 + G实（京劳社养发〔1998〕21号）
   // G同：1992年10月前的视同缴费年限 → 用 sightYears
@@ -477,14 +480,16 @@ function calcTransitionalPension(params) {
 
   // 广东粤府函[2021]294号 新办法（系数法）+过渡期（2021-2025）
   // 新办法: 计发基数 × 1998年6月前缴费指数 × (视同+1998年6月前实际) × 1.2%
-  // 老办法: 视同缴费账户储存额 ÷ 计发月数
+  // 老办法: max(视同缴费账户÷月数, 100+总年限×4)
   // 过渡期: 2021=30%, 2022=50%, 2023=70%, 2024=90%, 2025=100%, 2026+全用新办法
   if (mod.formula_type === "guangdong") {
     const coef = mod.coefficient || 0.012
     const newAmount = Math.round(provBase * effectiveYears * transIdx * coef * 100) / 100
     const xuzhang = params?.xuzhang || 0
     const months = params?.months || 139
-    const oldAmount = (months > 0 && xuzhang > 0) ? Math.round(xuzhang / months * 100) / 100 : 0
+    const xuzhangAmount = (months > 0 && xuzhang > 0) ? Math.round(xuzhang / months * 100) / 100 : 0
+    const fixedAmount = Math.round((100 + Math.floor(totalYears) * 4) * 100) / 100
+    const oldAmount = Math.max(xuzhangAmount, fixedAmount)  // 取老办法中较高者
     const retireYear = params?.retireYear || 2026
     const transitionRates = { 2021: 0.3, 2022: 0.5, 2023: 0.7, 2024: 0.9, 2025: 1.0 }
 
@@ -509,6 +514,11 @@ function calcTransitionalPension(params) {
       const amount = Math.round(oldAmount * 100) / 100
       return { amount, description: `新${newAmount.toFixed(2)} ≤ 老${oldAmount.toFixed(2)}，取老办法${amount.toFixed(2)}元` }
     }
+  }
+
+  // 非广东/深圳公式：effectiveYears为0时返回无视同
+  if (!mod.formula_type || (mod.formula_type !== 'guangdong' && mod.formula_type !== 'shenzhen')) {
+    if (!effectiveYears || effectiveYears <= 0) return { amount: 0, description: '无视同缴费年限' }
   }
 
   // 通用公式：全省计发基数 × 缴费年限 × 指数 × 系数

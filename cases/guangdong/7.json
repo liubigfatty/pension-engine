@@ -1,0 +1,28 @@
+{
+  "case_id": "guangdong-jiangmen-2024-05",
+  "province": "guangdong",
+  "city": "prov",
+  "gender": "female",
+  "birth_year": 1974,
+  "birth_month": 4,
+  "work_year": 2004,
+  "work_month": 6,
+  "retire_year": 2024,
+  "retire_month": 5,
+  "total_years": 17.75,
+  "sight_years": 0,
+  "pre_account_years": 0,
+  "avg_index": 0.452,
+  "trans_index": 0,
+  "base_number": 9028,
+  "base_prov": 9028,
+  "personal_account": 55389.69,
+  "months": 195,
+  "expected": {
+    "basic_pension": 965.73,
+    "personal_pension": 284.05,
+    "transitional_pension": 168.00,
+    "total": 1417.78
+  },
+  "notes": "广东江门核定表(2024-05)。关键发现：①广东老办法=100+floor(年限)×4=168 ✅，即使无视同也有过渡性！②基础养老金官方=965.73(对应14.73年)，但实际缴费213月(17.75年)，差3年→疑似中断缴费扣除，需确认核定表上中断月数。③2024年过渡期90%，新=0<旧=168，取旧✅。"
+}
