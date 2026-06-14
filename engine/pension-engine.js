@@ -538,6 +538,20 @@ function calcSpecialAddition(params) {
       amount,
       description: `独生子女补贴：全省人均养老金${avgPension}元(${retireYear}年) × ${(rate * 100)}% = ${amount.toFixed(2)}元`
     }
+  } else if (mod.type === 'qinghai_27_doc') {
+    // 青劳社厅发[2004]27号《关于适当提高企业退休人员待遇水平的通知》
+    // 西宁地区(含大通、湟中、湟源)+12元/月，其他地区+13元/月
+    const location = params?.context?.location || 'prov'
+    let amount = 0
+    if (location === 'xining') {
+      amount = mod.xining_addition || 12
+    } else {
+      amount = mod.other_addition || 13
+    }
+    return {
+      amount: amount,
+      description: `青劳社厅发[2004]27号待遇提高：${location === 'xining' ? '西宁地区' : '其他地区'}，月增 ${amount} 元`
+    }
   }
 
   return { amount: 0, description: '未满足增发条件' }

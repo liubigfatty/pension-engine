@@ -538,6 +538,20 @@ function calcSpecialAddition(params) {
       amount,
       description: `独生子女补贴：全省人均养老金${avgPension}元(${retireYear}年) × ${(rate * 100)}% = ${amount.toFixed(2)}元`
     }
+  } else if (mod.type === 'qinghai_27_doc') {
+    // 青劳社厅发[2004]27号《关于适当提高企业退休人员待遇水平的通知》
+    // 西宁地区(含大通、湟中、湟源)+12元/月，其他地区+13元/月
+    const location = params?.context?.location || 'prov'
+    let amount = 0
+    if (location === 'xining') {
+      amount = mod.xining_addition || 12
+    } else {
+      amount = mod.other_addition || 13
+    }
+    return {
+      amount: amount,
+      description: `青劳社厅发[2004]27号待遇提高：${location === 'xining' ? '西宁地区' : '其他地区'}，月增 ${amount} 元`
+    }
   }
 
   return { amount: 0, description: '未满足增发条件' }
@@ -1425,6 +1439,14 @@ function formatResult(result) {
 }
 
 
+
+// ============================================================
+// 灵活就业人员养老金计算
+// 核心公式与企业职工相同，差异：视同缴费=0，无干部/工人分类
+
+
+
+// Browser global export
 if(typeof window!=="undefined"){
 window.PensionEngine = {calculate,calcBasicPension,calcExtraPension,calcPersonalAccountPension,calcTransitionalPension,calcSpecialAddition,calcAdjustmentFund,getRetireMonths,getDelayMonths,getRetireTotalMonths,getRetireDate,getAgeStr,getDateStr,getMinYears,getBase,getAccRate,calcYears,parseInput,formatMoney,getModuleName,formatResult};
 }

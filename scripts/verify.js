@@ -153,6 +153,7 @@ function mapCityType(city, province) {
   if (/大连/.test(s)) return 'dl'   // 辽宁
   if (/沈阳/.test(s)) return 'sy'   // 辽宁
   if (/深圳/.test(s)) return 'sz'   // 广东
+  if (/西宁/.test(s)) return 'xining' // 青海
   return 'prov'
 }
 
@@ -325,7 +326,7 @@ function caseToEngineInput(c) {
 
   const gender     = mapGender(c.gender);
   const genderType = mapGenderType(c.gender);
-  const cityType  = mapCityType(c.city, c.province);
+  const cityType  = c.cityType || mapCityType(c.city, c.province);
   const retireType = mapRetireType(c.retire_type || c.retireType);
 
   const input = {
