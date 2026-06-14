@@ -491,7 +491,7 @@ function calcTransitionalPension(params) {
 
   // 广东粤府函[2021]294号 新办法（系数法）+过渡期（2021-2025）
   // 新办法: 计发基数 × 1998年6月前缴费指数 × (视同+1998年6月前实际) × 1.2%
-  // 老办法: max(视同缴费账户÷月数, 100+总年限×4)
+  // 老办法: 视同缴费账户÷月数 + 粤劳电[2009]32号加发100 + 粤人社[2014]8号缴费年限津贴(floor(总年限)×4)
   // 过渡期: 2021=30%, 2022=50%, 2023=70%, 2024=90%, 2025=100%, 2026+全用新办法
   if (mod.formula_type === "guangdong") {
     const coef = mod.coefficient || 0.012
@@ -499,13 +499,14 @@ function calcTransitionalPension(params) {
     const xuzhang = params?.xuzhang || 0
     const months = params?.months || 139
     const xuzhangAmount = (months > 0 && xuzhang > 0) ? Math.round(xuzhang / months * 100) / 100 : 0
+    // 粤劳电[2009]32号+100 + 粤人社[2014]8号缴费年限津贴(floor(总年限)×4)
     const fixedAmount = Math.round((100 + Math.floor(totalYears) * 4) * 100) / 100
-    const oldAmount = Math.max(xuzhangAmount, fixedAmount)  // 取老办法中较高者
+    const oldAmount = Math.round((xuzhangAmount + fixedAmount) * 100) / 100  // 三项之和
     const retireYear = params?.retireYear || 2026
     const transitionRates = { 2021: 0.3, 2022: 0.5, 2023: 0.7, 2024: 0.9, 2025: 1.0 }
 
-    // 2026年起或无视同缴费账户额，直接全用新办法
-    if (retireYear >= 2026 || !oldAmount) {
+    // 2026年起直接全用新办法
+    if (retireYear >= 2026) {
       const amount = Math.round(newAmount * 100) / 100
       const desc = retireYear >= 2026
         ? `粤府函[2021]294号新办法(${retireYear}年起全用)：基数${provBase.toLocaleString()} × 指数${transIdx.toFixed(4)} × 建账前${effectiveYears.toFixed(2)}年 × ${(coef*100).toFixed(1)}% = ${amount.toFixed(2)}元`
