@@ -1114,11 +1114,11 @@ function calculate(config, inputData) {
   // 优先使用用户显式指定的累计缴费年限（来自官方核定表），否则自动计算
   // 优先使用用户显式指定的视同缴费年限（来自官方核定表），否则自动计算
   const autoSightYears = hasSight ? calcYears(data.work, accountStartConfigured) : 0
-  const sightYears = data.sightYearsInput != null ? data.sightYearsInput : autoSightYears
+  let sightYears = data.sightYearsInput != null ? data.sightYearsInput : autoSightYears
   const autoTotalYears = calcYears(actualStart, legalDate) + sightYears
-  const totalYears = data.totalYearsInput != null ? data.totalYearsInput : autoTotalYears
+  let totalYears = data.totalYearsInput != null ? data.totalYearsInput : autoTotalYears
   // 累计年限确定后，重新推算actualYears（用于增发分段计算）
-  const actualYears = totalYears - sightYears
+  // 实际缴费年限 = 总年限 - 视同年限（取整规则后续处理）
 
   // 云南特色：建账前缴费年限（用于过渡性养老金）
   // 如果配置中启用了 usePreAccountYears，则计算建账前缴费年限
@@ -1131,7 +1131,30 @@ function calculate(config, inputData) {
     preAccountYears = parseFloat(data.preAccountYearsInput)
   }
 
-  // ===== 计算各模块 =====
+  // ===== 省份特殊取整规则 =====
+  // 安徽等省份：缴费年限取1位小数，指数保留4位，结果保留2位
+  const roundingRules = config.rounding
+  if (roundingRules) {
+    const yDec = roundingRules.years_decimal
+    const iDec = roundingRules.index_decimal
+    const rDec = roundingRules.result_decimal
+    
+    // 年限取整（总年限、视同年限、建账前年限、实际缴费年限）
+    if (yDec != null) {
+      const factor = Math.pow(10, yDec)
+      if (totalYears != null) totalYears = Math.round(totalYears * factor) / factor
+      if (sightYears != null) sightYears = Math.round(sightYears * factor) / factor
+      if (preAccountYears != null) preAccountYears = Math.round(preAccountYears * factor) / factor
+    }
+    
+    // 平均缴费指数保留指定位数
+    if (iDec != null && data.avgIndex != null) {
+      const iFactor = Math.pow(10, iDec)
+      data.avgIndex = Math.round(data.avgIndex * iFactor) / iFactor
+    }
+  }
+  // 重新计算 actualYears（取整后）
+  const actualYears = totalYears - sightYears
   // 计发基数查询逻辑：
   // 1. 优先使用用户显式传入的基数（官方核定表验证场景）
   // 2. 否则查退休当年的基数：如果配置文件中该年已公布就用当年，否则回退上一年
