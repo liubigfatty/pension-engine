@@ -433,39 +433,50 @@ function calcTransitionalPension(params) {
   }
 
   // 深圳过渡性养老金（深人社规，独立体系）
-  // 原办法: 指数化月平均缴费工资(老) × 享受比例 + 总缴费年限 × 4 + 100
-  // 新办法: 计发基数 × 1998年6月前指数 × 建账前年限 × 1.2%（同广东）
-  // 调整额 = (新-原) × 发放比例（过渡期同广东：2021-2025）
+  // 原办法核心: oldIndexSalary × 享受比例 + FLOOR(总年限) × 4
+  // 当 oldIndexSalary=0：加+100最低保障，无单独调节金
+  // 当 oldIndexSalary>0：过渡不含+100，单独加调节金（逐年递减40/年）
+  // 调整额 = max(新办法 - 调整基准, 0) × 发放比例（调整基准=核心+100保障）
   if (mod.formula_type === "shenzhen") {
     const oldIndexSalary = params?.oldIndexSalary || 0
     const enjoymentRatio = params?.enjoymentRatio || 0
-    const yyBase = totalYears || 0
 
-    // 旧: oldIndexSalary × 享受比例 + FLOOR(总年限) × 4 + 100
-    const oldSZAmount = Math.round((oldIndexSalary * enjoymentRatio + Math.floor(totalYears) * 4 + 100) * 100) / 100
+    const coreAmount = Math.round((oldIndexSalary * enjoymentRatio + Math.floor(totalYears) * 4) * 100) / 100
+    // 最低保障：当 oldIndexSalary=0 时过渡性额外+100（如案例4），否则调节金单独加
+    const minGuarantee = (oldIndexSalary === 0) ? 100 : 0
+    const baseSZAmount = Math.round((coreAmount + minGuarantee) * 100) / 100
+    // 调整基准 = 核心金额（不含保障的过渡性基础）
+    const adjBase = coreAmount
+
+    // 独li调节金：仅 oldIndexSalary>0（每年递减40元）
+    const retireYear = params?.retireYear || 2026
+    const adjFund = (oldIndexSalary > 0)
+      ? { 2023: 180, 2024: 140, 2025: 100, 2026: 60, 2027: 20 }[retireYear] || 0
+      : 0
 
     // 新办法（同广东系数法）
     const coef = mod.coefficient || 0.012
     const newAmount = Math.round(provBase * (transIndex || avgIndex) * (preAccountYears || sightYears) * coef * 100) / 100
 
-    // 过渡期判断
-    const retireYear = params?.retireYear || 2026
     const transitionRates = { 2021: 0.3, 2022: 0.5, 2023: 0.7, 2024: 0.9, 2025: 1.0 }
     const rate = transitionRates[retireYear] || 1.0
 
-    if (newAmount > oldSZAmount) {
-      const excess = newAmount - oldSZAmount
+    // 调整额：新办法 vs 调整基准
+    const excess = newAmount - adjBase
+    if (excess > 0) {
       const adjustment = Math.round(excess * rate * 100) / 100
-      // 深圳调节金（逐年递减40元/年：2023=180, 2024=140, 2025=100, 2026=60, 2027=20）
-      const adjFund = { 2023: 180, 2024: 140, 2025: 100, 2026: 60, 2027: 20 }[retireYear] || 0
-      const total = Math.round((oldSZAmount + adjustment + adjFund) * 100) / 100
-      const desc = `旧${oldSZAmount.toFixed(2)} + 调整额(${adjustment.toFixed(2)}=高出${excess.toFixed(2)}×${(rate*100).toFixed(0)}%) + 调节金${adjFund === 0 ? '' : adjFund} = ${total.toFixed(2)}元（深圳独立体系）`
-      return { amount: total, description: desc }
+      const total = Math.round((baseSZAmount + adjustment + adjFund) * 100) / 100
+      const descParts = []
+      descParts.push('过渡性' + baseSZAmount.toFixed(2) + (minGuarantee ? '(含保障+100)' : ''))
+      descParts.push('调整(' + adjustment.toFixed(2) + '=(新' + newAmount.toFixed(2) + '-基准' + adjBase.toFixed(2) + ')×' + (rate*100).toFixed(0) + '%)')
+      if (adjFund > 0) descParts.push('调节金' + adjFund)
+      descParts.push('=' + total.toFixed(2) + '元（深圳独立体系）')
+      return { amount: total, description: descParts.join(' + ') }
     }
-    const adjFund = { 2023: 180, 2024: 140, 2025: 100, 2026: 60, 2027: 20 }[retireYear] || 0
-    const totalOld = Math.round((oldSZAmount + adjFund) * 100) / 100
-    const desc = '旧' + oldSZAmount.toFixed(2) + ' ≥ 新' + newAmount.toFixed(2) + '，取旧办法 + 调节金' + adjFund + ' = ' + totalOld.toFixed(2) + '元（深圳独立体系）'
-    return { amount: totalOld, description: desc }
+    // 新≤基准：只取过渡性基础（含保障）+ 调节金（如有），无调整
+    const total = Math.round((baseSZAmount + adjFund) * 100) / 100
+    const desc = '过渡性' + baseSZAmount.toFixed(2) + (minGuarantee ? '(含保障+100)' : '') + '，新' + newAmount.toFixed(2) + '≤基准' + adjBase.toFixed(2) + '，无调整' + (adjFund > 0 ? ' + 调节金' + adjFund : '') + ' = ' + total.toFixed(2) + '元（深圳独立体系）'
+    return { amount: total, description: desc }
   }
 
   // 重庆特殊公式（渝办发〔2006〕205号）：
