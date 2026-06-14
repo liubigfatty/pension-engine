@@ -668,31 +668,31 @@ function calcSpecialAddition(params) {
     }
   } else if (mod.type === 'zhengzhou_subsidy') {
     // 郑州过渡性补贴（郑州市人民政府令第161号，2023修正）
-    // 公式：[(95年后实际缴费年限 × 参数) / (全部年限 × 1%)] × (当地上年度月均工资 / 郑州市上年度月均工资)
+    // 公式(2026年最新): [(实际缴费年限 × 8.85) / (累计工作年限 × 1%)] × (郑州市计发基数 / 7933)
     // 仅限郑州市(zz)参保人员，视同缴费发生在1994年12月31日以前
     const location = params?.context?.location || 'prov'
     if (location !== 'zz') {
       return { amount: 0, description: '郑州过渡性补贴：非郑州市参保人员，不享受' }
     }
 
-    const after1995Actual = params?.context?.after1995Actual || 0
+    const actualYears_zz = params?.context?.actualYears || 0
     const totalWorkYears = params?.context?.totalWorkYears || 0
-    const localAvgSalary = params?.context?.localAvgSalary || 1
-    const zhengzhouAvgSalary = params?.context?.zhengzhouAvgSalary || 1
-    const param = mod.subsidy_param || 5.82
+    const zzBase = params?.context?.zzBase || 1
+    const param = mod.subsidy_param || 8.85
+    const baseRef = 7933  // 参考值（2026年固定）
 
-    if (!after1995Actual || !totalWorkYears || totalWorkYears <= 0) {
+    if (!actualYears_zz || !totalWorkYears || totalWorkYears <= 0) {
       return { amount: 0, description: '郑州过渡性补贴：不满足计发条件' }
     }
 
-    const ratio = localAvgSalary && zhengzhouAvgSalary ? (localAvgSalary / zhengzhouAvgSalary) : 1
-    const numerator = after1995Actual * param
+    const baseRatio = zzBase ? (zzBase / baseRef) : 1
+    const numerator = actualYears_zz * param
     const denominator = totalWorkYears * 0.01
-    const amount = Math.round((numerator / denominator * ratio) * 100) / 100
+    const amount = Math.round((numerator / denominator * baseRatio) * 100) / 100
 
     return {
       amount,
-      description: `郑州过渡性补贴：[(${after1995Actual.toFixed(2)} × ${param}) / (${totalWorkYears.toFixed(2)} × 1%)] × (${localAvgSalary}/${zhengzhouAvgSalary}) = ${amount.toFixed(2)}元（市政府令161号）`
+      description: `郑州过渡性补贴：[${actualYears_zz.toFixed(2)} × ${param}] / (${totalWorkYears.toFixed(2)} × 1%) × (${zzBase}/${baseRef}) = ${amount.toFixed(2)}元（市政府令161号）`
     }
   }
 
@@ -1441,14 +1441,10 @@ function calculate(config, inputData) {
   })
 
   // 特殊增发
-  // 郑州过渡性补贴：需要1995年后实际缴费年限（=actualYears）、全部工作年限、月均工资
-  // 获取郑州上年度在岗职工月平均工资
-  let zzLocalAvg = 0
-  let zzCityAvg = 0
-  if (config.province === 'henan' && config.base_rates?.zz_avg) {
-    const lastYear = legalDate.year - 1
-    zzCityAvg = config.base_rates.zz_avg[lastYear] || 0
-    zzLocalAvg = zzCityAvg  // 郑州退休人员，当地=郑州
+  // 郑州过渡性补贴：需要实际缴费年限、全部工作年限、计发基数
+  let zzBaseVal = 0
+  if (config.province === 'henan' && city === 'zz') {
+    zzBaseVal = retBase  // 郑州市计发基数（用于过渡性补贴公式）
   }
 
   let specialAddition = calcSpecialAddition({
@@ -1458,10 +1454,9 @@ function calculate(config, inputData) {
       location: data.cityType,
       retireYear: legalDate.year,
       intellectual: data.intellectual,
-      after1995Actual: actualYears,
+      actualYears: actualYears,
       totalWorkYears: totalYears,
-      localAvgSalary: zzLocalAvg,
-      zhengzhouAvgSalary: zzCityAvg,
+      zzBase: zzBaseVal,
       avgIndex: data.avgIndex,
       localPensionYears: data.localPensionYears,
       pre1992LocalYears: data.pre1992LocalYears
