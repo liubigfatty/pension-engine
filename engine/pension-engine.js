@@ -1133,18 +1133,34 @@ function calculate(config, inputData) {
 
   // ===== 省份特殊取整规则 =====
   // 安徽等省份：缴费年限取1位小数，指数保留4位，结果保留2位
+  // 福建等省份：年限按半段进整（不足半年按半年，大于半年不足一年按一年）
   const roundingRules = config.rounding
   if (roundingRules) {
     const yDec = roundingRules.years_decimal
     const iDec = roundingRules.index_decimal
     const rDec = roundingRules.result_decimal
     
-    // 年限取整（总年限、视同年限、建账前年限、实际缴费年限）
+    // 年限取整（总年限、视同年限、建账前年限）
     if (yDec != null) {
       const factor = Math.pow(10, yDec)
       if (totalYears != null) totalYears = Math.round(totalYears * factor) / factor
       if (sightYears != null) sightYears = Math.round(sightYears * factor) / factor
       if (preAccountYears != null) preAccountYears = Math.round(preAccountYears * factor) / factor
+    }
+    
+    // 福建等省份：年限按半段进整（0.5年步进）
+    if (roundingRules.years_half_step) {
+      // 将年数转为月数，按"不足半年按半年，大于半年不足一年按一年"进整
+      function roundToHalfStep(years) {
+        const totalMonths = Math.round(years * 12)
+        const fullYears = Math.floor(totalMonths / 12)
+        const remainingMonths = totalMonths % 12
+        if (remainingMonths === 0) return fullYears
+        return remainingMonths <= 6 ? fullYears + 0.5 : fullYears + 1
+      }
+      if (totalYears != null) totalYears = roundToHalfStep(totalYears)
+      if (sightYears != null) sightYears = roundToHalfStep(sightYears)
+      if (preAccountYears != null) preAccountYears = roundToHalfStep(preAccountYears)
     }
     
     // 平均缴费指数保留指定位数
