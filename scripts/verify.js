@@ -148,7 +148,15 @@ function mapGenderType(gender, birthYear, birthMonth, workYear, workMonth) {
 /** city → cityType */
 function mapCityType(city, province) {
   if (!city) return 'prov'
-  const s = String(city)
+  const s = String(city).toLowerCase()
+  // 城市代码直接匹配
+  if (s === 'cc' || s === 'changchun') return 'cc'
+  if (s === 'sz' || s === 'shenzhen') return 'sz'
+  if (s === 'zz' || s === 'zhengzhou') return 'zz'
+  if (s === 'xining') return 'xining'
+  if (s === 'dl' || s === 'dalian') return 'dl'
+  if (s === 'sy' || s === 'shenyang') return 'sy'
+  // 中文名称匹配
   if (/长春/.test(s)) return 'cc'
   if (/大连/.test(s)) return 'dl'   // 辽宁
   if (/沈阳/.test(s)) return 'sy'   // 辽宁
@@ -391,6 +399,20 @@ function caseToEngineInput(c) {
   // 江苏过渡性养老金：原办法金额
   const transPensionOld = num(c.trans_pension_old, c.transPensionOld);
   if (transPensionOld != null) input.transPensionOld = transPensionOld;
+
+  // 深圳独立体系：指数化月平均缴费工资(老) + 享受比例
+  const oldIndexSalary = num(c.oldIndexSalary);
+  if (oldIndexSalary != null) input.oldIndexSalary = oldIndexSalary;
+
+  const enjoymentRatio = num(c.enjoymentRatio);
+  if (enjoymentRatio != null) input.enjoymentRatio = enjoymentRatio;
+
+  // 深圳独立体系：地方补充养老缴费年限 + 1992年7月前地方补缴年限
+  const localPensionYears = num(c.localPensionYears);
+  if (localPensionYears != null) input.localPensionYears = localPensionYears;
+
+  const pre1992LocalYears = num(c.pre1992LocalYears);
+  if (pre1992LocalYears != null) input.pre1992LocalYears = pre1992LocalYears;
 
   return input;
 }
