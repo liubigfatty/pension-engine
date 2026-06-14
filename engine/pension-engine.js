@@ -456,13 +456,13 @@ function calcTransitionalPension(params) {
     if (newAmount > oldSZAmount) {
       const excess = newAmount - oldSZAmount
       const adjustment = Math.round(excess * rate * 100) / 100
-      // 深圳调节金（逐年递减：2023=150, 2024=125, 2025=100, 2026=75, 2027=50, 2028=25）
-      const adjFund = { 2023: 150, 2024: 125, 2025: 100, 2026: 75, 2027: 50, 2028: 25 }[retireYear] || 0
+      // 深圳调节金（逐年递减40元/年：2023=180, 2024=140, 2025=100, 2026=60, 2027=20）
+      const adjFund = { 2023: 180, 2024: 140, 2025: 100, 2026: 60, 2027: 20 }[retireYear] || 0
       const total = Math.round((oldSZAmount + adjustment + adjFund) * 100) / 100
       const desc = `旧${oldSZAmount.toFixed(2)} + 调整额(${adjustment.toFixed(2)}=高出${excess.toFixed(2)}×${(rate*100).toFixed(0)}%) + 调节金${adjFund === 0 ? '' : adjFund} = ${total.toFixed(2)}元（深圳独立体系）`
       return { amount: total, description: desc }
     }
-    const adjFund = { 2023: 150, 2024: 125, 2025: 100, 2026: 75, 2027: 50, 2028: 25 }[retireYear] || 0
+    const adjFund = { 2023: 180, 2024: 140, 2025: 100, 2026: 60, 2027: 20 }[retireYear] || 0
     const totalOld = Math.round((oldSZAmount + adjFund) * 100) / 100
     const desc = '旧' + oldSZAmount.toFixed(2) + ' ≥ 新' + newAmount.toFixed(2) + '，取旧办法 + 调节金' + adjFund + ' = ' + totalOld.toFixed(2) + '元（深圳独立体系）'
     return { amount: totalOld, description: desc }
