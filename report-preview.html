@@ -83,8 +83,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
   <div class="info-line" id="legalSummary"></div>
   <div class="sub-section">
     <div style="font-size:14px;font-weight:600;margin-bottom:10px">详细计算</div>
-    <div class="detail-grid" id="legalDetail"></div>
-    <div style="margin-top:12px" id="legalCalcSteps"></div>
+    <div id="legalCalcSteps"></div>
   </div>
   <div class="sub-section" style="text-align:right;font-size:18px;font-weight:700;color:var(--primary)">
     月基本养老金合计：<span id="legalTotal">--</span>
@@ -97,8 +96,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
   <div class="info-line" id="flexSummary"></div>
   <div class="sub-section">
     <div style="font-size:14px;font-weight:600;margin-bottom:10px">详细计算</div>
-    <div class="detail-grid" id="flexDetail"></div>
-    <div style="margin-top:12px" id="flexCalcSteps"></div>
+    <div id="flexCalcSteps"></div>
   </div>
   <div class="sub-section" style="text-align:right;font-size:18px;font-weight:700;color:var(--orange)">
     月基本养老金合计：<span id="flexTotal">--</span>
@@ -273,9 +271,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
       ].join('');
 
       // 正常退休详细计算
-      var legalItems = buildPensionItems(L);
-      document.getElementById('legalDetail').innerHTML = legalItems.html;
-      document.getElementById('legalCalcSteps').innerHTML = legalItems.steps;
+      document.getElementById('legalCalcSteps').innerHTML = buildSteps(L);
       document.getElementById('legalTotal').textContent = money(L.total);
 
       // ===== 三、弹性提前退休 =====
@@ -288,9 +284,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
           '<span class="lbl">计发基数：</span><span class="val">'+money(F.baseRetire)+'</span>'
         ].join('');
 
-        var flexItems = buildPensionItems(F);
-        document.getElementById('flexDetail').innerHTML = flexItems.html;
-        document.getElementById('flexCalcSteps').innerHTML = flexItems.steps;
+        document.getElementById('flexCalcSteps').innerHTML = buildSteps(F);
         document.getElementById('flexTotal').textContent = money(F.total);
 
         // ===== 四、对比分析 =====
@@ -343,41 +337,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
       showError('加载省份配置失败: '+(e.message||e));
     });
 
-  // ===== 辅助函数：生成养老金明细 =====
-  function buildPensionItems(obj) {
-    var items = [];
-    if (obj.basicPension && obj.basicPension.amount != null) {
-      items.push({label:'基础养老金', val:obj.basicPension.amount, desc:cleanDesc(obj.basicPension.description)});
-    }
-    if (obj.personalAccount) {
-      items.push({label:'个人账户养老金', val:obj.personalAccount.amount, desc:'账户余额'+money(obj.personalAccount.balance||input.personalAccInput)+' ÷ '+obj.months+'个月'});
-    }
-    if (obj.transitionalPension && obj.transitionalPension.amount > 0) {
-      items.push({label:'过渡性养老金', val:obj.transitionalPension.amount, desc:cleanDesc(obj.transitionalPension.description)});
-    }
-    if (obj.extraPension && obj.extraPension.amount > 0) {
-      items.push({label:'增发基础养老金', val:obj.extraPension.amount, desc:cleanDesc(obj.extraPension.description)});
-    }
-    if (obj.specialAddition && obj.specialAddition.amount > 0) {
-      items.push({label:'特殊增发', val:obj.specialAddition.amount, desc:cleanDesc(obj.specialAddition.description)});
-    }
-    if (obj.adjustmentFund && obj.adjustmentFund.amount > 0) {
-      items.push({label:'调节金', val:obj.adjustmentFund.amount});
-    }
-
-    var html = items.map(function(i){
-      var d = i.desc ? '<small>'+i.desc+'</small>' : '';
-      return '<div class="row"><div class="label">'+i.label+d+'</div><div class="val">'+money(i.val)+'</div></div>';
-    }).join('');
-
-    // 计算步骤
-    var steps = items.map(function(i){
+  // ===== 辅助函数：生成计算步骤 =====
+  function buildSteps(obj) {
+    var steps = [];
+    function add(title, desc, val) {
+      if (val == null || val <= 0) return;
       var icons = {'基础养老金':'📐','个人账户养老金':'👤','过渡性养老金':'📋','增发基础养老金':'➕','特殊增发':'⭐','调节金':'⚖️'};
-      return '<div class="calc-step"><div class="step-title">'+(icons[i.label]||'📌')+' '+i.label+'</div><div class="formula">'+i.desc.replace(/[¥]/g,'').trim()+' = <span class="hl">'+money(i.val)+'</span></div></div>';
-    }).join('');
-
-    return {html:html, steps:steps};
-  }
+      var d = desc ? desc.replace(/[¥]/g,'').trim() : '';
+      steps.push('<div class="calc-step"><div class="step-title">'+(icons[title]||'📌')+' '+title+'</div><div class="formula">'+d+' = <span class="hl">'+money(val)+'</span></div></div>');
+    }
+    if (obj.basicPension && obj.basicPension.amount) add('基础养老金', cleanDesc(obj.basicPension.description), obj.basicPension.amount);
+    if (obj.personalAccount && obj.personalAccount.amount) add('个人账户养老金', '账户余额'+money(obj.personalAccount.balance||input.personalAccInput)+' ÷ '+obj.months+'个月', obj.personalAccount.amount);
+    if (obj.transitionalPension && obj.transitionalPension.amount > 0) add('过渡性养老金', cleanDesc(obj.transitionalPension.description), obj.transitionalPension.amount);
+    if (obj.extraPension && obj.extraPension.amount > 0) add('增发基础养老金', cleanDesc(obj.extraPension.description), obj.extraPension.amount);
+    if (obj.specialAddition && obj.specialAddition.amount > 0) add('特殊增发', cleanDesc(obj.specialAddition.description), obj.specialAddition.amount);
+    if (obj.adjustmentFund && obj.adjustmentFund.amount > 0) add('调节金', '', obj.adjustmentFund.amount);
+    return steps.join('');
 
 })();
 </script>
