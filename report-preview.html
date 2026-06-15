@@ -3,218 +3,160 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>养老金测算报告 - 预览</title>
+<title>养老金测算报告 - 现实调音师</title>
 <style>
 :root{--primary:#0071e3;--bg:#f5f5f7;--card:#fff;--text:#1d1d1f;--sub:#86868b;--border:#e5e5ea;--green:#34c759;--red:#ff3b30}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
 .container{max-width:820px;margin:0 auto;padding:24px 16px 60px}
-
-/* 页眉 */
-.report-header{text-align:center;padding:32px 0 24px;border-bottom:3px solid var(--primary);margin-bottom:28px}
-.report-header h1{font-size:22px;font-weight:700}
-.report-header p{color:var(--sub);font-size:13px;margin-top:6px}
-.report-header .badge{display:inline-block;background:var(--primary);color:#fff;font-size:11px;padding:2px 10px;border-radius:10px;margin-top:8px}
-
-/* 卡片 */
+.report-header{text-align:center;padding:28px 0 20px;border-bottom:2px solid var(--border);margin-bottom:24px}
+.report-header h1{font-size:20px;font-weight:700}
+.report-header p{color:var(--sub);font-size:12px;margin-top:4px}
 .card{background:var(--card);border-radius:12px;padding:24px;margin-bottom:16px;box-shadow:0 1px 6px rgba(0,0,0,.05);border:1px solid var(--border)}
-.card-title{font-size:16px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px}
-.card-title .icon{width:24px;height:24px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:13px;flex-shrink:0}
-.card-title .icon.blue{background:var(--primary)}
-.card-title .icon.green{background:var(--green)}
-.card-title .icon.orange{background:#ff9500}
-.card-title .icon.purple{background:#af52de}
-
-/* 结果大数字 */
-.result-hero{text-align:center;padding:24px 0 20px;border-bottom:2px solid var(--border);margin-bottom:20px}
-.result-hero .amount{font-size:48px;font-weight:700;color:var(--primary)}
-.result-hero .unit{font-size:16px;color:var(--sub);font-weight:400;margin-left:4px}
-.result-hero .label{font-size:14px;color:var(--sub);margin-top:4px}
-.result-hero .tag{display:inline-block;background:#e8f0fe;color:var(--primary);font-size:12px;padding:2px 10px;border-radius:8px;margin-top:8px}
-
-/* 明细网格 */
-.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
-.detail-grid .item{padding:12px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.detail-grid .item:nth-last-child(-n+2){border-bottom:none}
-.detail-grid .item .label{font-size:14px;color:var(--text)}
-.detail-grid .item .label small{display:block;font-size:11px;color:var(--sub);font-weight:400}
-.detail-grid .item .val{font-size:18px;font-weight:600;text-align:right}
-.detail-grid .item .val.total{color:var(--primary)}
-
-/* 计算过程 */
-.calc-step{padding:14px 16px;background:#f8f9fa;border-radius:8px;margin-bottom:10px}
+.card-title{font-size:15px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.card-title .icon{width:22px;height:22px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:12px;flex-shrink:0}
+.card-title .icon.blue{background:var(--primary)}.card-title .icon.green{background:var(--green)}.card-title .icon.orange{background:#ff9500}.card-title .icon.purple{background:#af52de}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.info-grid .item{display:flex;flex-direction:column;padding:10px 14px;background:#f8f9fa;border-radius:8px}
+.info-grid .item .lbl{font-size:12px;color:var(--sub)}
+.info-grid .item .val{font-size:15px;font-weight:600;margin-top:2px}
+.info-line{display:flex;gap:24px;flex-wrap:wrap;padding:6px 0;font-size:14px}
+.info-line .lbl{color:var(--sub);white-space:nowrap}
+.info-line .val{font-weight:600}
+.detail-grid .row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)}
+.detail-grid .row:last-child{border-bottom:none}
+.detail-grid .row .label{font-size:14px}
+.detail-grid .row .label small{display:block;font-size:11px;color:var(--sub);font-weight:400}
+.detail-grid .row .val{font-size:17px;font-weight:600;text-align:right}
+.detail-grid .row .val.primary{color:var(--primary)}
+.calc-step{padding:12px 14px;background:#f8f9fa;border-radius:8px;margin-bottom:8px}
 .calc-step:last-child{margin-bottom:0}
-.calc-step .step-title{font-size:13px;font-weight:600;color:var(--sub);margin-bottom:4px}
-.calc-step .formula{font-size:14px;color:var(--text);font-family:'SF Mono','Menlo','Consolas',monospace;line-height:1.8;word-break:break-all}
-.calc-step .formula .highlight{color:var(--primary);font-weight:600}
-
-/* 参数表 */
-.param-table{width:100%;border-collapse:collapse;font-size:14px}
-.param-table th{text-align:left;padding:8px 12px;background:#f8f9fa;font-weight:600;color:var(--sub);font-size:12px;border-bottom:1px solid var(--border)}
-.param-table td{padding:10px 12px;border-bottom:1px solid var(--border)}
-.param-table tr:last-child td{border-bottom:none}
-.param-table td:last-child{text-align:right;font-weight:600}
-
-/* 建议 */
-.suggestion{padding:16px;border-radius:8px;margin-bottom:12px;border-left:4px solid}
-.suggestion.primary{border-color:var(--primary);background:#f0f7ff}
+.calc-step .step-title{font-size:13px;font-weight:600;color:var(--sub);margin-bottom:3px}
+.calc-step .formula{font-size:13px;font-family:'SF Mono','Menlo','Consolas',monospace;line-height:1.7;word-break:break-all}
+.calc-step .formula .hl{color:var(--primary);font-weight:600}
+.compare-box{display:flex;gap:16px;margin:12px 0}
+.compare-box .box{flex:1;text-align:center;padding:14px;border-radius:8px;border:1px solid var(--border)}
+.compare-box .box .lbl{font-size:12px;color:var(--sub)}
+.compare-box .box .num{font-size:22px;font-weight:700;margin:4px 0}
+.compare-box .box .sub{font-size:12px;color:var(--sub)}
+.compare-box .box.highlight{border-color:var(--primary);background:#f0f7ff}
+.suggestion{padding:14px 16px;border-radius:8px;margin-bottom:10px;border-left:4px solid;font-size:14px;line-height:1.7}
+.suggestion.blue{border-color:var(--primary);background:#f0f7ff}
 .suggestion.green{border-color:var(--green);background:#f0fff4}
 .suggestion.orange{border-color:#ff9500;background:#fff8f0}
-.suggestion h4{font-size:15px;margin-bottom:6px}
-.suggestion p{font-size:14px;color:#4a4a4a;line-height:1.7}
-
-/* 页脚 */
-.report-footer{text-align:center;padding:24px 0;color:var(--sub);font-size:12px;border-top:1px solid var(--border);margin-top:28px}
-.report-footer p{margin-bottom:4px}
-
-/* 弹性对比 */
-.flex-compare{display:flex;gap:16px;margin-top:16px}
-.flex-compare .box{flex:1;text-align:center;padding:16px;border-radius:8px;border:1px solid var(--border)}
-.flex-compare .box .lbl{font-size:12px;color:var(--sub)}
-.flex-compare .box .num{font-size:22px;font-weight:700;margin:4px 0}
-.flex-compare .box .sub{font-size:12px;color:var(--sub)}
-.flex-compare .box.highlight{border-color:var(--primary);background:#f0f7ff}
-
-/* 参数两列 */
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media(max-width:600px){.two-col{grid-template-columns:1fr}}
-.two-col .item{display:flex;flex-direction:column;padding:10px 12px;background:#f8f9fa;border-radius:8px}
-.two-col .item .lbl{font-size:12px;color:var(--sub)}
-.two-col .item .val{font-size:16px;font-weight:600;margin-top:2px}
-
-/* 打印 */
-@media print{body{background:#fff}.card{box-shadow:none;border:1px solid #ddd;break-inside:avoid}.container{padding:16px}}
+.suggestion h4{font-size:14px;margin-bottom:4px}
+.suggestion p{color:#4a4a4a}
+.sub-section{margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+.tag{display:inline-block;background:#e8f0fe;color:var(--primary);font-size:11px;padding:2px 10px;border-radius:8px;margin:2px}
+.footer{text-align:center;padding:20px 0;color:var(--sub);font-size:11px;border-top:1px solid var(--border);margin-top:20px;line-height:1.8}
 </style>
 </head>
 <body>
 <div class="container">
 
-<!-- 报告头部 -->
 <div class="report-header">
-  <h1>📄 基本养老金测算报告</h1>
-  <p>生成时间：<span id="genTime">--</span> · 报告编号：<span id="reportId">--</span></p>
-  <span class="badge">仅供参考，实际以社保经办机构核定为准</span>
+  <h1>现实调音师 · 养老金计算引擎</h1>
+  <p id="headerInfo">--</p>
 </div>
 
-<!-- 加载状态 / 错误 -->
 <div id="loading" class="card" style="text-align:center;padding:40px">
-  <div style="font-size:18px;margin-bottom:8px">⏳ 正在生成报告...</div>
-  <div style="font-size:14px;color:var(--sub)">根据您的参保信息进行计算</div>
+  <div style="font-size:16px;margin-bottom:6px">⏳ 正在生成报告...</div>
+  <div style="font-size:13px;color:var(--sub)">根据您的参保信息进行计算</div>
 </div>
 <div id="error" class="card" style="display:none;text-align:center;padding:40px">
-  <div style="font-size:18px;margin-bottom:8px">❌ 报告生成失败</div>
-  <div id="errorMsg" style="font-size:14px;color:var(--red)"></div>
+  <div style="font-size:16px;margin-bottom:6px">❌ 报告生成失败</div>
+  <div id="errorMsg" style="font-size:13px;color:var(--red)"></div>
 </div>
 
 <div id="reportContent" style="display:none">
 
-<!-- 一、核心结果 -->
+<!-- 一、个人情况 -->
 <div class="card">
-  <div class="card-title"><span class="icon blue">¥</span> 测算结果</div>
-  <div class="result-hero">
-    <div class="amount" id="totalAmount">--</div>
-    <div class="unit">元 / 月</div>
-    <div class="label">月基本养老金（法定退休）</div>
-    <div class="tag" id="retireInfo">--</div>
-  </div>
-  <div class="detail-grid" id="detailGrid"></div>
+  <div class="card-title"><span class="icon blue">👤</span> 个人情况</div>
+  <div class="info-grid" id="personalInfo"></div>
 </div>
 
-<!-- 弹性退休对比 -->
+<!-- 二、正常退休测算 -->
+<div class="card">
+  <div class="card-title"><span class="icon green">📋</span> 正常退休测算</div>
+  <div class="info-line" id="legalSummary"></div>
+  <div class="sub-section">
+    <div style="font-size:14px;font-weight:600;margin-bottom:10px">详细计算</div>
+    <div class="detail-grid" id="legalDetail"></div>
+    <div style="margin-top:12px" id="legalCalcSteps"></div>
+  </div>
+  <div class="sub-section" style="text-align:right;font-size:18px;font-weight:700;color:var(--primary)">
+    月基本养老金合计：<span id="legalTotal">--</span>
+  </div>
+</div>
+
+<!-- 三、弹性提前退休测算 -->
 <div class="card" id="flexCard" style="display:none">
-  <div class="card-title"><span class="icon orange">⇄</span> 弹性提前退休对比</div>
-  <div class="flex-compare">
+  <div class="card-title"><span class="icon orange">⏰</span> 弹性提前退休测算</div>
+  <div class="info-line" id="flexSummary"></div>
+  <div class="sub-section">
+    <div style="font-size:14px;font-weight:600;margin-bottom:10px">详细计算</div>
+    <div class="detail-grid" id="flexDetail"></div>
+    <div style="margin-top:12px" id="flexCalcSteps"></div>
+  </div>
+  <div class="sub-section" style="text-align:right;font-size:18px;font-weight:700;color:var(--orange)">
+    月基本养老金合计：<span id="flexTotal">--</span>
+  </div>
+</div>
+
+<!-- 四、两项对比 -->
+<div class="card" id="compareCard" style="display:none">
+  <div class="card-title"><span class="icon purple">⇄</span> 法定 vs 弹性提前 对比分析</div>
+  <div class="compare-box">
     <div class="box highlight">
       <div class="lbl">法定退休</div>
-      <div class="num" id="legalTotal">--</div>
-      <div class="sub" id="legalDate">--</div>
+      <div class="num" id="cmpLegal">--</div>
+      <div class="sub" id="cmpLegalDate">--</div>
     </div>
     <div class="box">
       <div class="lbl">弹性提前</div>
-      <div class="num" id="flexTotal">--</div>
-      <div class="sub" id="flexDate">--</div>
+      <div class="num" id="cmpFlex">--</div>
+      <div class="sub" id="cmpFlexDate">--</div>
     </div>
   </div>
-  <div style="font-size:13px;color:var(--sub);margin-top:12px;text-align:center" id="flexNote">--</div>
+  <div id="cmpDetail" style="font-size:14px;line-height:1.9;padding:14px;background:#f8f9fa;border-radius:8px"></div>
 </div>
 
-<!-- 二、关键参数 -->
+<!-- 五、建议 -->
 <div class="card">
-  <div class="card-title"><span class="icon purple">⚙</span> 关键参数</div>
-  <div class="two-col" id="paramsGrid"></div>
-</div>
-
-<!-- 三、计算过程 -->
-<div class="card">
-  <div class="card-title"><span class="icon green">∑</span> 计算过程</div>
-  <div id="calcSteps"></div>
-</div>
-
-<!-- 四、缴费建议 -->
-<div class="card">
-  <div class="card-title"><span class="icon orange">💡</span> 缴费规划建议</div>
-  
-  <div class="suggestion primary">
-    <h4>📌 基本情况分析</h4>
-    <p id="situationAnalysis">根据您的参保信息，您将累计缴费 <strong>--</strong> 年（含视同缴费 <strong>--</strong> 年），达到法定退休条件。<span id="situationExtra"></span></p>
+  <div class="card-title"><span class="icon orange">💡</span> 分析与建议</div>
+  <div class="suggestion blue">
+    <h4>📌 持续缴费的保障意义</h4>
+    <p id="sugKeep">无论您是企业在职职工还是灵活就业人员，持续缴纳养老保险是保障退休后基本生活的基石。缴费年限越长、缴费基数越高，退休后养老金水平就越高。每多缴1年，基础养老金大约提升1%，这是国家养老金计发办法的核心激励原则。</p>
   </div>
-
-  <div class="suggestion green" id="suggestionKeep">
-    <h4>✅ 持续缴费建议</h4>
-    <p>如果您目前仍在单位就业，建议持续缴纳至退休。缴费年限越长、缴费指数越高，退休后养老金水平越高。每多缴1年，基础养老金大约提升1%。</p>
+  <div class="suggestion orange">
+    <h4>🔄 退休时间的选择</h4>
+    <p id="sugTime">退休时间的选择需要综合算好账：<strong>经济账</strong>（弹性提前退休更早开始领钱但每月减少，延迟退休则每月更多）、<strong>健康账</strong>（身体状况是否允许继续工作）、<strong>生活账</strong>（家庭经济压力、精神压力等）。</p>
   </div>
-
-  <div class="suggestion orange" id="suggestionFlex">
-    <h4>🔄 灵活就业续缴方案</h4>
-    <p>如果您目前处于离职/自主择业状态，建议以灵活就业人员身份继续缴纳养老保险：</p>
-    <p style="margin-top:6px">
-      ① <strong>缴费基数选择</strong>：可在当地社平工资60%-300%之间自主选择。<br>
-      ② <strong>建议档位</strong>：建议按 <span id="suggestLevel">100%</span> 档位缴纳（约 <span id="suggestAmount">--</span> 元/月），平衡投入与回报。<br>
-      ③ <strong>最低年限</strong>：累计缴满15年是领取养老金的基本条件，您目前已有 <span id="currentPaidYears">--</span> 年缴费记录。<br>
-      ④ <strong>医保注意</strong>：灵活就业医保需单独办理，建议同步缴纳，避免医保断档。
-    </p>
-  </div>
-
-  <div class="suggestion primary">
-    <h4>🔍 个性化规划</h4>
-    <p id="personalAdvice">如需针对您个人情况的详细规划（缴费档位测算、退休收入目标、补充养老方案等），<strong>请联系客服获取一对一咨询服务</strong>。</p>
-  </div>
-
-  <div style="margin-top:12px;font-size:13px;color:var(--sub);padding:12px;background:#f8f9fa;border-radius:8px">
-    <strong>💡 提示</strong>：如需针对您个人情况的详细规划，请联系客服获取一对一咨询服务。详细免责条款见下方「相关说明与免责」。
+  <div class="suggestion green">
+    <h4>📊 核心经济账判断</h4>
+    <p id="sugEcon">一个关键经济指标：如果弹性提前退休后每月养老金 <strong>高于</strong> 您继续工作的月净收入（扣除社保缴费后），提前退休可能更划算。反之则延迟退休的经济收益更大。</p>
   </div>
 </div>
 
-<!-- 五、相关说明与免责 -->
+<!-- 六、免责 -->
 <div class="card">
   <div class="card-title"><span class="icon purple">📋</span> 相关说明与免责</div>
-  <div style="font-size:13px;color:#4a4a4a;line-height:1.8">
-    <p><strong>1. 数据来源</strong><br>
-    本报告中的计发基数、记账利率、过渡系数等参数，均依据各省人力资源和社会保障厅官方文件及国家统一公布数据。数据截至2026年6月，如有更新以官方最新文件为准。</p>
-
-    <p style="margin-top:12px"><strong>2. 计算结果说明</strong><br>
-    本报告基于您自行填写的参保参数（出生年月、参工时间、缴费指数、个人账户余额等），结合现行养老金计发办法进行测算。测算结果仅供您个人参考，<strong>不等同于社保经办机构最终核定的养老金数额</strong>。</p>
-
-    <p style="margin-top:12px"><strong>3. 政策风险提示</strong><br>
-    养老保险政策可能随国家及地方规定调整。特别是延迟退休政策（国办发〔2025〕5号）处于渐进实施阶段，具体执行细则以退休时当地社保部门规定为准。</p>
-
-    <p style="margin-top:12px"><strong>4. 缴费建议说明</strong><br>
-    报告中涉及的缴费规划建议为通用性参考，不构成任何形式的投资或保险购买建议。如需个性化社保规划，建议通过官方渠道咨询当地社保经办机构。</p>
-
-    <p style="margin-top:12px"><strong>5. 责任限制</strong><br>
-    本平台及报告提供方对因使用本报告内容而产生的任何直接或间接损失不承担法律责任。用户应自行判断报告内容并承担相关决策风险。</p>
-
-    <p style="margin-top:12px"><strong>6. 信息保密</strong><br>
-    您填写的参保参数仅用于本次测算，不会存储在服务器端。如需保存报告，建议自行下载或截图。</p>
+  <div style="font-size:12px;color:#4a4a4a;line-height:1.8">
+    <p><strong>1. 数据来源</strong> — 计发基数、记账利率、过渡系数等参数依据各省人社厅官方文件及国家统一公布数据，截至2026年6月。</p>
+    <p style="margin-top:8px"><strong>2. 计算结果说明</strong> — 基于您自行填写的参保参数和现行养老金计发办法测算，<strong>不等同于社保经办机构最终核定的养老金数额</strong>。</p>
+    <p style="margin-top:8px"><strong>3. 政策风险</strong> — 养老保险政策可能调整，特别是延迟退休政策（国办发〔2025〕5号）处于渐进实施阶段，以退休时当地社保部门规定为准。</p>
+    <p style="margin-top:8px"><strong>4. 建议性质</strong> — 报告中的分析与建议为通用性参考，不构成任何形式的投资或保险购买建议。</p>
+    <p style="margin-top:8px"><strong>5. 责任限制</strong> — 本平台对因使用本报告内容而产生的任何直接或间接损失不承担法律责任。</p>
+    <p style="margin-top:8px"><strong>6. 信息保密</strong> — 您填写的参保参数仅用于本次测算，不会存储在服务器端。</p>
   </div>
 </div>
 
 </div>
 
-<!-- 报告页脚 -->
-<div class="report-footer" id="reportFooter" style="display:none">
-  <p>本报告由 养老金计算平台 生成 · 数据来源各省人社厅官方文件</p>
-  <p>数据截至2026年6月 · 报告仅供参考，不构成任何投资或决策建议</p>
+<div class="footer" id="reportFooter" style="display:none">
+  <p>现实调音师 · 养老金计算引擎 · 数据来源各省人社厅官方文件</p>
+  <p>数据截至2026年6月 · 本报告仅供参考，实际以社保经办机构核定为准</p>
 </div>
 
 </div>
@@ -230,7 +172,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
     return;
   }
 
-  // ===== 从URL读取参数 =====
+  function showError(msg) {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('error').style.display = 'block';
+    document.getElementById('errorMsg').textContent = msg;
+  }
+
   var params = new URLSearchParams(window.location.search);
   var province = params.get('province') || 'jilin';
 
@@ -247,239 +194,168 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
     retireType: 'standard'
   };
 
-  // 显示报告生成基本信息
-  document.getElementById('genTime').textContent = new Date().toLocaleString('zh-CN');
-  document.getElementById('reportId').textContent = 'RP' + Date.now().toString(36).toUpperCase();
+  var provinceNames = {
+    jilin:'吉林省', liaoning:'辽宁省', heilongjiang:'黑龙江省',
+    beijing:'北京市', tianjin:'天津市', shanghai:'上海市', chongqing:'重庆市',
+    hebei:'河北省', shanxi:'山西省', neimenggu:'内蒙古',
+    shandong:'山东省', henan:'河南省', jiangsu:'江苏省',
+    zhejiang:'浙江省', anhui:'安徽省', fujian:'福建省',
+    jiangxi:'江西省', hubei:'湖北省', hunan:'湖南省',
+    guangdong:'广东省', guangxi:'广西', hainan:'海南省',
+    sichuan:'四川省', guizhou:'贵州省', yunnan:'云南省',
+    shaanxi:'陕西省', gansu:'甘肃省', qinghai:'青海省',
+    ningxia:'宁夏', xinjiang:'新疆', xizang:'西藏'
+  };
+
+  function fmtDate(y,m){return (y||'--')+'年'+(m||'--')+'月';}
+  function fmtObj(d){return d?fmtDate(d.year,d.month):'--';}
+  function cleanDesc(d){if(!d)return'';return d.replace(/=\s*[\d,.]+元$/,'').replace(/1\.00%/g,'1%').trim();}
+  function money(v){return'¥'+(v||0).toLocaleString('zh-CN',{minimumFractionDigits:2});}
+  function genderLabel(gt){return gt==='male'?'男职工':gt==='fw'?'女工人':gt==='fc'?'女干部':'女';}
 
   // ===== 加载省份配置并计算 =====
-  fetch('js/provinces/' + province + '.json')
-    .then(function(r) { return r.json(); })
-    .then(function(config) {
-      // 省份中文名
-      var provinceNames = {
-        jilin:'吉林', liaoning:'辽宁', heilongjiang:'黑龙江',
-        beijing:'北京', tianjin:'天津', shanghai:'上海', chongqing:'重庆',
-        hebei:'河北', shanxi:'山西', neimenggu:'内蒙古',
-        shandong:'山东', henan:'河南', jiangsu:'江苏',
-        zhejiang:'浙江', anhui:'安徽', fujian:'福建',
-        jiangxi:'江西', hubei:'湖北', hunan:'湖南',
-        guangdong:'广东', guangxi:'广西', hainan:'海南',
-        sichuan:'四川', guizhou:'贵州', yunnan:'云南',
-        shaanxi:'陕西', gansu:'甘肃', qinghai:'青海',
-        ningxia:'宁夏', xinjiang:'新疆', xizang:'西藏'
-      };
-      var pName = provinceNames[province] || province;
-
-      // 执行计算
-      var result = eng.calculate(config, input);
-      var L = result.legal;
-      var F = result.flex;
-      var C = result.comparison;
-      var inputParsed = result.inputData || input;
-
-      // 隐藏加载、显示内容
+  fetch('js/provinces/'+province+'.json')
+    .then(function(r){return r.json();})
+    .then(function(config){
+      var pName = provinceNames[province]||province;
+      document.getElementById('headerInfo').textContent = pName + ' · ' + genderLabel(input.genderType) + ' · 养老金测算报告';
       document.getElementById('loading').style.display = 'none';
       document.getElementById('reportContent').style.display = 'block';
       document.getElementById('reportFooter').style.display = 'block';
 
-      // ===== 核心结果 =====
-      var total = L.total || 0;
-      document.getElementById('totalAmount').textContent = '¥' + total.toLocaleString('zh-CN', {minimumFractionDigits:2});
-      // 日期格式化统一
-      function fmtDate(y, m) { return (y || '--') + '年' + (m || '--') + '月'; }
-      function fmtDateObj(d) { return d ? fmtDate(d.year, d.month) : '--'; }
+      var result = eng.calculate(config, input);
+      var L = result.legal;
+      var F = result.flex;
+      var C = result.comparison;
 
-      document.getElementById('retireInfo').textContent = pName + ' · ' + (L.ageStr || '--') + '退休 · ' + fmtDateObj(L.date);
+      // ===== 一、个人情况 =====
+      document.getElementById('personalInfo').innerHTML = [
+        {lbl:'退休省份', val:pName},
+        {lbl:'城市/地区', val: input.cityType==='prov'?'全省默认':input.cityType},
+        {lbl:'人员身份', val:genderLabel(input.genderType)},
+        {lbl:'出生年月', val:fmtDate(input.birthYear,input.birthMonth)},
+        {lbl:'参加工作时间', val:fmtDate(input.workYear,input.workMonth)},
+        {lbl:'平均缴费指数', val:input.avgIndex.toFixed(4)},
+        {lbl:'个人账户余额', val:money(input.personalAccInput)}
+      ].map(function(i){return'<div class="item"><span class="lbl">'+i.lbl+'</span><span class="val">'+i.val+'</span></div>';}).join('');
 
-      // 明细列表（description去掉末尾的"= XXX元"）
-      function cleanDesc(d) {
-        if (!d) return '';
-        return d.replace(/=\s*[\d,.]+元$/, '').replace(/1\.00%/g, '1%').trim();
-      }
-      var items = [
-        {label:'基础养老金', val:L.basicPension.amount, desc:cleanDesc(L.basicPension.description)},
-        {label:'个人账户养老金', val:L.personalAccount.amount, desc:'账户余额¥' + (L.personalAccount.balance || 0).toLocaleString() + ' ÷ ' + L.months + '个月'},
-      ];
-      if (L.transitionalPension && L.transitionalPension.amount > 0)
-        items.push({label:'过渡性养老金', val:L.transitionalPension.amount, desc:cleanDesc(L.transitionalPension.description)});
-      if (L.extraPension && L.extraPension.amount > 0)
-        items.push({label:'增发基础养老金', val:L.extraPension.amount, desc:cleanDesc(L.extraPension.description)});
-      if (L.specialAddition && L.specialAddition.amount > 0)
-        items.push({label:'特殊增发', val:L.specialAddition.amount, desc:cleanDesc(L.specialAddition.description)});
-      if (L.adjustmentFund && L.adjustmentFund.amount > 0)
-        items.push({label:'调节金', val:L.adjustmentFund.amount, desc:cleanDesc(L.adjustmentFund.description)});
+      // ===== 二、正常退休测算 =====
+      document.getElementById('legalSummary').innerHTML = [
+        '<span class="lbl">退休时间：</span><span class="val">'+fmtObj(L.date)+'</span>',
+        '<span class="lbl">退休年龄：</span><span class="val">'+(L.ageStr||'--')+'</span>',
+        '<span class="lbl">累计缴费：</span><span class="val">'+(L.totalYears||0).toFixed(2)+'年</span>',
+        '<span class="lbl">视同缴费：</span><span class="val">'+(L.sightYears||0).toFixed(2)+'年</span>',
+        '<span class="lbl">实际缴费：</span><span class="val">'+(L.actualYears||0).toFixed(2)+'年</span>',
+        '<span class="lbl">计发基数：</span><span class="val">'+money(L.baseRetire)+'</span>',
+        '<span class="lbl">是否满足最低年限：</span><span class="val" style="color:'+(L.meetMin?'var(--green)':'var(--red)')+'">'+(L.meetMin?'✅ 是':'❌ 否')+'</span>'
+      ].join('');
 
-      document.getElementById('detailGrid').innerHTML = items.map(function(item) {
-        return '<div class="item"><div class="label">' + item.label + '<small>' + (item.desc || '') + '</small></div><div class="val">¥' + (item.val || 0).toLocaleString('zh-CN', {minimumFractionDigits:2}) + '</div></div>';
-      }).join('') +
-      '<div class="item"><div class="label"><strong>月基本养老金合计</strong></div><div class="val total">¥' + total.toLocaleString('zh-CN', {minimumFractionDigits:2}) + '</div></div>';
+      // 正常退休详细计算
+      var legalItems = buildPensionItems(L);
+      document.getElementById('legalDetail').innerHTML = legalItems.html;
+      document.getElementById('legalCalcSteps').innerHTML = legalItems.steps;
+      document.getElementById('legalTotal').textContent = money(L.total);
 
-      // ===== 弹性退休 =====
+      // ===== 三、弹性提前退休 =====
       if (C && C.canFlex && F && F.total) {
         document.getElementById('flexCard').style.display = 'block';
-        document.getElementById('legalTotal').textContent = '¥' + (L.total || 0).toFixed(2);
-        document.getElementById('legalDate').textContent = fmtDateObj(L.date);
-        document.getElementById('flexTotal').textContent = '¥' + (F.total || 0).toFixed(2);
-        document.getElementById('flexDate').textContent = fmtDateObj(F.date);
-        document.getElementById('flexNote').innerHTML = 
-          '提前 ' + C.flexAdvance + ' 个月退休，每月少领约 ¥' + ((L.total || 0) - (F.total || 0)).toFixed(2) +
-          '，提前多领约 ¥' + ((F.total || 0) * (C.flexAdvance || 0)).toFixed(0) + '。';
-        // 盈亏平衡分析
-        var beDiff = (L.total||0) - (F.total||0);
-        var beExtra = (F.total||0) * (C.flexAdvance||0);
-        if (beDiff > 0) {
-          var beMonths = Math.ceil(beExtra / beDiff);
-          var beY = F.date.year + Math.floor((F.date.month + beMonths - 1) / 12);
-          var beM = ((F.date.month + beMonths - 1) % 12) + 1;
-          document.getElementById('flexNote').innerHTML +=
-            '<br><strong>盈亏平衡分析：</strong>约 ' + beMonths + ' 个月（' + (beMonths/12).toFixed(1) + '年）后追平，约 ' + beY + '年' + beM + '月起反超。';
-        }
+        document.getElementById('flexSummary').innerHTML = [
+          '<span class="lbl">最早退休时间：</span><span class="val">'+fmtObj(F.date)+'</span>',
+          '<span class="lbl">退休年龄：</span><span class="val">'+(F.ageStr||'--')+'</span>',
+          '<span class="lbl">累计缴费：</span><span class="val">'+(F.totalYears||0).toFixed(2)+'年</span>',
+          '<span class="lbl">计发基数：</span><span class="val">'+money(F.baseRetire)+'</span>'
+        ].join('');
+
+        var flexItems = buildPensionItems(F);
+        document.getElementById('flexDetail').innerHTML = flexItems.html;
+        document.getElementById('flexCalcSteps').innerHTML = flexItems.steps;
+        document.getElementById('flexTotal').textContent = money(F.total);
+
+        // ===== 四、对比分析 =====
+        document.getElementById('compareCard').style.display = 'block';
+        document.getElementById('cmpLegal').textContent = money(L.total);
+        document.getElementById('cmpLegalDate').textContent = fmtObj(L.date);
+        document.getElementById('cmpFlex').textContent = money(F.total);
+        document.getElementById('cmpFlexDate').textContent = fmtObj(F.date);
+
+        var diff = (L.total||0) - (F.total||0);
+        var adv = C.flexAdvance||0;
+        var extraTotal = (F.total||0) * adv;
+        var beMonths = diff > 0 ? Math.ceil(extraTotal / diff) : 0;
+        var fd = F.date;
+        var beY = fd.year + Math.floor((fd.month + beMonths - 1) / 12);
+        var beM = ((fd.month + beMonths - 1) % 12) + 1;
+
+        document.getElementById('cmpDetail').innerHTML =
+          '① <strong>早领时间：</strong>弹性提前 <strong>'+adv+'个月</strong>退休（'+fmtObj(F.date)+' 至 '+fmtObj(L.date)+'）<br>'+
+          '② <strong>提前多领总额：</strong>弹性退休期间累计多领约 <strong>'+money(extraTotal)+'</strong>（'+money(F.total)+' × '+adv+'个月）<br>'+
+          '③ <strong>每月差额：</strong>弹性退休每月少领 <strong>'+money(diff)+'</strong>（法定 '+money(L.total)+' - 弹性 '+money(F.total)+'）<br>'+
+          (diff > 0 ? '④ <strong>盈亏平衡：</strong>约 <strong>'+beMonths+'个月（'+(beMonths/12).toFixed(1)+'年）</strong>后追平，约 <strong>'+beY+'年'+beM+'月</strong>起反超。<br>'+
+          '   即如果领取养老金超过 <strong>'+(beMonths/12).toFixed(1)+'年</strong>（约'+beY+'年后），正常退休的总收入将反超弹性提前退休。' : '');
       }
 
-      // ===== 关键参数 =====
-      var paramsList = [
-        {lbl:'退休省份', val:pName},
-        {lbl:'性别', val: (input.genderType === 'male' || input.gender === 'male') ? '男' : '女'},
-        {lbl:'出生年月', val:fmtDate(input.birthYear, input.birthMonth)},
-        {lbl:'参工时间', val:fmtDate(input.workYear, input.workMonth)},
-        {lbl:'退休日期', val:fmtDateObj(L.date)},
-        {lbl:'退休年龄', val:L.ageStr || '--'},
-        {lbl:'延迟退休月数', val:L.age ? (L.age - (L.ageStr.includes('岁') ? parseInt(L.ageStr) : 60)).toFixed(0) + '个月' : '--'},
-        {lbl:'累计缴费年限', val:(L.totalYears || 0).toFixed(2) + '年'},
-        {lbl:'实际缴费年限', val:(L.actualYears || 0).toFixed(2) + '年'},
-        {lbl:'视同缴费年限', val:(L.sightYears || 0).toFixed(2) + '年'},
-        {lbl:'平均缴费指数', val:(input.avgIndex || 1.0).toFixed(4)},
-        {lbl:'计发月数', val:L.months + '个月'},
-        {lbl:'退休地计发基数', val:'¥' + (L.baseRetire || 0).toLocaleString()},
-        {lbl:'全省计发基数', val:'¥' + (L.baseProv || 0).toLocaleString()},
-        {lbl:'替代率', val:(L.rate || 0).toFixed(1) + '%'},
-        {lbl:'是否满足最低年限', val:L.meetMin ? '✅ 是' : '❌ 否（仅' + (L.totalYears || 0).toFixed(2) + '年）'}
-      ];
-      document.getElementById('paramsGrid').innerHTML = paramsList.map(function(p) {
-        return '<div class="item"><span class="lbl">' + p.lbl + '</span><span class="val">' + p.val + '</span></div>';
-      }).join('');
+      // ===== 五、建议 =====
+      // 判断用户身份
+      var isFlexible = input.genderType === 'eco_male' || input.genderType === 'eco_female';
+      var isMale = input.genderType === 'male';
+      var isMeet = L.meetMin;
+      var totalYrs = L.totalYears||0;
 
-      // ===== 计算过程 =====
-      // cleanDesc 已在上面定义
-      var steps = [];
-
-      // 基础养老金
-      if (L.basicPension && L.basicPension.amount != null) {
-        steps.push({
-          title: '基础养老金',
-          formula: cleanDesc(L.basicPension.description),
-          result: '¥' + (L.basicPension.amount || 0).toFixed(2)
-        });
+      if (!isMeet) {
+        document.getElementById('sugKeep').innerHTML =
+          '您目前累计缴费 <strong>'+(totalYrs).toFixed(2)+'年</strong>，尚未达到法定最低缴费年限。'+
+          '<strong>首要目标是确保缴费年限达到最低要求</strong>，建议尽快以灵活就业身份续缴，避免断缴影响累计年限。'+
+          '每多缴1年，基础养老金约提升1%，退休后的生活保障就越充分。';
+      } else if (isFlexible) {
+        document.getElementById('sugKeep').innerHTML =
+          '您作为灵活就业人员，养老保险费用全部由个人承担。建议根据自身经济状况，在社保缴费基数（当地社平工资60%-300%）范围内选择合适的缴费档位。'+
+          '缴费年限越长、基数越高，退休后的养老金水平就越高。持续缴费是保障退休生活的最可靠方式。';
       } else {
-        steps.push({
-          title: '基础养老金',
-          formula: '未计算出有效值（请检查缴费年限等参数）',
-          result: '--'
-        });
+        document.getElementById('sugKeep').innerHTML =
+          '您作为企业在职职工，养老保险由单位和个人共同缴纳，是目前性价比最高的养老保障方式。'+
+          '建议保持连续缴费状态，避免因换工作或离职导致断缴。如有断缴，尽快以灵活就业身份续上，确保累计缴费年限不断增长。';
       }
-
-      // 个人账户养老金
-      if (L.personalAccount) {
-        steps.push({
-          title: '个人账户养老金',
-          formula: '个人账户余额 ¥' + (L.personalAccount.balance || input.personalAccInput || 0).toLocaleString() + ' ÷ 计发月数 ' + L.months + '个月 = ¥' + (L.personalAccount.amount || 0).toFixed(2),
-          result: '¥' + (L.personalAccount.amount || 0).toFixed(2)
-        });
-      }
-
-      // 过渡性养老金
-      if (L.transitionalPension && L.transitionalPension.amount > 0) {
-        steps.push({
-          title: '过渡性养老金',
-          formula: cleanDesc(L.transitionalPension.description),
-          result: '¥' + (L.transitionalPension.amount || 0).toFixed(2)
-        });
-      }
-
-      // 增发养老金
-      if (L.extraPension && L.extraPension.amount > 0) {
-        steps.push({
-          title: '增发基础养老金',
-          formula: cleanDesc(L.extraPension.description),
-          result: '¥' + (L.extraPension.amount || 0).toFixed(2)
-        });
-      }
-
-      // 调节金
-      if (L.adjustmentFund && L.adjustmentFund.amount > 0) {
-        steps.push({
-          title: '调节金',
-          formula: L.adjustmentFund.description || '--',
-          result: '¥' + (L.adjustmentFund.amount || 0).toFixed(2)
-        });
-      }
-
-      // 特殊增发
-      if (L.specialAddition && L.specialAddition.amount > 0) {
-        steps.push({
-          title: '特殊增发',
-          formula: L.specialAddition.description || '--',
-          result: '¥' + (L.specialAddition.amount || 0).toFixed(2)
-        });
-      }
-
-      document.getElementById('calcSteps').innerHTML = steps.map(function(s) {
-        var iconMap = {
-          '基础养老金':'📐',
-          '个人账户养老金':'👤',
-          '过渡性养老金':'📋',
-          '增发基础养老金':'➕',
-          '调节金':'⚖️',
-          '特殊增发':'⭐'
-        };
-        return '<div class="calc-step"><div class="step-title">' + (iconMap[s.title] || '📌') + ' ' + s.title + '</div><div class="formula">' + s.formula + ' = <span class="highlight">' + s.result + '</span></div></div>';
-      }).join('');
-
-      // ===== 缴费建议 =====
-      var totalYrs = L.totalYears || 0;
-      var sightYrs = L.sightYears || 0;
-      var actualYrs = L.actualYears || (totalYrs - sightYrs);
-      var isMeetMin = L.meetMin;
-
-      document.getElementById('situationAnalysis').innerHTML =
-        '根据您的参保信息，您将累计缴费 <strong>' + totalYrs.toFixed(2) + '</strong> 年（含视同缴费 <strong>' + sightYrs.toFixed(2) + '</strong> 年），' +
-        (isMeetMin ? '已达到' : '未达到') + '法定最低缴费年限（' + (L.minYears || 15) + '年）。' +
-        (isMeetMin ? '' : '⚠️ 需要继续缴费至满足最低要求。');
-
-      document.getElementById('currentPaidYears').textContent = actualYrs.toFixed(2);
-
-      // 建议缴费档位
-      var baseSalary = L.baseProv || L.baseRetire || 8000;
-      var currentLevel = input.avgIndex || 1.0;
-      var suggestLevel;
-      if (currentLevel < 0.8) suggestLevel = '80%';
-      else if (currentLevel < 1.0) suggestLevel = '100%';
-      else if (currentLevel < 1.5) suggestLevel = '100%';
-      else suggestLevel = '当前档位';
-      var suggestAmount = Math.round(baseSalary * parseFloat(suggestLevel.replace('%','')) / 100 * 0.2);
-      document.getElementById('suggestLevel').textContent = suggestLevel;
-      document.getElementById('suggestAmount').textContent = suggestAmount.toLocaleString();
-
-      // 个性化建议
-      var advice = '';
-      if (!isMeetMin) {
-        advice = '您目前累计缴费尚不足 ' + (L.minYears || 15) + ' 年，<strong>首要目标是确保缴费年限达到最低要求</strong>。建议尽快以灵活就业身份续缴，避免断缴影响累计年限。';
-      } else if (actualYrs < 25) {
-        advice = '您已满足最低缴费年限，但缴费年限偏短（' + actualYrs.toFixed(2) + '年）。每多缴1年，养老金约提升1%。建议继续缴纳至退休，尽可能提高退休后的养老金水平。';
-      } else if (actualYrs >= 25 && actualYrs < 35) {
-        advice = '您的缴费年限较为充足（' + actualYrs.toFixed(2) + '年）。建议关注缴费指数的提升空间，适当提高缴费档位，以获得更高的替代率。';
-      } else {
-        advice = '您的缴费年限充足（' + actualYrs.toFixed(2) + '年），养老金水平已较为可观。如需进一步提升退休收入，可考虑补充商业养老保险。';
-      }
-      advice += '<br><br>如需针对您个人收入情况、年龄、退休目标的详细规划方案，<strong>请联系客服获取一对一咨询服务</strong>。';
-      document.getElementById('personalAdvice').innerHTML = advice;
 
     })
-    .catch(function(e) {
-      document.getElementById('loading').style.display = 'none';
-      document.getElementById('error').style.display = 'block';
-      document.getElementById('errorMsg').textContent = '加载省份配置失败: ' + (e.message || e);
+    .catch(function(e){
+      showError('加载省份配置失败: '+(e.message||e));
     });
+
+  // ===== 辅助函数：生成养老金明细 =====
+  function buildPensionItems(obj) {
+    var items = [];
+    if (obj.basicPension && obj.basicPension.amount != null) {
+      items.push({label:'基础养老金', val:obj.basicPension.amount, desc:cleanDesc(obj.basicPension.description)});
+    }
+    if (obj.personalAccount) {
+      items.push({label:'个人账户养老金', val:obj.personalAccount.amount, desc:'账户余额'+money(obj.personalAccount.balance||input.personalAccInput)+' ÷ '+obj.months+'个月'});
+    }
+    if (obj.transitionalPension && obj.transitionalPension.amount > 0) {
+      items.push({label:'过渡性养老金', val:obj.transitionalPension.amount, desc:cleanDesc(obj.transitionalPension.description)});
+    }
+    if (obj.extraPension && obj.extraPension.amount > 0) {
+      items.push({label:'增发基础养老金', val:obj.extraPension.amount, desc:cleanDesc(obj.extraPension.description)});
+    }
+    if (obj.specialAddition && obj.specialAddition.amount > 0) {
+      items.push({label:'特殊增发', val:obj.specialAddition.amount, desc:cleanDesc(obj.specialAddition.description)});
+    }
+    if (obj.adjustmentFund && obj.adjustmentFund.amount > 0) {
+      items.push({label:'调节金', val:obj.adjustmentFund.amount});
+    }
+
+    var html = items.map(function(i){
+      var d = i.desc ? '<small>'+i.desc+'</small>' : '';
+      return '<div class="row"><div class="label">'+i.label+d+'</div><div class="val">'+money(i.val)+'</div></div>';
+    }).join('');
+
+    // 计算步骤
+    var steps = items.map(function(i){
+      var icons = {'基础养老金':'📐','个人账户养老金':'👤','过渡性养老金':'📋','增发基础养老金':'➕','特殊增发':'⭐','调节金':'⚖️'};
+      return '<div class="calc-step"><div class="step-title">'+(icons[i.label]||'📌')+' '+i.label+'</div><div class="formula">'+i.desc.replace(/[¥]/g,'').trim()+' = <span class="hl">'+money(i.val)+'</span></div></div>';
+    }).join('');
+
+    return {html:html, steps:steps};
+  }
 
 })();
 </script>
