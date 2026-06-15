@@ -35,6 +35,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .result-grid .item .label{font-size:13px;color:var(--sub)}.result-grid .item .val{font-size:18px;font-weight:600}
 .info-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
 .info-tag{background:#f0f0f5;padding:4px 12px;border-radius:20px;font-size:13px;color:var(--sub)}
+.adv-toggle{cursor:pointer;color:var(--accent);font-size:14px;text-align:center;padding:8px;user-select:none}
+.adv-toggle:hover{opacity:.8}
+.adv-panel{display:none;margin-top:12px}
+.adv-panel.show{display:block}
 .error-msg{background:#fff0f0;color:var(--red);padding:12px 16px;border-radius:10px;font-size:14px;margin-bottom:12px;display:none}
 .loading{text-align:center;padding:40px;color:var(--sub)}
 .flex-compare{margin-top:12px;padding:12px;background:#f8f8fa;border-radius:10px;font-size:14px}
@@ -70,7 +74,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </div>
 <div class="field">
 <label>退休类型</label>
-<select id="retireType"><option value="normal">正常退休</option><option value="flex_early">弹性提前</option></select>
+<select id="retireType"><option value="normal">正常退休</option><option value="flex_early">弹性提前</option><option value="special">特殊工种</option></select>
 </div>
 <div class="field">
 <label>出生：年 / 月</label>
@@ -87,6 +91,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div class="field">
 <label>平均缴费指数</label>
 <input type="number" id="avgIndex" value="1.0" step="0.0001" min="0.6" max="3.0">
+</div>
+</div>
+
+<div class="adv-toggle" onclick="document.getElementById('adv-panel').classList.toggle('show');this.textContent=this.textContent.includes('展开')?'▲ 收起高级参数':'▼ 展开高级参数'">▼ 展开高级参数</div>
+<div class="adv-panel" id="adv-panel">
+<div class="row">
+<div class="field"><label>视同缴费年限</label><input type="number" id="sightYears" placeholder="自动计算" step="0.01"></div>
+<div class="field"><label>建账前缴费年限</label><input type="number" id="preAccountYears" placeholder="自动计算" step="0.01"></div>
+<div class="field"><label>累计缴费年限</label><input type="number" id="totalYears" placeholder="自动计算" step="0.01"></div>
+<div class="field"><label>计发月数</label><input type="number" id="months" placeholder="自动计算"></div>
+<div class="field"><label>退休地计发基数</label><input type="number" id="baseRetire" placeholder="自动查询" step="0.01"></div>
+<div class="field"><label>全省计发基数</label><input type="number" id="baseProv" placeholder="自动查询" step="0.01"></div>
+<div class="field"><label>过渡指数</label><input type="number" id="transIndex" placeholder="=avgIndex" step="0.0001"></div>
+<div class="field"><label>特殊标记</label>
+<select id="specialFlags"><option value="">无</option><option value="oneChild">独生子女</option><option value="intellectual">知识分子</option><option value="both">独生+知识分子</option></select>
+</div>
+</div>
 </div>
 
 <button class="btn btn-primary" onclick="calculate()">计算养老金</button>
@@ -107,7 +128,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </div>
 </div>
 
-<script src="pension-engine-browser.js"></script>
+<script src="js/pension-engine-browser.js"></script>
 <script>
 // === 全局状态 ===
 var currentConfig = null;
@@ -137,7 +158,7 @@ async function init() {
 
 async function loadProvince(id) {
   try {
-    var resp = await fetch("provinces/" + id + ".json");
+    var resp = await fetch("js/provinces/" + id + ".json");
     currentConfig = await resp.json();
     var citySel = document.getElementById("city");
     var cities = currentConfig.cities || [{code:"prov",name:"全省默认"}];
@@ -149,6 +170,8 @@ function onProvinceChange() {
   var id = document.getElementById("province").value;
   loadProvince(id);
 }
+
+function nv(id) { var v = document.getElementById(id).value; return v ? parseFloat(v) : null; }
 
 function calculate() {
   var errEl = document.getElementById("error-msg");
@@ -171,6 +194,16 @@ function calculate() {
       personalAccInput: parseFloat(document.getElementById("personalAcc").value) || 0,
       skipDelay: false
     };
+    var sy = nv("sightYears"); if (sy != null) input.sightYears = sy;
+    var pa = nv("preAccountYears"); if (pa != null) input.preAccountYears = pa;
+    var ty = nv("totalYears"); if (ty != null) input.totalYears = ty;
+    var mo = nv("months"); if (mo != null) input.months = mo;
+    var br = nv("baseRetire"); if (br != null) input.baseRetireInput = br;
+    var bp = nv("baseProv"); if (bp != null) input.baseProvInput = bp;
+    var ti = nv("transIndex"); if (ti != null) input.transIndex = ti;
+    var sf = document.getElementById("specialFlags").value;
+    if (sf === "oneChild" || sf === "both") input.oneChild = true;
+    if (sf === "intellectual" || sf === "both") input.intellectual = true;
     var result = window.PensionEngine.calculate(currentConfig, input);
     displayResult(result);
   } catch(e) {
@@ -180,18 +213,14 @@ function calculate() {
 }
 
 function displayResult(result) {
-  var retireType = document.getElementById("retireType").value;
-  var r = retireType === "flex_early" && result.flex && result.flex.total ? result.flex : result.legal;
-  var other = r === result.legal ? result.flex : result.legal;
-  var tagLabel = retireType === "flex_early" ? "弹性提前退休" : "法定退休";
-  
+  var r = result.legal;
   document.getElementById("result-card").classList.remove("result-hidden");
-  document.getElementById("total-amount").innerHTML = "<span style='font-size:14px;color:#86868b'>" + tagLabel + "</span><br>¥" + r.total.toLocaleString("zh-CN",{minimumFractionDigits:2}) + "<br><small>月基本养老金</small>";
+  document.getElementById("total-amount").innerHTML = "¥" + r.total.toLocaleString("zh-CN",{minimumFractionDigits:2}) + "<br><small>月基本养老金</small>";
   var items = [
     {label:"基础养老金",val:r.basicPension.amount,desc:r.basicPension.description},
     {label:"个人账户养老金",val:r.personalAccount.amount,desc:r.personalAccount.description}
   ];
-  if (r.extraPension && r.extraPension.amount > 0) items.push({label:"增发基础养老金",val:r.extraPension.amount,desc:r.extraPension.description});
+  if (r.extraPension && r.extraPension.amount > 0) items.push({label:"增发基础养老金",val:r.extraPension.amount});
   if (r.transitionalPension && r.transitionalPension.amount > 0) items.push({label:"过渡性养老金",val:r.transitionalPension.amount,desc:r.transitionalPension.description});
   if (r.specialAddition && r.specialAddition.amount > 0) items.push({label:"特殊增发",val:r.specialAddition.amount,desc:r.specialAddition.description});
   if (r.adjustmentFund && r.adjustmentFund.amount > 0) items.push({label:"调节金",val:r.adjustmentFund.amount});
@@ -200,14 +229,9 @@ function displayResult(result) {
     var d = i.desc ? " <span style='font-size:11px;color:#86868b'>("+i.desc+")</span>" : "";
     return "<div class='item'><div class='label'>"+i.label+d+"</div><div class='val'>¥"+i.val.toLocaleString("zh-CN",{minimumFractionDigits:2})+"</div></div>";
   }).join("");
-  var tm=currentConfig.modules&&currentConfig.modules.transitional_pension;
-  var c0=tm?(tm.coefficient||tm.coefficient_over_20||0):0;
-  var transCoef = Math.round(c0*1000)/10;
-  if (isNaN(transCoef)) transCoef = 0;
-  var d = r.date || {};
-  var dateStr = d.year ? d.year + '/' + String(d.month).padStart(2,'0') : '--';
+  var transCoef = (currentConfig.modules&&currentConfig.modules.transitional_pension?currentConfig.modules.transitional_pension.coefficient:0)*100;
   document.getElementById("info-bar").innerHTML = [
-    "退休日期: " + dateStr,
+    "退休日期: " + (result.legalDate||"--"),
     "退休年龄: " + (r.ageStr||"--"),
     "计发月数: " + (r.months||"--"),
     "累计年限: " + (r.totalYears||0).toFixed(2) + "年",
@@ -215,12 +239,9 @@ function displayResult(result) {
     "过渡系数: " + transCoef + "%"
   ].map(function(t){return "<span class='info-tag'>"+t+"</span>";}).join("");
   var fc = document.getElementById("flex-compare");
-  if (retireType === "flex_early" && result.legal && result.legal.total) {
+  if (result.flex && result.flex.total) {
     fc.style.display = "block";
-    fc.innerHTML = "<strong>对比</strong><br>法定退休 ¥" + result.legal.total.toFixed(2) + " | 弹性提前 ¥" + result.flex.total.toFixed(2) + " | 差额: ¥" + (result.flex.total - result.legal.total).toFixed(2);
-  } else if (retireType === "normal" && result.flex && result.flex.total) {
-    fc.style.display = "block";
-    fc.innerHTML = "<strong>也可选弹性提前</strong><br>法定 ¥" + result.legal.total.toFixed(2) + " | 提前 ¥" + result.flex.total.toFixed(2) + " | 差额: ¥" + (result.flex.total - result.legal.total).toFixed(2);
+    fc.innerHTML = "<strong>弹性退休对比</strong><br>法定 ¥" + r.total.toFixed(2) + " | 提前 ¥" + result.flex.total.toFixed(2) + " | 差额: ¥" + ((result.flex.total||0)-(r.total||0)).toFixed(2);
   } else { fc.style.display = "none"; }
   document.getElementById("result-card").scrollIntoView({behavior:"smooth"});
 }
