@@ -5,10 +5,34 @@ const PROVINCES = {
   'jilin': { name: '吉林省' },
   'liaoning': { name: '辽宁省' },
   'heilongjiang': { name: '黑龙江省' },
+  'beijing': { name: '北京市' },
+  'tianjin': { name: '天津市' },
+  'shanghai': { name: '上海市' },
+  'chongqing': { name: '重庆市' },
+  'hebei': { name: '河北省' },
+  'shanxi': { name: '山西省' },
+  'neimenggu': { name: '内蒙古' },
   'shandong': { name: '山东省' },
   'henan': { name: '河南省' },
-  'hebei': { name: '河北省' },
-  'jiangsu': { name: '江苏省' }
+  'jiangsu': { name: '江苏省' },
+  'zhejiang': { name: '浙江省' },
+  'anhui': { name: '安徽省' },
+  'fujian': { name: '福建省' },
+  'jiangxi': { name: '江西省' },
+  'hubei': { name: '湖北省' },
+  'hunan': { name: '湖南省' },
+  'guangdong': { name: '广东省' },
+  'guangxi': { name: '广西' },
+  'hainan': { name: '海南省' },
+  'sichuan': { name: '四川省' },
+  'guizhou': { name: '贵州省' },
+  'yunnan': { name: '云南省' },
+  'shaanxi': { name: '陕西省' },
+  'gansu': { name: '甘肃省' },
+  'qinghai': { name: '青海省' },
+  'ningxia': { name: '宁夏' },
+  'xinjiang': { name: '新疆' },
+  'xizang': { name: '西藏' }
 };
 
 // 表单字段配置
@@ -210,15 +234,22 @@ function onProvinceChange() {
   const cityGroup = document.getElementById('cityGroup');
   const citySelect = document.getElementById('city');
   const code = select.value;
-  
-  // 只有吉林省才显示城市选项（长春单列基数）
-  if (code === 'jilin') {
-    cityGroup.style.display = 'block';
-    citySelect.value = 'cc';
-  } else {
-    cityGroup.style.display = 'none';
-    citySelect.value = 'prov';
-  }
+
+  // 有城市子选项的省份显示城市下拉
+  cityGroup.style.display = 'block';
+  citySelect.innerHTML = '<option value="prov">全省默认</option>';
+
+  // 从省份配置加载城市列表
+  fetch(`js/provinces/${code}.json`)
+    .then(r => r.json())
+    .then(config => {
+      if (config.cities && config.cities.length > 1) {
+        citySelect.innerHTML = config.cities.map(c =>
+          `<option value="${c.code}">${c.name}</option>`
+        ).join('');
+      }
+    })
+    .catch(() => {});
 }
 
 // 计算养老金
@@ -257,13 +288,8 @@ function calculate() {
   };
   const typeMap = PERSON_TYPE_MAP[personType] || PERSON_TYPE_MAP['male'];
 
-  // 视同缴费年限：灵活就业=0，企业职工=个人账户建立时间-参保时间（吉林省1995年7月）
-  let sightYears = 0;
-  if (typeMap.type !== 'flexible') {
-    const accountStart = { year: 1995, month: 7 }; // 吉林省企业职工养老保险个人账户建立时间
-    const monthsDiff = (accountStart.year - workY) * 12 + (accountStart.month - workM);
-    sightYears = Math.max(0, monthsDiff / 12);
-  }
+  // 视同缴费改为由引擎根据省份配置自动计算，不手动传值
+  const sightYears = undefined;
 
   // 原始数据传给 loadAndCalculate，在获取省份配置后计算缴费指数
   loadAndCalculate(province, {
@@ -308,14 +334,14 @@ async function loadAndCalculate(provinceCode, formData, userType) {
       birthYear: formData.birthYear, birthMonth: formData.birthMonth,
       workYear: formData.workYear, workMonth: formData.workMonth,
       cityType: formData.cityType,
-      userType: formData.userType,
+      retireType: formData.userType === 'flexible' ? 'economic' : 'standard',
       sightYears: formData.sightYears,
       avgIndex,
       personalAccInput: formData.personalAccInput
     };
     
     // 调用引擎计算
-    const result = window.pensionEngine.calculate(config, input);
+    const result = window.PensionEngine.calculate(config, input);
     displayResult(result);
   } catch(e) {
     console.error('计算失败:', e);

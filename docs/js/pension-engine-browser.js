@@ -1711,7 +1711,10 @@ function formatResult(result) {
   }
 }
 
-module.exports = {
+// ═══════════════════════════════════════════════════════
+//  浏览器包装 — 同时支持 CommonJS 和浏览器全局
+// ═══════════════════════════════════════════════════════
+if (typeof window !== 'undefined') { window.PensionEngine = {
   // 核心入口
   calculate,
 
@@ -1742,7 +1745,40 @@ module.exports = {
   formatMoney,
   getModuleName,
   formatResult
-}
+}; }
+
+if (typeof module !== 'undefined') { module.exports = {
+  // 核心入口
+  calculate,
+
+  // 计算模块
+  calcBasicPension,
+  calcExtraPension,
+  calcPersonalAccountPension,
+  calcTransitionalPension,
+  calcSpecialAddition,
+  calcAdjustmentFund,
+
+  // 退休时间计算
+  getRetireMonths,
+  getDelayMonths,
+  getRetireTotalMonths,
+  getRetireDate,
+  getAgeStr,
+  getDateStr,
+  getMinYears,
+
+  // 基础数据查询
+  getBase,
+  getAccRate,
+
+  // 辅助函数
+  calcYears,
+  parseInput,
+  formatMoney,
+  getModuleName,
+  formatResult
+}; }
 
 // ============================================================
 // 灵活就业人员养老金计算

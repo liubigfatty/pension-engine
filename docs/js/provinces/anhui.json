@@ -9,6 +9,12 @@
     "year": 1996,
     "month": 1
   },
+  "rounding": {
+    "years_decimal": 1,
+    "index_decimal": 4,
+    "result_decimal": 2,
+    "notes": "缴费年限(含视同/建账前)取小数点后1位(第2位四舍五入)；平均缴费指数保留4位(第5位四舍五入)；基本养老金结果保留2位(第3位四舍五入)。"
+  },
   "base_rates": {
     "_source": "皖人社秘/皖人社发〔2022〕~〔2025〕",
     "prov": {

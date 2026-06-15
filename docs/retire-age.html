@@ -85,14 +85,33 @@
       
       const gender = document.querySelector('input[name="gender"]:checked').value;
       const [birthY, birthM] = birthDate.split('-').map(Number);
-      const type = gender; // 'male' or 'fw' (female worker)
       
-      const result = window.pensionEngine.getDelayResult(birthY, birthM, type);
+      // 性别 → 引擎退休类型映射
+      const type = gender === 'male' ? 'male' : 'fw';
       
-      document.getElementById('originalAge').textContent = result.originalAgeStr;
-      document.getElementById('delayMonths').textContent = result.delayMonths + '个月';
-      document.getElementById('newAge').textContent = result.newAgeStr;
-      document.getElementById('retireDate').textContent = result.retireDate;
+      const eng = window.PensionEngine;
+      
+      // 原法定退休年龄
+      const originalAgeMap = { 'male': 60, 'fw': 50, 'fc': 55 };
+      const originalAge = originalAgeMap[type] || 60;
+      
+      // 延迟月数
+      const delay = eng.getDelayMonths(birthY, birthM, type);
+      
+      // 新法定退休总月数（从出生到退休的总月数）
+      const totalMonths = eng.getRetireTotalMonths(birthY, birthM, type);
+      
+      // 新退休年龄（用总月数计算）
+      const newAgeStr = eng.getAgeStr(totalMonths);
+      
+      // 新退休日期
+      const retireDate = eng.getRetireDate(birthY, birthM, totalMonths);
+      const dateStr = eng.getDateStr(retireDate);
+      
+      document.getElementById('originalAge').textContent = originalAge + '岁';
+      document.getElementById('delayMonths').textContent = delay + '个月';
+      document.getElementById('newAge').textContent = newAgeStr;
+      document.getElementById('retireDate').textContent = dateStr;
       
       document.getElementById('resultArea').style.display = 'block';
       document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth' });

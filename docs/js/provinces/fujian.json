@@ -9,6 +9,10 @@
     "year": 1996,
     "month": 1
   },
+  "rounding": {
+    "years_half_step": true,
+    "notes": "缴费年限含建账前年限：不足半年按半年，大于半年不足一年按一年。"
+  },
   "base_rates": {
     "_source": "闽人社文〔2022〕~〔2025〕45号",
     "prov": {
