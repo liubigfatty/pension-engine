@@ -259,7 +259,7 @@ function displayResult(result) {
   }
   var items = [
     {label:"基础养老金",val:r.basicPension.amount,desc:cleanDesc(r.basicPension.description)},
-    {label:"个人账户养老金",val:r.personalAccount.amount,desc:r.personalAccount.description}
+    {label:"个人账户养老金",val:r.personalAccount.amount,desc:cleanDesc(r.personalAccount.description)}
   ];
   if (r.extraPension && r.extraPension.amount > 0) items.push({label:"增发基础养老金",val:r.extraPension.amount,desc:cleanDesc(r.extraPension.description)});
   if (r.transitionalPension && r.transitionalPension.amount > 0) items.push({label:"过渡性养老金",val:r.transitionalPension.amount,desc:cleanDesc(r.transitionalPension.description)});
