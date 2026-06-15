@@ -56,7 +56,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 
 <div class="report-header">
   <h1>现实调音师 · 养老金计算引擎</h1>
-  <p id="headerInfo">--</p>
+  <p id="headerInfo"></p>
+  <p style="font-size:11px;color:var(--sub);margin-top:2px" id="headerMeta"></p>
 </div>
 
 <div id="loading" class="card" style="text-align:center;padding:40px">
@@ -218,7 +219,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
     .then(function(r){return r.json();})
     .then(function(config){
       var pName = provinceNames[province]||province;
+      var now = new Date();
+      var reportId = 'RP' + now.getFullYear() + ('0'+(now.getMonth()+1)).slice(-2) + ('0'+now.getDate()).slice(-2) + '-' + now.getTime().toString(36).toUpperCase().slice(-4);
       document.getElementById('headerInfo').textContent = pName + ' · ' + genderLabel(input.genderType) + ' · 养老金测算报告';
+      document.getElementById('headerMeta').textContent = '生成时间：' + now.toLocaleString('zh-CN') + '　报告编号：' + reportId;
       document.getElementById('loading').style.display = 'none';
       document.getElementById('reportContent').style.display = 'block';
       document.getElementById('reportFooter').style.display = 'block';
