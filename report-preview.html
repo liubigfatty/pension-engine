@@ -324,7 +324,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
         {lbl:'参工时间', val:input.workYear + '年' + input.workMonth + '月'},
         {lbl:'退休日期', val:eng.getDateStr(L.date)},
         {lbl:'退休年龄', val:L.ageStr || '--'},
-        {lbl:'法定退休年龄', val:((L.ageStr||'').replace('岁','').replace('个月','')) || '--'},
+        {lbl:'延迟退休月数', val:L.age ? (L.age - (L.ageStr.includes('岁') ? parseInt(L.ageStr) : 60)).toFixed(0) + '个月' : '--'},
         {lbl:'累计缴费年限', val:(L.totalYears || 0).toFixed(2) + '年'},
         {lbl:'实际缴费年限', val:(L.actualYears || 0).toFixed(2) + '年'},
         {lbl:'视同缴费年限', val:(L.sightYears || 0).toFixed(2) + '年'},
