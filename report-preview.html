@@ -185,6 +185,30 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
   </div>
 </div>
 
+<!-- 五、相关说明与免责 -->
+<div class="card">
+  <div class="card-title"><span class="icon purple">📋</span> 相关说明与免责</div>
+  <div style="font-size:13px;color:#4a4a4a;line-height:1.8">
+    <p><strong>1. 数据来源</strong><br>
+    本报告中的计发基数、记账利率、过渡系数等参数，均依据各省人力资源和社会保障厅官方文件及国家统一公布数据。数据截至2026年6月，如有更新以官方最新文件为准。</p>
+
+    <p style="margin-top:12px"><strong>2. 计算结果说明</strong><br>
+    本报告基于您自行填写的参保参数（出生年月、参工时间、缴费指数、个人账户余额等），结合现行养老金计发办法进行测算。测算结果仅供您个人参考，<strong>不等同于社保经办机构最终核定的养老金数额</strong>。</p>
+
+    <p style="margin-top:12px"><strong>3. 政策风险提示</strong><br>
+    养老保险政策可能随国家及地方规定调整。特别是延迟退休政策（国办发〔2025〕5号）处于渐进实施阶段，具体执行细则以退休时当地社保部门规定为准。</p>
+
+    <p style="margin-top:12px"><strong>4. 缴费建议说明</strong><br>
+    报告中涉及的缴费规划建议为通用性参考，不构成任何形式的投资或保险购买建议。如需个性化社保规划，建议通过官方渠道咨询当地社保经办机构。</p>
+
+    <p style="margin-top:12px"><strong>5. 责任限制</strong><br>
+    本平台及报告提供方对因使用本报告内容而产生的任何直接或间接损失不承担法律责任。用户应自行判断报告内容并承担相关决策风险。</p>
+
+    <p style="margin-top:12px"><strong>6. 信息保密</strong><br>
+    您填写的参保参数仅用于本次测算，不会存储在服务器端。如需保存报告，建议自行下载或截图。</p>
+  </div>
+</div>
+
 </div>
 
 <!-- 报告页脚 -->
@@ -295,7 +319,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
       // ===== 关键参数 =====
       var paramsList = [
         {lbl:'退休省份', val:pName},
-        {lbl:'性别', val:input.gender === 'male' ? '男' : '女'},
+        {lbl:'性别', val: (input.genderType === 'male' || input.gender === 'male') ? '男' : '女'},
         {lbl:'出生年月', val:input.birthYear + '年' + input.birthMonth + '月'},
         {lbl:'参工时间', val:input.workYear + '年' + input.workMonth + '月'},
         {lbl:'退休日期', val:eng.getDateStr(L.date)},

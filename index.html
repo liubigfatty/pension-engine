@@ -186,7 +186,7 @@ function calculate() {
     if (!by || !bm || !wy || !wm) { errEl.textContent = "请填写完整的出生和参工年月"; errEl.style.display = "block"; return; }
     var input = {
       name: "测算用户",
-      gender: document.getElementById("genderType").value === "male" ? "男" : "女",
+      gender: document.getElementById("genderType").value === "male" ? "male" : "female",
       genderType: document.getElementById("genderType").value,
       cityType: document.getElementById("city").value,
       retireType: document.getElementById("retireType").value,
