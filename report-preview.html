@@ -55,9 +55,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 <div class="container">
 
 <div class="report-header">
-  <h1>现实调音师 · 养老金计算引擎</h1>
-  <p id="headerInfo"></p>
-  <p style="font-size:11px;color:var(--sub);margin-top:2px" id="headerMeta"></p>
+  <h1 style="font-size:22px;font-weight:700" id="headerInfo"></h1>
+  <p style="font-size:13px;color:var(--sub);margin-top:6px">现实调音师 · 养老金计算引擎</p>
+  <p style="font-size:11px;color:var(--sub);margin-top:4px" id="headerMeta"></p>
 </div>
 
 <div id="loading" class="card" style="text-align:center;padding:40px">
@@ -123,8 +123,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
   <div id="cmpDetail" style="font-size:14px;line-height:1.9;padding:14px;background:#f8f9fa;border-radius:8px"></div>
 </div>
 
-<!-- 五、建议 -->
-<div class="card">
+<!-- 五、分析与建议 -->
+<div class="card" id="adviceCard">
   <div class="card-title"><span class="icon orange">💡</span> 分析与建议</div>
   <div class="suggestion blue">
     <h4>📌 持续缴费的保障意义</h4>
@@ -138,18 +138,36 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
     <h4>📊 核心经济账判断</h4>
     <p id="sugEcon">一个关键经济指标：如果弹性提前退休后每月养老金 <strong>高于</strong> 您继续工作的月净收入（扣除社保缴费后），提前退休可能更划算。反之则延迟退休的经济收益更大。</p>
   </div>
+  <div class="suggestion blue" id="adviceCustom">
+    <h4>💬 个性化咨询</h4>
+    <p>如果您的参保情况比较复杂（如存在断缴、特殊工种、多地参保等），或有其他社保规划需求，欢迎添加微信咨询：</p>
+    <p style="margin-top:8px;text-align:center" id="qrArea">（二维码待添加）</p>
+  </div>
 </div>
 
-<!-- 六、免责 -->
+<!-- 六、估算依据 -->
+<div class="card">
+  <div class="card-title"><span class="icon purple">📐</span> 估算依据说明</div>
+  <div style="font-size:12px;color:#4a4a4a;line-height:1.8">
+    <p>1. 您填写的个人账户余额和平均缴费指数为截至填表时的实际数据。</p>
+    <p style="margin-top:6px">2. 后续至退休前的缴费，按您填写的平均缴费指数延续估算。</p>
+    <p style="margin-top:6px">3. 个人账户后续利息按 <strong>1.5%</strong>（2025年全国统一记账利率）逐年复利估算。</p>
+    <p style="margin-top:6px">4. 社平工资增长率按 <strong>2.6%</strong>（基于近年各省平均增长率）估算。</p>
+    <p style="margin-top:6px">5. 计发基数按估算的退休年份社平工资计算，实际以退休时社保部门公布为准。</p>
+  </div>
+</div>
+
+<!-- 七、免责 -->
 <div class="card">
   <div class="card-title"><span class="icon purple">📋</span> 相关说明与免责</div>
   <div style="font-size:12px;color:#4a4a4a;line-height:1.8">
     <p><strong>1. 数据来源</strong> — 计发基数、记账利率、过渡系数等参数依据各省人社厅官方文件及国家统一公布数据，截至2026年6月。</p>
     <p style="margin-top:8px"><strong>2. 计算结果说明</strong> — 基于您自行填写的参保参数和现行养老金计发办法测算，<strong>不等同于社保经办机构最终核定的养老金数额</strong>。</p>
     <p style="margin-top:8px"><strong>3. 政策风险</strong> — 养老保险政策可能调整，特别是延迟退休政策（国办发〔2025〕5号）处于渐进实施阶段，以退休时当地社保部门规定为准。</p>
-    <p style="margin-top:8px"><strong>4. 建议性质</strong> — 报告中的分析与建议为通用性参考，不构成任何形式的投资或保险购买建议。</p>
-    <p style="margin-top:8px"><strong>5. 责任限制</strong> — 本平台对因使用本报告内容而产生的任何直接或间接损失不承担法律责任。</p>
-    <p style="margin-top:8px"><strong>6. 信息保密</strong> — 您填写的参保参数仅用于本次测算，不会存储在服务器端。</p>
+    <p style="margin-top:8px"><strong>4. 估算说明</strong> — 未来缴费指数按您当前指数延续估算，实际可能因政策变化、个人收入变化等存在差异。</p>
+    <p style="margin-top:8px"><strong>5. 建议性质</strong> — 报告中的分析与建议为通用性参考，不构成任何形式的投资或保险购买建议。</p>
+    <p style="margin-top:8px"><strong>6. 责任限制</strong> — 本平台对因使用本报告内容而产生的任何直接或间接损失不承担法律责任。</p>
+    <p style="margin-top:8px"><strong>7. 信息保密</strong> — 您填写的参保参数仅用于本次测算，不会存储在服务器端。</p>
   </div>
 </div>
 
