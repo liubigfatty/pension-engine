@@ -41,8 +41,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .adv-panel.show{display:block}
 .error-msg{background:#fff0f0;color:var(--red);padding:12px 16px;border-radius:10px;font-size:14px;margin-bottom:12px;display:none}
 .loading{text-align:center;padding:40px;color:var(--sub)}
-.flex-compare{margin-top:12px;padding:12px;background:#f8f8fa;border-radius:10px;font-size:14px}
-.flex-compare .row{grid-template-columns:1fr 1fr 1fr}
 .footer{text-align:center;color:var(--sub);font-size:12px;padding:24px}
 .province-selector select{font-size:16px;font-weight:500}
 .note-text{font-size:13px;color:var(--sub);line-height:1.6}
@@ -74,7 +72,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </div>
 <div class="field">
 <label>退休类型</label>
-<select id="retireType"><option value="normal">正常退休</option><option value="flex_early">弹性提前</option><option value="special">特殊工种</option></select>
+<select id="retireType"><option value="normal">正常退休</option><option value="flex_early">弹性提前</option></select>
 </div>
 <div class="field">
 <label>出生：年 / 月</label>
@@ -97,13 +95,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div class="adv-toggle" onclick="document.getElementById('adv-panel').classList.toggle('show');this.textContent=this.textContent.includes('展开')?'▲ 收起高级参数':'▼ 展开高级参数'">▼ 展开高级参数</div>
 <div class="adv-panel" id="adv-panel">
 <div class="row">
-<div class="field"><label>视同缴费年限</label><input type="number" id="sightYears" placeholder="自动计算" step="0.01"></div>
-<div class="field"><label>建账前缴费年限</label><input type="number" id="preAccountYears" placeholder="自动计算" step="0.01"></div>
-<div class="field"><label>累计缴费年限</label><input type="number" id="totalYears" placeholder="自动计算" step="0.01"></div>
-<div class="field"><label>计发月数</label><input type="number" id="months" placeholder="自动计算"></div>
-<div class="field"><label>退休地计发基数</label><input type="number" id="baseRetire" placeholder="自动查询" step="0.01"></div>
-<div class="field"><label>全省计发基数</label><input type="number" id="baseProv" placeholder="自动查询" step="0.01"></div>
-<div class="field"><label>过渡指数</label><input type="number" id="transIndex" placeholder="=avgIndex" step="0.0001"></div>
+<div class="field"><label>视同缴费年限</label><input type="number" id="sightYears" placeholder="不填则自动计算" step="0.01"></div>
+<div class="field"><label>退休地计发基数</label><input type="number" id="baseRetire" placeholder="不填则自动查询" step="0.01"></div>
+<div class="field"><label>全省计发基数</label><input type="number" id="baseProv" placeholder="不填则自动查询" step="0.01"></div>
 <div class="field"><label>特殊标记</label>
 <select id="specialFlags"><option value="">无</option><option value="oneChild">独生子女</option><option value="intellectual">知识分子</option><option value="both">独生+知识分子</option></select>
 </div>
@@ -118,8 +112,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div class="card result-card result-hidden" id="result-card">
 <div class="total" id="total-amount">--</div>
 <div class="result-grid" id="result-grid"></div>
-<div class="info-bar" id="info-bar"></div>
-<div id="flex-compare" class="flex-compare" style="display:none"></div>
+  <div class="info-bar" id="info-bar"></div>
+<button class="btn btn-secondary" id="reportBtn" onclick="openReport()" style="margin-top:16px;display:none">📄 查看完整报告（预览）</button>
 </div>
 
 <div class="footer">
@@ -128,7 +122,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </div>
 </div>
 
-<script src="js/pension-engine-browser.js"></script>
+<script src="js/pension-engine-browser.js?v=20260615"></script>
 <script>
 // === 全局状态 ===
 var currentConfig = null;
@@ -163,11 +157,53 @@ async function loadProvince(id) {
     var citySel = document.getElementById("city");
     var cities = currentConfig.cities || [{code:"prov",name:"全省默认"}];
     citySel.innerHTML = cities.map(function(c){return "<option value="+c.code+">"+c.name+"</option>";}).join("");
+    updateDefaultAccount();
   } catch(e) { console.error("Load province error:", e); currentConfig = null; }
 }
 
+function updateDefaultAccount() {
+  if (!currentConfig) return;
+  // 粗略估算个人账户余额默认值
+  // 公式：近10年平均基数 × 指数 × 8% × 12 × (退休年龄-参工年龄) × 复利因子1.3
+  var baseRates = currentConfig.base_rates;
+  if (!baseRates) return;
+  // 取prov或城市基数
+  var provRates = baseRates.prov || baseRates;
+  var years = Object.keys(provRates).map(Number).filter(function(y){return y >= 2015 && y <= 2025});
+  if (years.length === 0) years = Object.keys(provRates).map(Number).slice(-10);
+  var sum = 0;
+  years.forEach(function(y){ sum += provRates[y]; });
+  var avgBase = sum / years.length;
+  var idx = parseFloat(document.getElementById("avgIndex").value) || 1.0;
+  var birthY = parseInt(document.getElementById("birthYear").value) || 1965;
+  var workY = parseInt(document.getElementById("workYear").value) || 1985;
+  var retireY = birthY + 60; // 粗略按60岁
+  var totalYears = Math.max(retireY - workY, 15);
+  var estBalance = Math.round(avgBase * idx * 0.08 * 12 * totalYears * 1.3);
+  // 取整到万
+  estBalance = Math.round(estBalance / 10000) * 10000;
+  // 设置默认值（只改初始值，用户改过后不动）
+  var accInput = document.getElementById("personalAcc");
+  if (!accInput.dataset.userModified) {
+    accInput.value = estBalance;
+  }
+}
+
+// 监听指数变化，更新默认账户余额
+document.addEventListener("DOMContentLoaded", function() {
+  document.getElementById("avgIndex").addEventListener("input", function() {
+    updateDefaultAccount();
+  });
+  document.getElementById("personalAcc").addEventListener("focus", function() {
+    this.dataset.userModified = "true";
+  });
+});
+
 function onProvinceChange() {
   var id = document.getElementById("province").value;
+  // 切换省份时重置账户默认值标记
+  var accInput = document.getElementById("personalAcc");
+  delete accInput.dataset.userModified;
   loadProvince(id);
 }
 
@@ -185,7 +221,7 @@ function calculate() {
     if (!by || !bm || !wy || !wm) { errEl.textContent = "请填写完整的出生和参工年月"; errEl.style.display = "block"; return; }
     var input = {
       name: "测算用户",
-      gender: document.getElementById("genderType").value === "male" ? "男" : "女",
+      gender: document.getElementById("genderType").value === "male" ? "male" : "female",
       genderType: document.getElementById("genderType").value,
       cityType: document.getElementById("city").value,
       retireType: document.getElementById("retireType").value,
@@ -195,16 +231,13 @@ function calculate() {
       skipDelay: false
     };
     var sy = nv("sightYears"); if (sy != null) input.sightYears = sy;
-    var pa = nv("preAccountYears"); if (pa != null) input.preAccountYears = pa;
-    var ty = nv("totalYears"); if (ty != null) input.totalYears = ty;
-    var mo = nv("months"); if (mo != null) input.months = mo;
     var br = nv("baseRetire"); if (br != null) input.baseRetireInput = br;
     var bp = nv("baseProv"); if (bp != null) input.baseProvInput = bp;
-    var ti = nv("transIndex"); if (ti != null) input.transIndex = ti;
     var sf = document.getElementById("specialFlags").value;
     if (sf === "oneChild" || sf === "both") input.oneChild = true;
     if (sf === "intellectual" || sf === "both") input.intellectual = true;
     var result = window.PensionEngine.calculate(currentConfig, input);
+    window._lastInput = input;
     displayResult(result);
   } catch(e) {
     errEl.textContent = "计算出错: " + e.message;
@@ -214,36 +247,64 @@ function calculate() {
 
 function displayResult(result) {
   var r = result.legal;
+  // 日期格式统一：xx年xx月
+  function fmtDateObj(d) { return d ? d.year + '年' + d.month + '月' : '--'; }
+  var dateStr = result.legalDate || fmtDateObj(r.date);
   document.getElementById("result-card").classList.remove("result-hidden");
   document.getElementById("total-amount").innerHTML = "¥" + r.total.toLocaleString("zh-CN",{minimumFractionDigits:2}) + "<br><small>月基本养老金</small>";
+  // 优化描述显示：去掉末尾的"= XXX元"，因为右侧已经单独显示金额了
+  function cleanDesc(d) {
+    if (!d) return "";
+    return d.replace(/=\s*[\d,.]+元$/, "").replace(/1\.00%/g, "1%").trim();
+  }
   var items = [
-    {label:"基础养老金",val:r.basicPension.amount,desc:r.basicPension.description},
-    {label:"个人账户养老金",val:r.personalAccount.amount,desc:r.personalAccount.description}
+    {label:"基础养老金",val:r.basicPension.amount,desc:cleanDesc(r.basicPension.description)},
+    {label:"个人账户养老金",val:r.personalAccount.amount,desc:cleanDesc(r.personalAccount.description)}
   ];
-  if (r.extraPension && r.extraPension.amount > 0) items.push({label:"增发基础养老金",val:r.extraPension.amount});
-  if (r.transitionalPension && r.transitionalPension.amount > 0) items.push({label:"过渡性养老金",val:r.transitionalPension.amount,desc:r.transitionalPension.description});
-  if (r.specialAddition && r.specialAddition.amount > 0) items.push({label:"特殊增发",val:r.specialAddition.amount,desc:r.specialAddition.description});
+  if (r.extraPension && r.extraPension.amount > 0) items.push({label:"增发基础养老金",val:r.extraPension.amount,desc:cleanDesc(r.extraPension.description)});
+  if (r.transitionalPension && r.transitionalPension.amount > 0) items.push({label:"过渡性养老金",val:r.transitionalPension.amount,desc:cleanDesc(r.transitionalPension.description)});
+  if (r.specialAddition && r.specialAddition.amount > 0) items.push({label:"特殊增发",val:r.specialAddition.amount,desc:cleanDesc(r.specialAddition.description)});
   if (r.adjustmentFund && r.adjustmentFund.amount > 0) items.push({label:"调节金",val:r.adjustmentFund.amount});
   var grid = document.getElementById("result-grid");
   grid.innerHTML = items.map(function(i){
     var d = i.desc ? " <span style='font-size:11px;color:#86868b'>("+i.desc+")</span>" : "";
     return "<div class='item'><div class='label'>"+i.label+d+"</div><div class='val'>¥"+i.val.toLocaleString("zh-CN",{minimumFractionDigits:2})+"</div></div>";
   }).join("");
-  var transCoef = (currentConfig.modules&&currentConfig.modules.transitional_pension?currentConfig.modules.transitional_pension.coefficient:0)*100;
+  // 过渡系数：兼容不同字段名
+  var transMd = currentConfig.modules && currentConfig.modules.transitional_pension;
+  var transCoef = 0;
+  if (transMd) {
+    transCoef = (transMd.coefficient || transMd.coefficient_over_20 || 0) * 100;
+  }
   document.getElementById("info-bar").innerHTML = [
-    "退休日期: " + (result.legalDate||"--"),
+    "退休日期: " + dateStr,
     "退休年龄: " + (r.ageStr||"--"),
     "计发月数: " + (r.months||"--"),
     "累计年限: " + (r.totalYears||0).toFixed(2) + "年",
     "计发基数: ¥" + (r.baseRetire||0).toLocaleString(),
-    "过渡系数: " + transCoef + "%"
+    "过渡系数: " + (transCoef ? transCoef.toFixed(1) + "%" : "--")
   ].map(function(t){return "<span class='info-tag'>"+t+"</span>";}).join("");
-  var fc = document.getElementById("flex-compare");
-  if (result.flex && result.flex.total) {
-    fc.style.display = "block";
-    fc.innerHTML = "<strong>弹性退休对比</strong><br>法定 ¥" + r.total.toFixed(2) + " | 提前 ¥" + result.flex.total.toFixed(2) + " | 差额: ¥" + ((result.flex.total||0)-(r.total||0)).toFixed(2);
-  } else { fc.style.display = "none"; }
   document.getElementById("result-card").scrollIntoView({behavior:"smooth"});
+  document.getElementById("reportBtn").style.display = "block";
+}
+
+function openReport() {
+  var inp = window._lastInput;
+  if (!inp) return;
+  var baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf("/")) + "/report-preview.html";
+  var params = [
+    "province=" + encodeURIComponent(document.getElementById("province").value || "jilin"),
+    "gender=" + encodeURIComponent(inp.gender || "male"),
+    "genderType=" + encodeURIComponent(inp.genderType || "male"),
+    "birthYear=" + (inp.birthYear || 1965),
+    "birthMonth=" + (inp.birthMonth || 1),
+    "workYear=" + (inp.workYear || 1985),
+    "workMonth=" + (inp.workMonth || 1),
+    "avgIndex=" + (inp.avgIndex || 1.0),
+    "personalAcc=" + (inp.personalAccInput || 0),
+    "cityType=" + encodeURIComponent(inp.cityType || "prov")
+  ];
+  window.open(baseUrl + "?" + params.join("&"), "_blank");
 }
 
 init();
