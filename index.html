@@ -120,6 +120,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div class="result-grid" id="result-grid"></div>
 <div class="info-bar" id="info-bar"></div>
 <div id="flex-compare" class="flex-compare" style="display:none"></div>
+<button class="btn btn-secondary" id="reportBtn" onclick="openReport()" style="margin-top:16px;display:none">📄 查看完整报告（预览）</button>
 </div>
 
 <div class="footer">
@@ -205,6 +206,7 @@ function calculate() {
     if (sf === "oneChild" || sf === "both") input.oneChild = true;
     if (sf === "intellectual" || sf === "both") input.intellectual = true;
     var result = window.PensionEngine.calculate(currentConfig, input);
+    window._lastInput = input;
     displayResult(result);
   } catch(e) {
     errEl.textContent = "计算出错: " + e.message;
@@ -244,6 +246,27 @@ function displayResult(result) {
     fc.innerHTML = "<strong>弹性退休对比</strong><br>法定 ¥" + r.total.toFixed(2) + " | 提前 ¥" + result.flex.total.toFixed(2) + " | 差额: ¥" + ((result.flex.total||0)-(r.total||0)).toFixed(2);
   } else { fc.style.display = "none"; }
   document.getElementById("result-card").scrollIntoView({behavior:"smooth"});
+  document.getElementById("reportBtn").style.display = "block";
+  window._lastInput = inp;
+}
+
+function openReport() {
+  var inp = window._lastInput;
+  if (!inp) return;
+  var baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf("/")) + "/report-preview.html";
+  var params = [
+    "province=" + encodeURIComponent(document.getElementById("province").value || "jilin"),
+    "gender=" + encodeURIComponent(inp.gender || "male"),
+    "genderType=" + encodeURIComponent(inp.genderType || "male"),
+    "birthYear=" + (inp.birthYear || 1965),
+    "birthMonth=" + (inp.birthMonth || 1),
+    "workYear=" + (inp.workYear || 1985),
+    "workMonth=" + (inp.workMonth || 1),
+    "avgIndex=" + (inp.avgIndex || 1.0),
+    "personalAcc=" + (inp.personalAccInput || 0),
+    "cityType=" + encodeURIComponent(inp.cityType || "prov")
+  ];
+  window.open(baseUrl + "?" + params.join("&"), "_blank");
 }
 
 init();
