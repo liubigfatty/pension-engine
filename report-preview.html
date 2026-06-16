@@ -239,13 +239,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
       document.getElementById('reportContent').style.display = 'block';
       document.getElementById('reportFooter').style.display = 'block';
 
-      // 正常退休（原法定年龄，不计延迟）
-      var normalResult = eng.calculate(config, Object.assign({}, input, { skipDelay: true }));
-      // 弹性退休（基于延迟后的法定年龄提前）
-      var flexResult = eng.calculate(config, Object.assign({}, input, { skipDelay: false }));
-      var L = normalResult.legal;
-      var F = flexResult.flex;
-      var C = flexResult.comparison;
+      var result = eng.calculate(config, input);
+      var L = result.legal;
+      var F = result.flex;
+      var C = result.comparison;
 
       // ===== 一、个人情况 =====
       document.getElementById('personalInfo').innerHTML = [
