@@ -72,10 +72,10 @@ Page({
         return
       }
       var cities = config.cities || [{code:'prov',name:'全省默认'}]
-      if (config.city_names && cities.length <= 1) {
-        cities = config.city_names.map(function(c) { return {code: c, name: c} })
+      // 确保全省默认在第一位
+      if (cities.length > 0 && cities[0].code !== 'prov') {
+        cities.unshift({code:'prov',name:'全省默认'})
       }
-      cities.unshift({code:'prov',name:'全省默认'})
       self.setData({
         currentConfig: config,
         cityList: cities,
