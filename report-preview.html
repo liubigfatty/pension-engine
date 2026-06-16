@@ -207,6 +207,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
     cityType: params.get('cityType') || 'prov',
     retireType: 'standard'
   };
+  var employType = params.get('employType') || 'employee';
+  // 灵活就业：视同缴费强制为0
+  if (employType === 'flexible') input.sightYears = 0;
 
   var provinceNames = {
     jilin:'吉林省', liaoning:'辽宁省', heilongjiang:'黑龙江省',
@@ -225,7 +228,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
   function fmtObj(d){return d?fmtDate(d.year,d.month):'--';}
   function cleanDesc(d){if(!d)return'';return d.replace(/=\s*[\d,.]+元$/,'').replace(/1\.00%/g,'1%').trim();}
   function money(v){return'¥'+(v||0).toLocaleString('zh-CN',{minimumFractionDigits:2});}
-  function genderLabel(gt){return gt==='male'?'男职工':gt==='fw'?'女工人':gt==='fc'?'女干部':'女';}
+  function genderLabel(gt, et){
+    if (et === 'flexible') return gt === 'male' ? '男性灵活就业' : '女性灵活就业';
+    return gt === 'male' ? '男职工' : gt === 'fw' ? '女工人' : gt === 'fc' ? '女干部' : '女';
+  }
 
   // ===== 加载省份配置并计算 =====
   fetch('js/provinces/'+province+'.json')
@@ -234,7 +240,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
       var pName = provinceNames[province]||province;
       var now = new Date();
       var reportId = 'RP' + now.getFullYear() + ('0'+(now.getMonth()+1)).slice(-2) + ('0'+now.getDate()).slice(-2) + '-' + now.getTime().toString(36).toUpperCase().slice(-4);
-      document.getElementById('headerInfo').textContent = pName + ' · ' + genderLabel(input.genderType) + ' · 养老金测算报告';
+      document.getElementById('headerInfo').textContent = pName + ' · ' + genderLabel(input.genderType, employType) + ' · 养老金测算报告';
       document.getElementById('headerMeta').textContent = '生成时间：' + now.toLocaleString('zh-CN') + '　报告编号：' + reportId;
       document.getElementById('loading').style.display = 'none';
       document.getElementById('reportContent').style.display = 'block';
@@ -249,7 +255,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
       document.getElementById('personalInfo').innerHTML = [
         {lbl:'退休省份', val:pName},
         {lbl:'城市/地区', val: input.cityType==='prov'?'全省默认':input.cityType},
-        {lbl:'人员身份', val:genderLabel(input.genderType)},
+        {lbl:'人员身份', val:genderLabel(input.genderType, employType)},
         {lbl:'出生年月', val:fmtDate(input.birthYear,input.birthMonth)},
         {lbl:'参加工作时间', val:fmtDate(input.workYear,input.workMonth)},
         {lbl:'平均缴费指数', val:input.avgIndex.toFixed(4)},

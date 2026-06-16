@@ -67,6 +67,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <select id="city"><option value="prov">全省默认</option></select>
 </div>
 <div class="field">
+<label>人员身份</label>
+<select id="employType" onchange="onEmployChange()"><option value="employee">企业职工</option><option value="flexible">灵活就业</option></select>
+</div>
+<div class="field">
 <label>性别 / 退休类型</label>
 <select id="genderType"><option value="male">男 (60岁)</option><option value="fw">女工人 (50岁)</option><option value="fc">女干部 (55岁)</option></select>
 </div>
@@ -217,6 +221,24 @@ function onProvinceChange() {
   loadProvince(id);
 }
 
+function onEmployChange() {
+  var et = document.getElementById("employType").value;
+  var genderSel = document.getElementById("genderType");
+  var flagSel = document.getElementById("specialFlags");
+  if (et === "flexible") {
+    // 灵活就业：性别只有男女，知识分子不适用
+    if (genderSel.value === "fc" || genderSel.value === "fw") genderSel.value = "male";
+    genderSel.innerHTML = '<option value="male">男 (60岁)</option><option value="female">女 (55岁)</option>';
+    // 其它加发中去掉知识分子
+    flagSel.innerHTML = '<option value="">无</option><option value="oneChild">独生子女</option>';
+  } else {
+    // 企业职工：完整选项
+    genderSel.innerHTML = '<option value="male">男 (60岁)</option><option value="fw">女工人 (50岁)</option><option value="fc">女干部 (55岁)</option>';
+    flagSel.innerHTML = '<option value="">无</option><option value="oneChild">独生子女</option><option value="intellectual">知识分子</option><option value="both">独生+知识分子</option>';
+  }
+  updateDefaultAccount();
+}
+
 
 function calculate() {
   var errEl = document.getElementById("error-msg");
@@ -228,10 +250,12 @@ function calculate() {
     var wy = parseInt(document.getElementById("workYear").value);
     var wm = parseInt(document.getElementById("workMonth").value);
     if (!by || !bm || !wy || !wm) { errEl.textContent = "请填写完整的出生和参工年月"; errEl.style.display = "block"; return; }
+    var employType = document.getElementById("employType").value;
+    var gv = document.getElementById("genderType").value;
     var input = {
       name: "测算用户",
-      gender: document.getElementById("genderType").value === "male" ? "male" : "female",
-      genderType: document.getElementById("genderType").value,
+      gender: (gv === "male") ? "male" : "female",
+      genderType: gv,
       cityType: document.getElementById("city").value,
       retireType: document.getElementById("retireType").value,
       birthYear: by, birthMonth: bm, workYear: wy, workMonth: wm,
@@ -239,6 +263,10 @@ function calculate() {
       personalAccInput: parseFloat(document.getElementById("personalAcc").value) || undefined,
       skipDelay: false
     };
+    // 灵活就业：无视同缴费
+    if (employType === "flexible") {
+      input.sightYears = 0;
+    }
     var sf = document.getElementById("specialFlags").value;
     if (sf === "oneChild" || sf === "both") input.oneChild = true;
     if (sf === "intellectual" || sf === "both") input.intellectual = true;
@@ -308,7 +336,8 @@ function openReport() {
     "workMonth=" + (inp.workMonth || 1),
     "avgIndex=" + (inp.avgIndex || 1.0),
     "personalAcc=" + (inp.personalAccInput || 0),
-    "cityType=" + encodeURIComponent(inp.cityType || "prov")
+    "cityType=" + encodeURIComponent(inp.cityType || "prov"),
+    "employType=" + encodeURIComponent(document.getElementById("employType").value || "employee")
   ];
   window.open(baseUrl + "?" + params.join("&"), "_blank");
 }
