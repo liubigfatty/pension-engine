@@ -217,51 +217,48 @@ Page({
 
   // ===== 开始测算 =====
   doCalculate() {
-    if (!this.validateStep(5)) return
+    if (!this.validateStep(5)) return;
     if (!this.data.currentConfig) {
-      wx.showToast({title:'省份配置未加载',icon:'none'})
-      return
+      wx.showToast({title:'省份配置未加载',icon:'none'});
+      return;
     }
-
-    var self = this
-    wx.showLoading({title:'计算中...'})
+    var self = this;
+    wx.showLoading({title:'计算中...'});
     engineUtil.loadEngine().then(function(engine) {
-      var d = self.data
+      var d = self.data;
       var input = {
-      name: '测算用户',
-      gender: (d.genderType === 'male') ? 'male' : 'female',
-      genderType: d.genderType,
-      cityType: d.cityList[d.cityIndex].code,
-      retireType: 'standard',
-      birthYear: d.birthYear,
-      birthMonth: d.birthMonth,
-      workYear: d.workYear,
-      workMonth: d.workMonth,
-      avgIndex: d.avgIndex,
-      personalAccInput: parseFloat(d.personalAcc) || undefined,
-      skipDelay: false
-    }
-
-    if (d.employType === 'flexible') input.sightYears = 0
-    if (d.specialFlag === 'oneChild' || d.specialFlag === 'both') input.oneChild = true
-    if (d.specialFlag === 'intellectual' || d.specialFlag === 'both') input.intellectual = true
-
-    try {
-      var result = engine.calculate(d.currentConfig, input)
-      // 存入全局并跳转
-      var app = getApp()
-      app.globalData.lastResult = result
-      app.globalData.lastInput = input
-      app.globalData.employType = d.employType
-      app.globalData.lastProvince = d.provinceList[d.provinceIndex].name
-      wx.hideLoading()
-      wx.navigateTo({ url: '/pages/result/result' })
-    } catch(e) {
-      wx.hideLoading()
-      wx.showToast({title:'计算失败: ' + e.message, icon:'none'})
-    }
-  }).catch(function(err) {
-    wx.hideLoading()
-    wx.showToast({title:'引擎加载失败',icon:'none'})
-  })
+        name: '测算用户',
+        gender: (d.genderType === 'male') ? 'male' : 'female',
+        genderType: d.genderType,
+        cityType: d.cityList[d.cityIndex].code,
+        retireType: 'standard',
+        birthYear: d.birthYear,
+        birthMonth: d.birthMonth,
+        workYear: d.workYear,
+        workMonth: d.workMonth,
+        avgIndex: d.avgIndex,
+        personalAccInput: parseFloat(d.personalAcc) || undefined,
+        skipDelay: false
+      };
+      if (d.employType === 'flexible') input.sightYears = 0;
+      if (d.specialFlag === 'oneChild' || d.specialFlag === 'both') input.oneChild = true;
+      if (d.specialFlag === 'intellectual' || d.specialFlag === 'both') input.intellectual = true;
+      try {
+        var result = engine.calculate(d.currentConfig, input);
+        var app = getApp();
+        app.globalData.lastResult = result;
+        app.globalData.lastInput = input;
+        app.globalData.employType = d.employType;
+        app.globalData.lastProvince = d.provinceList[d.provinceIndex].name;
+        wx.hideLoading();
+        wx.navigateTo({ url: '/pages/result/result' });
+      } catch(e) {
+        wx.hideLoading();
+        wx.showToast({title:'计算失败: ' + e.message, icon:'none'});
+      }
+    }).catch(function(err) {
+      wx.hideLoading();
+      wx.showToast({title:'引擎加载失败',icon:'none'});
+    });
   }
+});
