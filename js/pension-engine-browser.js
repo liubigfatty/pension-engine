@@ -1014,8 +1014,8 @@ function getBase(city, year, config, sourceField = 'base_rates') {
   const cityKeys = cityRates ? Object.keys(cityRates).map(Number).sort((a, b) => a - b) : []
   const provKeys = Object.keys(provRates).map(Number).sort((a, b) => a - b)
 
-  // 找到最近年份后，若晚于该年则按社平增长率外推
-  const GROWTH_RATE = config.growth_rate != null ? config.growth_rate : 0.026
+  // 找到最近年份后，若晚于该年则按2.0%社平增长率外推
+  const GROWTH_RATE = config.growth_rate != null ? config.growth_rate : 0.02
 
   // 从城市表向前找
   for (let i = cityKeys.length - 1; i >= 0; i--) {
@@ -1388,10 +1388,10 @@ function calculate(config, inputData) {
     const provRates = allRates['prov']
     const cityRates = allRates[city]
 
-    // 全省基数：当年有数据用当年，否则按2.6%外推
+    // 全省基数：当年有数据用当年，否则按2.0%外推
     provBase = getBase('prov', legalDate.year, config)
 
-    // 退休地基数：当年有数据用当年，否则按2.6%外推
+    // 退休地基数：当年有数据用当年，否则按2.0%外推
     retBase = getBase(city, legalDate.year, config)
   }
 
