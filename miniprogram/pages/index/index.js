@@ -2,7 +2,6 @@
  * 首页 - 引导式填表流程（5步）
  */
 const provinceUtil = require('../../utils/province')
-const engineUtil = require('../../utils/engine')
 
 Page({
   data: {
@@ -17,7 +16,7 @@ Page({
     // Step 2: 出生/参工
     birthYear: 1970,
     birthMonth: 1,
-    workYear: 1990,
+    workYear: 1995,
     workMonth: 1,
     birthYearRange: [],
     workYearRange: [],
@@ -47,13 +46,15 @@ Page({
   },
 
   onLoad() {
-    // 生成年份范围
+    // 生成年份范围（出生从1962开始，参工从1978开始）
     var now = new Date().getFullYear()
-    var years = []
-    for (var y = 1940; y <= now; y++) years.push(y)
+    var birthYears = []
+    for (var y = 1962; y <= now; y++) birthYears.push(y)
+    var workYears = []
+    for (var y = 1978; y <= now; y++) workYears.push(y)
     this.setData({
-      birthYearRange: years,
-      workYearRange: years,
+      birthYearRange: birthYears,
+      workYearRange: workYears,
       provinceList: provinceUtil.PROVINCE_LIST,
       genderOptions: [{value:'male',label:'男 (60岁)'},{value:'fw',label:'女工人 (50岁)'},{value:'fc',label:'女干部 (55岁)'}]
     })
@@ -151,13 +152,15 @@ Page({
     this.setData({ birthYear: this.data.birthYearRange[e.detail.value] })
   },
   onBirthMonthChange(e) {
-    this.setData({ birthMonth: e.detail.value + 1 })
+    var m = (e.detail.value === undefined ? 0 : e.detail.value) + 1
+    this.setData({ birthMonth: m })
   },
   onWorkChange(e) {
     this.setData({ workYear: this.data.workYearRange[e.detail.value] })
   },
   onWorkMonthChange(e) {
-    this.setData({ workMonth: e.detail.value + 1 })
+    var m = (e.detail.value === undefined ? 0 : e.detail.value) + 1
+    this.setData({ workMonth: m })
   },
 
   // ===== Step 3: 地区 =====
@@ -222,10 +225,9 @@ Page({
       wx.showToast({title:'省份配置未加载',icon:'none'});
       return;
     }
-    var self = this;
-    wx.showLoading({title:'计算中...'});
-    engineUtil.loadEngine().then(function(engine) {
-      var d = self.data;
+    try {
+      var engine = require('../../utils/pension-engine')
+      var d = this.data;
       var input = {
         name: '测算用户',
         gender: (d.genderType === 'male') ? 'male' : 'female',
@@ -250,15 +252,12 @@ Page({
         app.globalData.lastInput = input;
         app.globalData.employType = d.employType;
         app.globalData.lastProvince = d.provinceList[d.provinceIndex].name;
-        wx.hideLoading();
         wx.navigateTo({ url: '/pages/result/result' });
       } catch(e) {
-        wx.hideLoading();
         wx.showToast({title:'计算失败: ' + e.message, icon:'none'});
       }
-    }).catch(function(err) {
-      wx.hideLoading();
+    } catch(e) {
       wx.showToast({title:'引擎加载失败',icon:'none'});
-    });
+    }
   }
 });
