@@ -18,9 +18,6 @@ Page({
     birthMonth: 1,
     workYear: 1995,
     workMonth: 1,
-    birthYearRange: [],
-    workYearRange: [],
-    monthRange: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
 
     // Step 3: 地区
     provinceList: [],
@@ -46,15 +43,7 @@ Page({
   },
 
   onLoad() {
-    // 生成年份范围（出生从1962开始，参工从1978开始）
-    var now = new Date().getFullYear()
-    var birthYears = []
-    for (var y = 1962; y <= now; y++) birthYears.push(y)
-    var workYears = []
-    for (var y = 1978; y <= now; y++) workYears.push(y)
     this.setData({
-      birthYearRange: birthYears,
-      workYearRange: workYears,
       provinceList: provinceUtil.PROVINCE_LIST,
       genderOptions: [{value:'male',label:'男 (60岁)'},{value:'fw',label:'女工人 (50岁)'},{value:'fc',label:'女干部 (55岁)'}]
     })
@@ -148,17 +137,13 @@ Page({
   },
 
   // ===== Step 2: 出生/参工 =====
-  onBirthChange(e) {
-    this.setData({ birthYear: this.data.birthYearRange[e.detail.value] })
+  onBirthDateChange(e) {
+    var parts = e.detail.value.split('-')
+    this.setData({ birthYear: parseInt(parts[0]), birthMonth: parseInt(parts[1]) })
   },
-  onBirthMonthChange(e) {
-    this.setData({ birthMonth: e.detail.value + 1 })
-  },
-  onWorkChange(e) {
-    this.setData({ workYear: this.data.workYearRange[e.detail.value] })
-  },
-  onWorkMonthChange(e) {
-    this.setData({ workMonth: e.detail.value + 1 })
+  onWorkDateChange(e) {
+    var parts = e.detail.value.split('-')
+    this.setData({ workYear: parseInt(parts[0]), workMonth: parseInt(parts[1]) })
   },
 
   // ===== Step 3: 地区 =====
