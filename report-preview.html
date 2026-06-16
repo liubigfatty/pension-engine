@@ -105,10 +105,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 
 <!-- 四、两项对比 -->
 <div class="card" id="compareCard" style="display:none">
-  <div class="card-title"><span class="icon purple">⇄</span> 法定 vs 弹性提前 对比分析</div>
+  <div class="card-title"><span class="icon purple">⇄</span> 正常退休 vs 弹性提前 对比分析</div>
   <div style="display:flex;justify-content:space-around;padding:12px 0;border-bottom:1px solid var(--border);margin-bottom:14px">
     <div style="text-align:center">
-      <div style="font-size:12px;color:var(--sub)">法定退休</div>
+      <div style="font-size:12px;color:var(--sub)">正常退休</div>
       <div style="font-size:20px;font-weight:700;color:var(--primary)" id="cmpLegal">--</div>
       <div style="font-size:12px;color:var(--sub)" id="cmpLegalDate">--</div>
     </div>
@@ -122,20 +122,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
   <div id="cmpDetail" style="font-size:14px;line-height:2;padding:14px;background:#f8f9fa;border-radius:8px"></div>
 </div>
 
-<!-- 五、分析与建议 -->
+<!-- 五、相关建议 -->
 <div class="card" id="adviceCard">
-  <div class="card-title"><span class="icon orange">💡</span> 分析与建议</div>
+  <div class="card-title"><span class="icon orange">💡</span> 相关建议</div>
   <div class="suggestion blue">
-    <h4>📌 持续缴费的保障意义</h4>
+    <h4>📌 持续缴费</h4>
     <p id="sugKeep">无论您是企业在职职工还是灵活就业人员，持续缴纳养老保险是保障退休后基本生活的基石。缴费年限越长、缴费基数越高，退休后养老金水平就越高。每多缴1年，基础养老金大约提升1%，这是国家养老金计发办法的核心激励原则。</p>
   </div>
+  <div class="suggestion green">
+    <h4>📊 核心判断</h4>
+    <p id="sugEcon">一个关键经济指标：如果弹性提前退休后每月养老金 <strong>高于</strong> 您继续工作的月净收入（扣除社保缴费后），提前退休可能更划算。反之则延迟退休的经济收益更大。</p>
+  </div>
   <div class="suggestion orange">
-    <h4>🔄 退休时间的选择</h4>
+    <h4>🔍 综合考量</h4>
     <p id="sugTime">退休时间的选择需要综合算好账：<strong>经济账</strong>（弹性提前退休更早开始领钱但每月减少，延迟退休则每月更多）、<strong>健康账</strong>（身体状况是否允许继续工作）、<strong>生活账</strong>（家庭经济压力、精神压力等）。</p>
   </div>
-  <div class="suggestion green">
-    <h4>📊 核心经济账判断</h4>
-    <p id="sugEcon">一个关键经济指标：如果弹性提前退休后每月养老金 <strong>高于</strong> 您继续工作的月净收入（扣除社保缴费后），提前退休可能更划算。反之则延迟退休的经济收益更大。</p>
+  <div class="suggestion blue">
+    <h4>📋 决策建议</h4>
+    <p id="sugDecision"></p>
   </div>
   <div class="suggestion blue" id="adviceCustom">
     <h4>💬 个性化咨询</h4>
@@ -303,8 +307,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 
         document.getElementById('cmpDetail').innerHTML =
           '① <strong>早领时间分析</strong><br>'+
-          '弹性提前退休比法定退休早 <strong>'+adv+'个月</strong>（'+fmtObj(F.date)+' 至 '+fmtObj(L.date)+'）。<br>'+
-          '在这 '+adv+' 个月期间，弹性退休人员持续领取养老金，而法定退休人员尚未开始领取。<br><br>'+
+          '弹性提前退休比正常退休早 <strong>'+adv+'个月</strong>（'+fmtObj(F.date)+' 至 '+fmtObj(L.date)+'）。<br>'+
+          '在这 '+adv+' 个月期间，弹性退休人员持续领取养老金，而正常退休人员尚未开始领取。<br><br>'+
 
           '② <strong>提前多领总额</strong><br>'+
           '弹性退休期间累计多领取养老金：<strong>'+money(extraTotal)+'</strong><br>'+
@@ -313,18 +317,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 
           '③ <strong>每月养老金差额</strong><br>'+
           '弹性退休每月少领：<strong>'+money(diff)+'</strong><br>'+
-          '计算方式：法定月养老金 '+money(L.total)+' - 弹性月养老金 '+money(F.total)+' = '+money(diff)+'<br>'+
+          '计算方式：正常退休月养老金 '+money(L.total)+' - 弹性月养老金 '+money(F.total)+' = '+money(diff)+'<br>'+
           '这是由于弹性退休缴费年限较短、计发基数较低、计发月数较大导致的。<br><br>'+
 
           (diff > 0 ? '④ <strong>盈亏平衡分析</strong><br>'+
           '虽然弹性退休先领了一笔钱（'+money(extraTotal)+'），但每月少领 '+money(diff)+'。<br>'+
-          '盈亏平衡点：约 <strong>'+beMonths+'个月（'+(beMonths/12).toFixed(1)+'年）</strong>后，法定退休累计总额追平弹性提前退休。<br>'+
-          '平衡点时间：约 <strong>'+beY+'年'+beM+'月</strong>。<br><br>'+
+          '盈亏平衡点：约 <strong>'+beMonths+'个月（'+(beMonths/12).toFixed(1)+'年）</strong>后，正常退休累计总额追平弹性提前退休。<br>'+
+          '平衡点时间：约 <strong>'+beY+'年'+beM+'月</strong>。<br><br>' : '');
 
-          '⑤ <strong>决策参考</strong><br>'+
-          '如果您预期寿命较长（超过 '+(beMonths/12).toFixed(1)+'年），法定退休的总收入更高，<strong>延迟退休更划算</strong>。<br>'+
-          '如果您当前经济压力大、身体状况一般，弹性提前退休可以更早获得稳定现金流，<strong>提前退休更合适</strong>。<br>'+
-          '建议结合个人健康状况、家庭经济需求、工作压力等综合判断。' : '');
+        // 决策建议内容（移入五、相关建议）
+        var sugDecision = document.getElementById('sugDecision');
+        if (diff > 0) {
+          sugDecision.innerHTML =
+            '如果您预期寿命较长（超过 '+(beMonths/12).toFixed(1)+'年），正常退休的总收入更高，<strong>延迟退休更划算</strong>。<br>'+
+            '如果您当前经济压力大、身体状况一般，弹性提前退休可以更早获得稳定现金流，<strong>提前退休更合适</strong>。<br>'+
+            '建议结合个人健康状况、家庭经济需求、工作压力等综合判断。';
+        } else {
+          sugDecision.innerHTML = '弹性提前退休与正常退休的月养老金基本持平，您可以根据个人情况自由选择退休时间。';
+        }
 
       }
 
