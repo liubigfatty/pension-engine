@@ -115,31 +115,16 @@ Page({
       specialAddition: '特殊加发'
     }
     var icons = {basicPension:'📐',personalAccount:'👤',transitionalPension:'📋',extraPension:'➕',specialAddition:'⭐'}
-    var descMap = {
-      basicPension: obj.basicPension ? obj.basicPension.description : '',
-      personalAccount: obj.personalAccount ? '账户余额 ÷ ' + obj.months + '个月' : '',
-      transitionalPension: obj.transitionalPension ? obj.transitionalPension.description : '',
-      extraPension: obj.extraPension ? obj.extraPension.description : '',
-      specialAddition: obj.specialAddition ? obj.specialAddition.description : ''
+    function add(key, desc, val) {
+      if (val == null || val <= 0) return
+      var d = desc ? desc.replace(/=\s*[\d,.]+元$/,'').trim() : ''
+      steps.push({title: (icons[key]||'📌') + ' ' + (names[key]||key), formula: d, amount: '¥' + val.toLocaleString('zh-CN',{minimumFractionDigits:2}), color: colors[steps.length % colors.length]})
     }
-    var amounts = {
-      basicPension: obj.basicPension ? obj.basicPension.amount : 0,
-      personalAccount: obj.personalAccount ? obj.personalAccount.amount : 0,
-      transitionalPension: obj.transitionalPension ? obj.transitionalPension.amount : 0,
-      extraPension: obj.extraPension ? obj.extraPension.amount : 0,
-      specialAddition: obj.specialAddition ? obj.specialAddition.amount : 0
-    }
-    var keys = ['basicPension','personalAccount','transitionalPension','extraPension','specialAddition']
-    keys.forEach(function(key, idx) {
-      var val = amounts[key]
-      var d = descMap[key] ? descMap[key].replace(/=\s*[\d,.]+元$/,'').trim() : ''
-      steps.push({
-        title: (icons[key]||'📌') + ' ' + names[key],
-        formula: d,
-        amount: '¥' + (val||0).toLocaleString('zh-CN',{minimumFractionDigits:2}),
-        color: colors[idx % colors.length]
-      })
-    })
+    add('basicPension', obj.basicPension && obj.basicPension.description, obj.basicPension && obj.basicPension.amount)
+    add('personalAccount', obj.personalAccount && ('账户余额 ÷ ' + obj.months + '个月'), obj.personalAccount && obj.personalAccount.amount)
+    add('transitionalPension', obj.transitionalPension && obj.transitionalPension.description, obj.transitionalPension && obj.transitionalPension.amount)
+    add('extraPension', obj.extraPension && obj.extraPension.description, obj.extraPension && obj.extraPension.amount)
+    add('specialAddition', obj.specialAddition && obj.specialAddition.description, obj.specialAddition && obj.specialAddition.amount)
     return steps
   },
 
