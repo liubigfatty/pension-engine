@@ -55,11 +55,6 @@ Page({
       legalCalc: this.buildCalcSteps(L),
       legalTotal: this.money(L.total)
     })
-    // 调试：打印引擎结果
-    console.log('[报告调试] 出生输入:', input.birthYear, input.birthMonth)
-    console.log('[报告调试] 参工输入:', input.workYear, input.workMonth)
-    console.log('[报告调试] 过渡养老金:', L.transitionalPension)
-    console.log('[报告调试] 增发养老金:', L.extraPension)
 
     if (C && C.canFlex && F && F.total) {
       var diff = (L.total||0) - (F.total||0)
