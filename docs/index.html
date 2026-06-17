@@ -5,6 +5,87 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>国家企业职工基本养老金测算平台</title>
   <link rel="stylesheet" href="css/style.css">
+  <style>
+    .quick-info {
+      background: #f0fdf4;
+      border: 1.5px solid #86efac;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    
+    .quick-info h2 {
+      font-size: 18px;
+      color: #166534;
+      margin: 0 0 16px 0;
+    }
+    
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .info-item label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 6px;
+    }
+    
+    .info-item select,
+    .info-item input {
+      width: 100%;
+      padding: 10px;
+      border: 1.5px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+    }
+    
+    .info-item select:focus,
+    .info-item input:focus {
+      outline: none;
+      border-color: #16a34a;
+      box-shadow: 0 0 0 3px rgba(22,163,74,0.1);
+    }
+    
+    .info-actions {
+      text-align: center;
+    }
+    
+    .btn-info {
+      background: #16a34a;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 12px 32px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-info:hover {
+      background: #15803d;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .btn-info:disabled {
+      background: #d1d5db;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    @media (max-width: 640px) {
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
   <!-- 导航栏 -->
@@ -13,7 +94,7 @@
       <a href="index.html" class="nav-brand">养老金测算</a>
       <ul class="nav-menu">
         <li><a href="pension.html" class="nav-link active">基本养老金</a></li>
-        <li><a href="index.html" class="nav-link">缴费指数</a></li>
+        <li><a href="contribution.html" class="nav-link">缴费指数</a></li>
         <li><a href="retire-age.html" class="nav-link">退休年龄</a></li>
       </ul>
     </div>
@@ -25,30 +106,66 @@
       <section class="hero">
         <h1>养老金测算平台</h1>
         <p class="hero-subtitle">国家企业职工基本养老金在线测算工具</p>
-        <p class="hero-desc">零门槛 · 无需注册 · 无需填报个人身份信息 · 即开即用</p>
+        <p class="hero-desc">零门槛 · 无需注册 · 无需填报个人信息 · 即开即用</p>
+      </section>
+
+      <!-- 人员信息快速入口 -->
+      <section class="quick-info">
+        <h2>📝 快速填写人员信息（可选）</h2>
+        <div class="info-grid">
+          <div class="info-item">
+            <label>人员类型</label>
+            <select id="quickPersonType">
+              <option value="">请选择</option>
+              <option value="male">企业职工·男</option>
+              <option value="fw">企业职工·女（原50岁）</option>
+              <option value="fc">企业职工·女（原55岁）</option>
+              <option value="eco_male">灵活就业·男</option>
+              <option value="eco_female">灵活就业·女</option>
+            </select>
+          </div>
+          <div class="info-item">
+            <label>出生年月</label>
+            <input type="month" id="quickBirthDate" />
+          </div>
+          <div class="info-item">
+            <label>参加工作时间</label>
+            <input type="month" id="quickWorkDate" />
+          </div>
+          <div class="info-item">
+            <label>参保地区</label>
+            <select id="quickProvince">
+              <option value="">请选择</option>
+              <option value="jilin" selected>吉林省</option>
+            </select>
+          </div>
+        </div>
+        <div class="info-actions">
+          <button class="btn-info" onclick="applyQuickInfo()">保存信息，继续选择功能</button>
+        </div>
       </section>
 
       <section class="feature-grid">
-        <a href="pension.html" class="feature-card">
-          <div class="feature-icon">📊</div>
+        <div class="feature-card" onclick="goToPage('pension.html')">
+          <div class="feature-icon">🍎</div>
           <h2>基本养老金测算</h2>
           <p>四部分 + 弹性提前退休测算，覆盖全国各省份</p>
-        </a>
-        <a href="pension.html" class="feature-card">
-          <div class="feature-icon">💰</div>
+        </div>
+        <div class="feature-card" onclick="goToPage('contribution.html')">
+          <div class="feature-icon">🔵</div>
           <h2>缴费水平测算</h2>
-          <p>计算平均缴费工资指数和个人账户累计储存额</p>
-        </a>
-        <a href="retire-age.html" class="feature-card">
-          <div class="feature-icon">📅</div>
+          <p>计算平均缴费工资指数和个人账户累计存储额</p>
+        </div>
+        <div class="feature-card" onclick="goToPage('retire-age.html')">
+          <div class="feature-icon">🎂</div>
           <h2>法定退休年龄查询</h2>
           <p>渐进式延迟法定退休年龄计算器</p>
-        </a>
+        </div>
       </section>
 
       <section class="about-card">
         <h2>关于平台</h2>
-        <p>本平台基于国办发〔2025〕5号《全国人民代表大会常务委员会关于实施渐进式延迟法定退休年龄的决定》，为Nation企业职工提供权威、准确的养老金测算服务。所有计算逻辑统一由参数化驱动引擎处理，确保不同平台结果一致。</p>
+        <p>本平台基于国办发〔2025〕8号《全国人民代表大会常务委员会关于实施渐进式延迟法定退休年龄的决定》，为国家企业职工提供权威、准确的养老金测算服务。所有计算逻辑统一由参数化驱动引擎处理，确保不同平台结果一致。</p>
         <ul class="about-list">
           <li>✅ 覆盖全国各省份</li>
           <li>✅ 支持渐进式延迟退休政策</li>
@@ -65,5 +182,46 @@
   </footer>
 
   <script src="js/pension-engine-browser.js"></script>
+  <script>
+    function applyQuickInfo() {
+      const personType = document.getElementById('quickPersonType').value;
+      const birthDate = document.getElementById('quickBirthDate').value;
+      const workDate = document.getElementById('quickWorkDate').value;
+      const province = document.getElementById('quickProvince').value;
+
+      if (!personType || !birthDate || !workDate || !province) {
+        alert('请填写完整人员信息后再保存');
+        return;
+      }
+
+      sessionStorage.setItem('quick_info', JSON.stringify({
+        personType,
+        birthDate,
+        workDate,
+        province
+      }));
+
+      alert('✅ 信息已保存！点击下方卡片选择功能，将自动带入人员信息。');
+    }
+
+    function goToPage(url) {
+      const saved = sessionStorage.getItem('quick_info');
+      if (saved) {
+        try {
+          const info = JSON.parse(saved);
+          const params = new URLSearchParams();
+          params.set('personType', info.personType);
+          params.set('birthDate', info.birthDate);
+          params.set('workDate', info.workDate);
+          params.set('province', info.province);
+          window.location.href = url + '?' + params.toString();
+          return;
+        } catch(e) {
+          console.error('解析失败:', e);
+        }
+      }
+      window.location.href = url;
+    }
+  </script>
 </body>
 </html>

@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>养老金测算 - 引导式流程</title>
+  <link rel="stylesheet" href="css/style.css">
+  <!-- 文件处理库 -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <style>
+    .flow-container { max-width: 800px; margin: 0 auto; }
+    .step-indicator { display: flex; justify-content: space-between; margin-bottom: 30px; position: relative; }
+    .step-indicator::before { content: ''; position: absolute; top: 20px; left: 0; right: 0; height: 2px; background: #e0e0e0; z-index: 0; }
+    .step-dot { position: relative; z-index: 1; text-align: center; }
+    .step-dot .circle { width: 40px; height: 40px; border-radius: 50%; background: #e0e0e0; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; font-weight: bold; color: #666; border: 3px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .step-dot.active .circle { background: #16a34a; color: white; }
+    .step-dot.completed .circle { background: #22c55e; color: white; }
+    .step-label { font-size: 12px; color: #666; max-width: 80px; margin: 0 auto; }
+    .step-content { display: none; }
+    .step-content.active { display: block; }
+    .form-section { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .form-section h3 { margin-bottom: 15px; color: #333; border-bottom: 2px solid #16a34a; padding-bottom: 10px; }
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; margin-bottom: 5px; font-weight: 500; color: #555; }
+    .form-group select, .form-group input { width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; }
+    .file-upload-area { border: 2px dashed #d1d5db; border-radius: 8px; padding: 30px; text-align: center; cursor: pointer; transition: border-color 0.3s; }
+    .file-upload-area:hover { border-color: #16a34a; }
+    .file-types { display: flex; justify-content: center; gap: 10px; margin-top: 10px; }
+    .file-type { padding: 4px 12px; background: #f3f4f6; border-radius: 4px; font-size: 12px; }
+    .btn-flow { background: #16a34a; color: white; border: none; padding: 12px 30px; border-radius: 6px; font-size: 16px; cursor: pointer; width: 100%; margin-top: 20px; }
+    .btn-flow:hover { background: #15803d; }
+    .btn-secondary { background: white; color: #16a34a; border: 1px solid #16a34a; }
+    .result-card { background: white; padding: 20px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .result-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+    .result-row:last-child { border-bottom: none; }
+    .result-label { color: #666; }
+    .result-value { font-weight: bold; color: #16a34a; }
+    .action-buttons { display: flex; gap: 15px; margin-top: 20px; }
+    .action-btn { flex: 1; padding: 15px; border-radius: 8px; border: none; font-size: 16px; cursor: pointer; text-align: center; }
+    .btn-share { background: #16a34a; color: white; }
+    .btn-report { background: #f59e0b; color: white; }
+    .comparison-section { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+    @media (max-width: 640px) { .comparison-section { grid-template-columns: 1fr; } }
+    .comparison-card { background: white; padding: 15px; border-radius: 8px; border: 2px solid #e5e7eb; }
+    .comparison-card.highlight { border-color: #16a34a; background: #f0fdf4; }
+    .comparison-title { font-weight: bold; color: #333; margin-bottom: 10px; text-align: center; }
+    .entry-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; background: #f9fafb; border-radius: 4px; margin-bottom: 6px; }
+    .entry-item button { color: #ef4444; background: none; border: none; cursor: pointer; font-size: 18px; }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container nav-content">
+      <a href="index.html" class="nav-brand">养老金测算</a>
+    </div>
+  </nav>
+
+  <main class="main">
+    <div class="container">
+      <div class="flow-container">
+        <div class="step-indicator">
+          <div class="step-dot active" data-step="1"><div class="circle">1</div><div class="step-label">基本信息</div></div>
+          <div class="step-dot" data-step="2"><div class="circle">2</div><div class="step-label">缴费数据</div></div>
+          <div class="step-dot" data-step="3"><div class="circle">3</div><div class="step-label">缴费指数</div></div>
+          <div class="step-dot" data-step="4"><div class="circle">4</div><div class="step-label">养老金结果</div></div>
+        </div>
+
+        <!-- Step 1: 基本信息 -->
+        <div class="step-content active" id="step1">
+          <div class="form-section">
+            <h3>📋 基本信息</h3>
+            <div class="form-group"><label>参保地区</label><select id="province" onchange="onProvinceChange()"><option value="">请选择</option><option value="jilin">吉林省</option><option value="beijing">北京市</option><option value="shanghai">上海市</option><option value="guangdong">广东省</option><option value="jiangsu">江苏省</option><option value="zhejiang">浙江省</option><option value="shandong">山东省</option><option value="liaoning">辽宁省</option><option value="heilongjiang">黑龙江省</option><option value="anhui">安徽省</option><option value="fujian">福建省</option><option value="jiangxi">江西省</option><option value="henan">河南省</option><option value="hubei">湖北省</option><option value="hunan">湖南省</option><option value="sichuan">四川省</option><option value="chongqing">重庆市</option><option value="shaanxi">陕西省</option><option value="gansu">甘肃省</option><option value="qinghai">青海省</option><option value="neimenggu">内蒙古自治区</option><option value="guangxi">广西壮族自治区</option><option value="xizang">西藏自治区</option><option value="ningxia">宁夏回族自治区</option><option value="xinjiang">新疆维吾尔自治区</option><option value="yunnan">云南省</option><option value="guizhou">贵州省</option><option value="hainan">海南省</option><option value="tianjin">天津市</option><option value="shanxi">山西省</option></select></div>
+            <div class="form-group" id="cityGroup" style="display:none;"><label>具体城市</label><select id="city"><option value="prov">全省</option><option value="cc">长春市</option></select></div>
+            <div class="form-group"><label>人员类型</label><select id="personType"><option value="">请选择</option><option value="male">企业职工·男</option><option value="fw">企业职工·女（原50岁）</option><option value="fc">企业职工·女（原55岁）</option><option value="eco_male">灵活就业·男</option><option value="eco_female">灵活就业·女</option></select></div>
+            <div class="form-group"><label>出生年月</label><input type="month" id="birthDate" /></div>
+            <div class="form-group"><label>参加工作时间</label><input type="month" id="workDate" /></div>
+            <button class="btn-flow" onclick="goToStep(2)">下一步</button>
+          </div>
+        </div>
+
+        <!-- Step 2: 缴费数据 -->
+        <div class="step-content" id="step2">
+          <div class="form-section">
+            <h3>📋 已填基本信息</h3>
+            <div id="step2-basic-info" style="font-size:14px;color:#666;">
+              <p style="color:#ef4444;font-weight:bold;">⚠️ 请先返回第一步填写完整基本信息（参保地区、人员类型、出生年月、参加工作时间）</p>
+            </div>
+          </div>
+          <div class="form-section">
+            <h3>📊 输入缴费数据</h3>
+            <div class="file-upload-area" onclick="document.getElementById('fileInput').click()">
+              <div style="font-size: 48px; margin-bottom: 10px;">📁</div>
+              <p style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">点击或拖拽上传文件</p>
+              <p style="font-size: 14px; color: #666; margin-bottom: 15px;">自动识别您的缴费记录</p>
+              <div class="file-types">
+                <span class="file-type">Excel</span>
+                <span class="file-type">PDF</span>
+                <span class="file-type">图片</span>
+              </div>
+              <input type="file" id="fileInput" accept=".xlsx,.xls" style="display:none;" onchange="handleFileUpload(this)" />
+            </div>
+            <div style="text-align: center; margin: 20px 0;"><span style="color: #999;">— 或手动输入 —</span></div>
+            <div class="form-group">
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <input type="number" id="manualYear" placeholder="年份" style="flex: 1; max-width: 100px;" />
+                <input type="number" id="manualBase" placeholder="缴费基数（元/月）" style="flex: 2;" />
+                <button class="btn-flow" style="width: auto; margin-top: 0;" onclick="addManualEntry()">添加</button>
+              </div>
+              <div id="manualEntries"></div>
+              <button class="btn-flow btn-secondary" style="width: auto; margin-top: 10px;" onclick="clearAllEntries()">清空所有数据</button>
+            </div>
+            <button class="btn-flow" onclick="calculateIndex()">计算缴费指数</button>
+          </div>
+        </div>
+
+        <!-- Step 3: 缴费指数结果 -->
+        <div class="step-content" id="step3">
+          <div class="form-section">
+            <h3>📈 缴费指数计算结果</h3>
+            <div class="result-row"><span class="result-label">平均缴费指数</span><span class="result-value" id="avgIndex">—</span></div>
+            <div class="result-row"><span class="result-label">个人账户余额</span><span class="result-value" id="accountBalance">—</span></div>
+            <div class="result-row"><span class="result-label">实际缴费年限</span><span class="result-value" id="totalYears">—</span></div>
+          </div>
+          <div class="form-section"><h3>📋 历年缴费明细</h3><table style="width: 100%; border-collapse: collapse;"><thead><tr style="background: #f3f4f6;"><th style="padding: 10px; text-align: left;">年份</th><th style="padding: 10px; text-align: left;">缴费指数</th><th style="padding: 10px; text-align: left;">账户余额</th></tr></thead><tbody id="detailTable"></tbody></table></div>
+          <button class="btn-flow" onclick="goToStep(4)">进入养老金测算</button>
+        </div>
+
+        <!-- Step 4: 养老金结果 -->
+        <div class="step-content" id="step4">
+          <div class="comparison-section">
+            <div class="comparison-card highlight">
+              <div class="comparison-title">法定退休</div>
+              <div class="result-row"><span class="result-label">退休时间</span><span class="result-value" id="legalDate">—</span></div>
+              <div class="result-row"><span class="result-label">总养老金</span><span class="result-value" id="legalTotal">—</span></div>
+              <div class="result-row"><span class="result-label">基本养老金</span><span class="result-value" id="legalBasic">—</span></div>
+              <div class="result-row"><span class="result-label">个人账户养老金</span><span class="result-value" id="legalPersonal">—</span></div>
+            </div>
+            <div class="comparison-card">
+              <div class="comparison-title">弹性提前退休</div>
+              <div class="result-row"><span class="result-label">退休时间</span><span class="result-value" id="flexDate">—</span></div>
+              <div class="result-row"><span class="result-label">总养老金</span><span class="result-value" id="flexTotal">—</span></div>
+              <div class="result-row"><span class="result-label">基本养老金</span><span class="result-value" id="flexBasic">—</span></div>
+              <div class="result-row"><span class="result-label">个人账户养老金</span><span class="result-value" id="flexPersonal">—</span></div>
+            </div>
+          </div>
+          <div class="form-section"><h3>💰 两种方案对比</h3><div class="result-row"><span class="result-label">提前退休月数</span><span class="result-value" id="advanceMonths">—</span></div><div class="result-row"><span class="result-label">每月差额</span><span class="result-value" id="monthlyDiff">—</span></div><div class="result-row"><span class="result-label">总计差额</span><span class="result-value" id="totalDiff">—</span></div></div>
+          <div class="action-buttons">
+            <button class="action-btn btn-share" onclick="exportReport()">📋 保存报告</button>
+            <button class="action-btn btn-report" onclick="shareResult()">📤 分享结果</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer"><div class="container"><p>本测算结果仅供参考，实际养老金以社保部门核定为准。</p></div></footer>
+
+  <script src="js/pension-engine-browser.js"></script>
+  <script>
+    let currentStep = 1, flowData = { basicInfo: {}, contribution: {}, results: {} }, contributionData = [];
+
+    function goToStep(step) {
+      document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+      document.getElementById('step' + step).classList.add('active');
+      document.querySelectorAll('.step-dot').forEach(dot => {
+        const dotStep = parseInt(dot.dataset.step);
+        dot.classList.remove('active', 'completed');
+        if (dotStep === step) dot.classList.add('active');
+        else if (dotStep < step) dot.classList.add('completed');
+      });
+      currentStep = step;
+      if (step === 2) updateStep2BasicInfo();
+      if (step === 3) calculateIndex();
+      else if (step === 4) calculatePension();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function updateStep2BasicInfo() {
+      const province = document.getElementById('province').value;
+      const personType = document.getElementById('personType').value;
+      const birthDate = document.getElementById('birthDate').value;
+      const workDate = document.getElementById('workDate').value;
+      const container = document.getElementById('step2-basic-info');
+      if (province && personType && birthDate && workDate) {
+        const typeMap = { 'male': '企业职工·男', 'fw': '企业职工·女（原50岁）', 'fc': '企业职工·女（原55岁）', 'eco_male': '灵活就业·男', 'eco_female': '灵活就业·女' };
+        container.innerHTML = `
+          <p>✅ 参保地区：${province}</p>
+          <p>✅ 人员类型：${typeMap[personType] || personType}</p>
+          <p>✅ 出生年月：${birthDate}</p>
+          <p>✅ 参加工作时间：${workDate}</p>
+          <p style="color:#10b981;margin-top:10px;">✓ 所有信息已填写，可继续计算</p>
+        `;
+      } else {
+        container.innerHTML = '<p style="color:#ef4444;font-weight:bold;">⚠️ 请先返回第一步填写完整基本信息（参保地区、人员类型、出生年月、参加工作时间）</p>';
+      }
+    }
+
+    function onProvinceChange() {
+      document.getElementById('cityGroup').style.display = document.getElementById('province').value === 'jilin' ? 'block' : 'none';
+    }
+
+    function handleFileUpload(input) {
+      const file = input.files[0];
+      if (!file) return;
+      const ext = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+      if (ext !== '.xlsx' && ext !== '.xls') {
+        alert('仅支持 Excel 文件 (.xlsx/.xls)');
+        input.value = '';
+        return;
+      }
+      processExcelFile(file);
+      input.value = '';
+    }
+
+    // 从缴费所属期文本中提取年份
+    function extractYearFromPeriod(value) {
+      if (value === null || value === undefined) return null;
+      const s = String(value).trim();
+      if (!s) return null;
+      const m = s.match(/(\d{4})/);
+      return m ? parseInt(m[1]) : null;
+    }
+
+    // 扫描表头，查找社保网站导出格式的列
+    function findSheBaoColumns(header) {
+      const periodKeywords = ['缴费所属期', '所属期', '月份', '年月', '缴费月份', '缴费时期', '期别'];
+      const baseKeywords = ['缴费基数', '工资基数', '缴费工资基数'];
+      let periodCol = -1, baseCol = -1;
+      for (let i = 0; i < header.length; i++) {
+        const name = String(header[i] || '').trim();
+        if (!name) continue;
+        if (periodCol === -1) {
+          for (const k of periodKeywords) {
+            if (name.includes(k) || k.includes(name)) { periodCol = i; break; }
+          }
+        }
+        if (baseCol === -1) {
+          for (const k of baseKeywords) {
+            if (name.includes(k) || k.includes(name)) { baseCol = i; break; }
+          }
+        }
+        if (periodCol !== -1 && baseCol !== -1) break;
+      }
+      return periodCol !== -1 && baseCol !== -1 ? { periodCol, baseCol } : null;
+    }
+
+    function processExcelFile(file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+          const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+          let parsedData = [];
+
+          // 尝试1：标准格式（第一列年份，第二列基数）
+          for (let i = 0; i < jsonData.length; i++) {
+            const row = jsonData[i];
+            if (row && row.length >= 2) {
+              const year = parseInt(row[0]), base = parseFloat(row[1]);
+              if (!isNaN(year) && !isNaN(base) && year > 1990 && year < 2030 && base > 0) {
+                parsedData.push({ year, base });
+              }
+            }
+          }
+
+          // 尝试2：社保网站导出格式（缴费所属期 + 缴费基数）
+          if (parsedData.length === 0 && jsonData.length >= 2) {
+            const headerRow = jsonData[0] || [];
+            const sheBao = findSheBaoColumns(headerRow);
+            if (sheBao) {
+              for (let r = 1; r < jsonData.length; r++) {
+                const row = jsonData[r];
+                if (!row) continue;
+                const year = extractYearFromPeriod(row[sheBao.periodCol]);
+                const base = parseFloat(row[sheBao.baseCol]);
+                if (!isNaN(year) && !isNaN(base) && year > 1990 && year < 2030 && base > 0) {
+                  parsedData.push({ year, base });
+                }
+              }
+            }
+          }
+
+          if (parsedData.length === 0) { alert('未能识别有效的缴费数据！\n\n支持格式：\n• 标准格式：第一列年份，第二列缴费基数\n• 社保导出格式：缴费所属期 + 缴费基数\n（自动识别，无需处理）'); return; }
+          parsedData.forEach(newD => { const existing = contributionData.find(d => d.year === newD.year); if (existing) existing.base = newD.base; else contributionData.push(newD); });
+          contributionData.sort((a, b) => a.year - b.year);
+          updateManualEntries();
+          alert(`成功导入 ${parsedData.length} 条缴费记录！`);
+        } catch(err) { alert('Excel 文件解析失败：' + err.message); }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function addManualEntry() {
+      const year = parseInt(document.getElementById('manualYear').value);
+      const base = parseFloat(document.getElementById('manualBase').value);
+      if (!year || !base || year < 1990 || year > 2030 || base <= 0) { alert('请输入有效的年份和缴费基数'); return; }
+      const existing = contributionData.find(d => d.year === year);
+      if (existing) existing.base = base; else contributionData.push({ year, base });
+      contributionData.sort((a, b) => a.year - b.year);
+      updateManualEntries();
+      document.getElementById('manualYear').value = '';
+      document.getElementById('manualBase').value = '';
+    }
+
+    function removeEntry(index) { contributionData.splice(index, 1); updateManualEntries(); }
+    function clearAllEntries() { contributionData = []; updateManualEntries(); }
+
+    function updateManualEntries() {
+      const container = document.getElementById('manualEntries');
+      if (contributionData.length === 0) { container.innerHTML = '<p style="color:#999;text-align:center;padding:10px;">暂无数据，请添加</p>'; return; }
+      container.innerHTML = contributionData.map((d, i) => `<div class="entry-item"><span>${d.year}年 - 缴费基数：¥${d.base.toLocaleString()}/月</span><button onclick="removeEntry(${i})">×</button></div>`).join('');
+    }
+
+    async function calculateIndex() {
+      const province = document.getElementById('province').value;
+      const personType = document.getElementById('personType').value;
+      const birthDate = document.getElementById('birthDate').value;
+      const workDate = document.getElementById('workDate').value;
+      if (!province || !personType || !birthDate || !workDate) {
+        var missing = [];
+        if (!province) missing.push('参保地区');
+        if (!personType) missing.push('人员类型');
+        if (!birthDate) missing.push('出生年月');
+        if (!workDate) missing.push('参加工作时间');
+        alert('缺少必填信息：\n\n- ' + missing.join('\n- ') + '\n\n请返回第一步补充完整后再计算。');
+        goToStep(1);
+        return;
+      }
+      if (contributionData.length === 0) { alert('暂无缴费数据，请先上传Excel文件或手动添加'); return; }
+      try {
+        const response = await fetch(`js/provinces/${province}.json`);
+        if (!response.ok) throw new Error('省份配置加载失败');
+        const config = await response.json();
+
+        // 使用各省实际计发基数计算指数
+        let indexSum = 0, accountTotal = 0, details = [];
+        for (const d of contributionData) {
+          // 用各省当年计发基数计算指数
+          let yearIndex;
+          if (config.base_rates && config.base_rates.prov && config.base_rates.prov[String(d.year)]) {
+            const provBase = config.base_rates.prov[String(d.year)];
+            yearIndex = d.base / provBase;
+          } else {
+            // 该年份无计发基数数据，用 2025 年基数做近似
+            const baseSalary = config.base_salary_2025 || (config.base_rates && config.base_rates.prov && config.base_rates.prov['2025']) || 8000;
+            yearIndex = d.base / baseSalary;
+          }
+          indexSum += yearIndex;
+          accountTotal += d.base * 0.08 * 12;
+          details.push({ year: d.year, base: d.base, index: yearIndex, deposit: d.base * 0.08 * 12 });
+        }
+        const avgIndex = indexSum / contributionData.length;
+
+        // 页面显示结果
+        document.getElementById('avgIndex').textContent = avgIndex.toFixed(4);
+        document.getElementById('accountBalance').textContent = '¥' + (accountTotal / 10000).toFixed(2) + '万';
+        document.getElementById('totalYears').textContent = contributionData.length + '年';
+        const tbody = document.getElementById('detailTable');
+        tbody.innerHTML = details.map(d => `<tr><td style="padding:10px;border-bottom:1px solid #f0f0f0;">${d.year}年</td><td style="padding:10px;border-bottom:1px solid #f0f0f0;">${d.index.toFixed(4)}</td><td style="padding:10px;border-bottom:1px solid #f0f0f0;">¥${d.deposit.toLocaleString()}</td></tr>`).join('');
+        flowData.contribution = { avgIndex, accountBalance: accountTotal, years: contributionData.length };
+        goToStep(3);
+      } catch(e) { alert('计算失败：' + e.message); }
+    }
+
+    async function calculatePension() {
+      try {
+        const province = document.getElementById('province').value;
+        const city = document.getElementById('city').value;
+        const personType = document.getElementById('personType').value;
+        const birthDate = document.getElementById('birthDate').value;
+        const workDate = document.getElementById('workDate').value;
+        if (!province || !personType || !birthDate || !workDate) { alert('请先填写完整的基本信息！'); goToStep(1); return; }
+        const response = await fetch(`js/provinces/${province}.json`);
+        if (!response.ok) throw new Error('省份配置加载失败');
+        const config = await response.json();
+        const [birthYear, birthMonth] = birthDate.split('-').map(Number);
+        const [workYear, workMonth] = workDate.split('-').map(Number);
+        const PERSON_TYPE_MAP = { 'male': { gender: 'male', type: 'standard', genderType: 'male' }, 'fw': { gender: 'female', type: 'standard', genderType: 'fw' }, 'fc': { gender: 'female', type: 'standard', genderType: 'fc' }, 'eco_male': { gender: 'male', type: 'flexible', genderType: 'male' }, 'eco_female': { gender: 'female', type: 'flexible', genderType: 'fw55' } };
+        const typeMap = PERSON_TYPE_MAP[personType] || PERSON_TYPE_MAP['male'];
+        let sightYears = 0;
+        if (typeMap.type !== 'flexible') { const monthsDiff = (1995 - workYear) * 12 + (7 - workMonth); sightYears = Math.max(0, monthsDiff / 12); }
+        let avgIndex = flowData.contribution.avgIndex;
+        if (!avgIndex) { // 兜底：用各省实际基数计算指数
+          let indexSum = 0;
+          contributionData.forEach(d => {
+            let yearIndex;
+            if (config.base_rates && config.base_rates.prov && config.base_rates.prov[String(d.year)]) {
+              yearIndex = d.base / config.base_rates.prov[String(d.year)];
+            } else {
+              const baseSalary = config.base_salary_2025 || (config.base_rates && config.base_rates.prov && config.base_rates.prov['2025']) || 8000;
+              yearIndex = d.base / baseSalary;
+            }
+            indexSum += yearIndex;
+          });
+          avgIndex = indexSum / contributionData.length;
+        }
+        const result = window.pensionEngine.calculate(config, { gender: typeMap.gender, genderType: typeMap.genderType, birthYear, birthMonth, workYear, workMonth, cityType: city, userType: typeMap.type, sightYears, avgIndex, personalAccInput: flowData.contribution.accountBalance || null });
+        const L = result.legal;
+        document.getElementById('legalDate').textContent = L.date ? `${L.date.year}年${L.date.month}月` : '—';
+        document.getElementById('legalTotal').textContent = L.total ? `¥${L.total.toFixed(2)}/月` : '—';
+        document.getElementById('legalBasic').textContent = L.basicPension?.amount ? `¥${L.basicPension.amount.toFixed(2)}` : '—';
+        document.getElementById('legalPersonal').textContent = L.personalAccount?.amount ? `¥${L.personalAccount.amount.toFixed(2)}` : '—';
+        if (result.comparison?.canFlex) {
+          const F = result.flex;
+          document.getElementById('flexDate').textContent = F.date ? `${F.date.year}年${F.date.month}月` : '—';
+          document.getElementById('flexTotal').textContent = F.total ? `¥${F.total.toFixed(2)}/月` : '—';
+          document.getElementById('flexBasic').textContent = F.basicPension?.amount ? `¥${F.basicPension.amount.toFixed(2)}` : '—';
+          document.getElementById('flexPersonal').textContent = F.personalAccount?.amount ? `¥${F.personalAccount.amount.toFixed(2)}` : '—';
+          document.getElementById('advanceMonths').textContent = `${result.comparison.flexAdvance}个月`;
+          document.getElementById('monthlyDiff').textContent = `每月差额 ¥${result.comparison.amountDiff.toFixed(2)}`;
+          document.getElementById('totalDiff').textContent = `总计差额 ¥${result.comparison.totalDiff.toFixed(2)}`;
+        }
+        flowData.results = result;
+      } catch(e) { alert('养老金计算失败：' + e.message); }
+    }
+
+    function shareResult() {
+      if (!flowData.results || !flowData.results.legal) { alert('请先完成养老金计算！'); return; }
+      const L = flowData.results.legal;
+      const shareData = { title: '我的养老金测算结果', province: document.getElementById('province').value, personType: document.getElementById('personType').value, birthDate: document.getElementById('birthDate').value, workDate: document.getElementById('workDate').value, legalDate: L.date ? `${L.date.year}年${L.date.month}月` : '—', legalTotal: L.total ? `¥${L.total.toFixed(2)}/月` : '—', flexDate: flowData.results.flex?.date ? `${flowData.results.flex.date.year}年${flowData.results.flex.date.month}月` : '—', flexTotal: flowData.results.flex?.total ? `¥${flowData.results.flex.total.toFixed(2)}/月` : '—' };
+      alert('分享功能开发中...\n\n将生成包含以下信息的图片：\n\n• 基本信息\n• 缴费指数结果\n• 养老金对比数据\n\n支持微信、QQ、短信分享。');
+      console.log('分享数据:', shareData);
+    }
+
+    function exportReport() {
+      if (!flowData.results || !flowData.results.legal) { alert('请先完成养老金计算！'); return; }
+      const L = flowData.results.legal;
+      const reportContent = `
+========================================
+  养老金测算详细报告
+  生成时间：${new Date().toLocaleDateString('zh-CN')}
+========================================
+
+一、基本信息
+  参保地区：${document.getElementById('province').value}
+  人员类型：${document.getElementById('personType').value}
+  出生年月：${document.getElementById('birthDate').value}
+  参加工作时间：${document.getElementById('workDate').value}
+
+二、法定退休信息
+  退休时间：${L.date ? L.date.year + '年' + L.date.month + '月' : '-'}
+  总养老金：${L.total ? '¥' + L.total.toFixed(2) + '/月' : '-'}
+  基本养老金：${L.basicPension?.amount ? '¥' + L.basicPension.amount.toFixed(2) : '-'}
+  个人账户养老金：${L.personalAccount?.amount ? '¥' + L.personalAccount.amount.toFixed(2) : '-'}
+
+三、弹性提前退休信息
+  退休时间：${flowData.results.flex?.date ? flowData.results.flex.date.year + '年' + flowData.results.flex.date.month + '月' : '-'}
+  总养老金：${flowData.results.flex?.total ? '¥' + flowData.results.flex.total.toFixed(2) + '/月' : '-'}
+
+四、对比分析
+  提前月数：${flowData.results.comparison?.flexAdvance || 0}个月
+  每月差额：¥${flowData.results.comparison?.amountDiff?.toFixed(2) || '0.00'}
+  总计差额：¥${flowData.results.comparison?.totalDiff?.toFixed(2) || '0.00'}
+
+========================================
+  免责声明：本报告仅供参考，实际养老金以社保部门核定为准。
+========================================
+      `;
+      const blob = new Blob([reportContent], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `养老金测算报告_${new Date().toISOString().slice(0,10)}.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function initAll() {
+      onProvinceChange();
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('personType')) document.getElementById('personType').value = urlParams.get('personType');
+      if (urlParams.get('birthDate')) document.getElementById('birthDate').value = urlParams.get('birthDate');
+      if (urlParams.get('workDate')) document.getElementById('workDate').value = urlParams.get('workDate');
+      if (urlParams.get('province')) document.getElementById('province').value = urlParams.get('province');
+      updateManualEntries();
+    }
+    initAll();
+  </script>
+</body>
+</html>
