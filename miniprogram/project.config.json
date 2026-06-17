@@ -1,5 +1,6 @@
 {
   "description": "养老金测算小程序",
+  "cloudfunctionRoot": "cloud-functions/",
   "packOptions": {
     "ignore": [],
     "include": []

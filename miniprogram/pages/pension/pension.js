@@ -102,34 +102,46 @@ Page({
 
     this.setData({ loading: true })
 
-    // 异步加载引擎并计算
-    const engineUtil = require('../../utils/engine')
-    
-    engineUtil.loadEngine()
-      .then(engine => {
-        const result = engine.calculate(selectedProvince.config, input)
-        
-        // 保存输入参数供报告使用
-        wx.setStorageSync('calc_name', name)
-        wx.setStorageSync('calc_city', selectedCity ? selectedCity.name : '全省')
-        wx.setStorageSync('calc_province', selectedProvince.name)
-        wx.setStorageSync('calc_input', input)
+    // 调用云函数计算
+    wx.cloud.callFunction({
+      name: 'calculate',
+      data: {
+        ...input,
+        provinceConfig: selectedProvince.config
+      }
+    }).then(res => {
+      this.setData({ loading: false })
 
-        this.setData({ loading: false })
-
-        // 跳转到结果页
-        wx.navigateTo({
-          url: `/pages/result/result?result=${encodeURIComponent(JSON.stringify(result))}`
-        })
-      })
-      .catch(err => {
-        this.setData({ loading: false })
+      if (res.result.success === false) {
         wx.showModal({
           title: '计算失败',
-          content: err.message || '引擎加载失败，请检查网络后重试',
+          content: res.result.error || '未知错误',
           showCancel: false
         })
+        return
+      }
+
+      const result = res.result.data
+
+      // 保存输入参数供报告使用
+      wx.setStorageSync('calc_name', name)
+      wx.setStorageSync('calc_city', selectedCity ? selectedCity.name : '全省')
+      wx.setStorageSync('calc_province', selectedProvince.name)
+      wx.setStorageSync('calc_input', input)
+
+      // 跳转到结果页
+      wx.navigateTo({
+        url: `/pages/result/result?result=${encodeURIComponent(JSON.stringify(result))}`
       })
+    }).catch(err => {
+      console.error('调用云函数失败:', err)
+      this.setData({ loading: false })
+      wx.showModal({
+        title: '计算失败',
+        content: err.errMsg || '网络错误，请检查网络后重试',
+        showCancel: false
+      })
+    })
   },
 
   goBack() {
