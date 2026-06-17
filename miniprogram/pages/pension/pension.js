@@ -102,22 +102,34 @@ Page({
 
     this.setData({ loading: true })
 
-    // 调用引擎计算
-    const engine = require('../../engine/pension-engine')
-    const result = engine.calculate(selectedProvince.config, input)
+    // 异步加载引擎并计算
+    const engineUtil = require('../../utils/engine')
+    
+    engineUtil.loadEngine()
+      .then(engine => {
+        const result = engine.calculate(selectedProvince.config, input)
+        
+        // 保存输入参数供报告使用
+        wx.setStorageSync('calc_name', name)
+        wx.setStorageSync('calc_city', selectedCity ? selectedCity.name : '全省')
+        wx.setStorageSync('calc_province', selectedProvince.name)
+        wx.setStorageSync('calc_input', input)
 
-    this.setData({ loading: false })
+        this.setData({ loading: false })
 
-    // 保存输入参数供报告使用
-    wx.setStorageSync('calc_name', name)
-    wx.setStorageSync('calc_city', selectedCity ? selectedCity.name : '全省')
-    wx.setStorageSync('calc_province', selectedProvince.name)
-    wx.setStorageSync('calc_input', input)
-
-    // 跳转到结果页
-    wx.navigateTo({
-      url: `/pages/result/result?result=${encodeURIComponent(JSON.stringify(result))}`
-    })
+        // 跳转到结果页
+        wx.navigateTo({
+          url: `/pages/result/result?result=${encodeURIComponent(JSON.stringify(result))}`
+        })
+      })
+      .catch(err => {
+        this.setData({ loading: false })
+        wx.showModal({
+          title: '计算失败',
+          content: err.message || '引擎加载失败，请检查网络后重试',
+          showCancel: false
+        })
+      })
   },
 
   goBack() {

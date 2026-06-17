@@ -373,4 +373,11 @@ function calculateFlexible(config, inputData) {
 }
 
 // ==================== 导出 ====================
-window.pensionEngine = { calculate, calculateFlexible, getDelayMonths, getDelayResult };
+// 浏览器环境
+if (typeof window !== 'undefined') {
+  window.pensionEngine = { calculate, calculateFlexible, getDelayMonths, getDelayResult };
+}
+// 小程序/Node.js 环境
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { calculate, calculateFlexible, getDelayMonths, getDelayResult };
+}
