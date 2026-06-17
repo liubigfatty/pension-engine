@@ -55,6 +55,11 @@ Page({
       legalCalc: this.buildCalcSteps(L),
       legalTotal: this.money(L.total)
     })
+    // 调试：打印引擎结果
+    console.log('[报告调试] 出生输入:', input.birthYear, input.birthMonth)
+    console.log('[报告调试] 参工输入:', input.workYear, input.workMonth)
+    console.log('[报告调试] 过渡养老金:', L.transitionalPension)
+    console.log('[报告调试] 增发养老金:', L.extraPension)
 
     if (C && C.canFlex && F && F.total) {
       var diff = (L.total||0) - (F.total||0)
@@ -115,16 +120,31 @@ Page({
       specialAddition: '特殊加发'
     }
     var icons = {basicPension:'📐',personalAccount:'👤',transitionalPension:'📋',extraPension:'➕',specialAddition:'⭐'}
-    function add(key, desc, val) {
-      if (val == null || val <= 0) return
-      var d = desc ? desc.replace(/=\s*[\d,.]+元$/,'').trim() : ''
-      steps.push({title: (icons[key]||'📌') + ' ' + (names[key]||key), formula: d, amount: '¥' + (val||0).toLocaleString('zh-CN',{minimumFractionDigits:2}), color: colors[steps.length % colors.length]})
+    var descMap = {
+      basicPension: obj.basicPension ? obj.basicPension.description : '',
+      personalAccount: obj.personalAccount ? '账户余额 ÷ ' + obj.months + '个月' : '',
+      transitionalPension: obj.transitionalPension ? obj.transitionalPension.description : '',
+      extraPension: obj.extraPension ? obj.extraPension.description : '',
+      specialAddition: obj.specialAddition ? obj.specialAddition.description : ''
     }
-    if (obj.basicPension && obj.basicPension.amount) add('basicPension', obj.basicPension.description, obj.basicPension.amount)
-    if (obj.personalAccount && obj.personalAccount.amount) add('personalAccount', '账户余额 ÷ ' + obj.months + '个月', obj.personalAccount.amount)
-    if (obj.transitionalPension && obj.transitionalPension.amount > 0) add('transitionalPension', obj.transitionalPension.description, obj.transitionalPension.amount)
-    if (obj.extraPension && obj.extraPension.amount > 0) add('extraPension', obj.extraPension.description, obj.extraPension.amount)
-    if (obj.specialAddition && obj.specialAddition.amount > 0) add('specialAddition', obj.specialAddition.description, obj.specialAddition.amount)
+    var amounts = {
+      basicPension: obj.basicPension ? obj.basicPension.amount : 0,
+      personalAccount: obj.personalAccount ? obj.personalAccount.amount : 0,
+      transitionalPension: obj.transitionalPension ? obj.transitionalPension.amount : 0,
+      extraPension: obj.extraPension ? obj.extraPension.amount : 0,
+      specialAddition: obj.specialAddition ? obj.specialAddition.amount : 0
+    }
+    var keys = ['basicPension','personalAccount','transitionalPension','extraPension','specialAddition']
+    keys.forEach(function(key, idx) {
+      var val = amounts[key]
+      var d = descMap[key] ? descMap[key].replace(/=\s*[\d,.]+元$/,'').trim() : ''
+      steps.push({
+        title: (icons[key]||'📌') + ' ' + names[key],
+        formula: d,
+        amount: '¥' + (val||0).toLocaleString('zh-CN',{minimumFractionDigits:2}),
+        color: colors[idx % colors.length]
+      })
+    })
     return steps
   },
 
