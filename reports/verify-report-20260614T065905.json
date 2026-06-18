@@ -1,0 +1,103 @@
+{
+  "timestamp": "2026-06-14T06:59:05.903Z",
+  "tolerance": 1,
+  "summary": {
+    "pass": 0,
+    "fail": 3,
+    "skip": 0,
+    "error": 0
+  },
+  "total": 3,
+  "results": [
+    {
+      "province": "ningxia",
+      "caseId": "ningxia-2024-male",
+      "file": "1.json",
+      "status": "fail",
+      "reason": null,
+      "maxDiff": 2.930000000000291,
+      "diffs": [
+        {
+          "label": "基础养老金",
+          "expect": 2828.37,
+          "actual": 2830,
+          "diff": 1.6300000000001091
+        },
+        {
+          "label": "月养老金合计",
+          "expect": 4477.36,
+          "actual": 4480.29,
+          "diff": 2.930000000000291
+        }
+      ],
+      "actual": {
+        "total": 4480.29
+      },
+      "expected": {
+        "basic": 2828.37,
+        "extra": null,
+        "personal": 688.86,
+        "transitional": null,
+        "total": 4477.36
+      }
+    },
+    {
+      "province": "ningxia",
+      "caseId": "ningxia-2026-male",
+      "file": "2.json",
+      "status": "fail",
+      "reason": null,
+      "maxDiff": 109.19000000000051,
+      "diffs": [
+        {
+          "label": "月养老金合计",
+          "expect": 4269.44,
+          "actual": 4378.63,
+          "diff": 109.19000000000051
+        }
+      ],
+      "actual": {
+        "total": 4378.63
+      },
+      "expected": {
+        "basic": 2771.13,
+        "extra": null,
+        "personal": 879.95,
+        "transitional": null,
+        "total": 4269.44
+      }
+    },
+    {
+      "province": "ningxia",
+      "caseId": "ningxia-2026-male-intellectual",
+      "file": "3.json",
+      "status": "fail",
+      "reason": null,
+      "maxDiff": 160.94999999999982,
+      "diffs": [
+        {
+          "label": "基础养老金",
+          "expect": 2771.13,
+          "actual": 2632.36,
+          "diff": 138.76999999999998
+        },
+        {
+          "label": "月养老金合计",
+          "expect": 4350.08,
+          "actual": 4189.13,
+          "diff": 160.94999999999982
+        }
+      ],
+      "actual": {
+        "total": 4189.13
+      },
+      "expected": {
+        "basic": 2771.13,
+        "extra": null,
+        "personal": 879.95,
+        "transitional": null,
+        "total": 4350.08
+      }
+    }
+  ]
+}

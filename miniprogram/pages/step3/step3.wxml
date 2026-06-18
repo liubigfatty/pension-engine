@@ -1,0 +1,73 @@
+<!--pages/step3/step3.wxml-->
+<view class="container">
+  <!-- 顶部信息摘要 -->
+  <view class="summary-card">
+    <text class="summary-province">{{provinceName || '...'}} · {{cityLabel || '全省'}}</text>
+    <view class="summary-tags">
+      <text class="tag">{{genderLabel}}</text>
+      <text class="tag">{{identityLabel}}</text>
+      <text class="tag">{{retireAgeLabel}}</text>
+    </view>
+  </view>
+
+  <!-- 缴费指数选择 -->
+  <view class="section">
+    <view class="section-title">平均缴费指数</view>
+    <view class="index-grid">
+      <view
+        wx:for="{{indexOptions}}"
+        wx:key="value"
+        class="index-item {{selectedIndex === index && !useCustomIndex ? 'active' : ''}}"
+        data-idx="{{index}}"
+        bindtap="onIndexSelect"
+      >{{item.label}}</view>
+    </view>
+    <view class="custom-index" bindtap="onCustomIndexTap">
+      <text class="{{useCustomIndex ? 'active' : ''}}">{{useCustomIndex ? '手动输入中...' : '手动输入缴费指数'}}</text>
+    </view>
+    <input
+      wx:if="{{useCustomIndex}}"
+      class="index-input"
+      type="digit"
+      placeholder="输入 0.6 ~ 3.0"
+      value="{{customIndex}}"
+      bindinput="onIndexInput"
+    />
+  </view>
+
+  <!-- 个人账户余额 -->
+  <view class="section">
+    <view class="section-title">个人账户余额（元）</view>
+    <input
+      class="balance-input"
+      type="digit"
+      placeholder="系统估算约 {{estimatedBalance}} 元，可手动修改"
+      value="{{accountBalance}}"
+      bindinput="onBalanceInput"
+    />
+    <text class="balance-hint" wx:if="{{estimatedBalance}}">💡 估算依据：按平均指数 1.0、缴费年限推算，仅供参考</text>
+  </view>
+
+  <!-- 加发项（根据省份动态显示） -->
+  <view class="section" wx:if="{{hasExtra}}">
+    <view class="section-title">{{extraLabel || '加发项'}}</view>
+
+    <!-- extra_pension 类型（吉林、四川）：视同缴费年限触发增发 -->
+    <view wx:if="{{extraType === 'extra_pension'}}">
+      <view class="extra-hint">视同缴费年限 ≥ 20年可触发增发养老金，系统将自动计算</view>
+    </view>
+
+    <!-- special_addition 类型（甘肃、黑龙江、云南）：省份特殊补贴 -->
+    <view wx:if="{{extraType === 'special_addition'}}">
+      <view class="extra-hint">该省份有特殊加发项，系统将自动核算</view>
+    </view>
+  </view>
+
+  <!-- 按钮 -->
+  <view class="btn-area">
+    <button class="btn-prev" bindtap="onPrev">上一步</button>
+    <button class="btn-calculate" loading="{{loading}}" disabled="{{loading}}" bindtap="onCalculate">
+      {{loading ? '计算中...' : '计算养老金'}}
+    </button>
+  </view>
+</view>

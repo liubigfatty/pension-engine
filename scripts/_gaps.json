@@ -1,0 +1,196 @@
+[
+  {
+    "prov": "beijing",
+    "missing": [
+      "fc"
+    ],
+    "caseCount": 5
+  },
+  {
+    "prov": "tianjin",
+    "missing": [
+      "fc"
+    ],
+    "caseCount": 5
+  },
+  {
+    "prov": "hebei",
+    "missing": [
+      "fc"
+    ],
+    "caseCount": 5
+  },
+  {
+    "prov": "shanxi",
+    "missing": [
+      "fc"
+    ],
+    "caseCount": 5
+  },
+  {
+    "prov": "neimenggu",
+    "missing": [
+      "fw50",
+      "fc"
+    ],
+    "caseCount": 1
+  },
+  {
+    "prov": "liaoning",
+    "missing": [
+      "fc"
+    ],
+    "caseCount": 4
+  },
+  {
+    "prov": "jilin",
+    "missing": [
+      "fc"
+    ],
+    "caseCount": 4
+  },
+  {
+    "prov": "heilongjiang",
+    "missing": [
+      "fc"
+    ],
+    "caseCount": 6
+  },
+  {
+    "prov": "shanghai",
+    "missing": [
+      "fw50",
+      "fc"
+    ],
+    "caseCount": 5
+  },
+  {
+    "prov": "jiangsu",
+    "missing": [
+      "fc"
+    ],
+    "caseCount": 5
+  },
+  {
+    "prov": "zhejiang",
+    "missing": [
+      "fc"
+    ],
+    "caseCount": 7
+  },
+  {
+    "prov": "anhui",
+    "missing": [
+      "fc"
+    ],
+    "caseCount": 6
+  },
+  {
+    "prov": "fujian",
+    "missing": [
+      "fw50",
+      "fc"
+    ],
+    "caseCount": 2
+  },
+  {
+    "prov": "shandong",
+    "missing": [
+      "fc"
+    ],
+    "caseCount": 5
+  },
+  {
+    "prov": "henan",
+    "missing": [
+      "fc"
+    ],
+    "caseCount": 7
+  },
+  {
+    "prov": "hubei",
+    "missing": [
+      "fc"
+    ],
+    "caseCount": 4
+  },
+  {
+    "prov": "hunan",
+    "missing": [
+      "fc"
+    ],
+    "caseCount": 5
+  },
+  {
+    "prov": "guangdong",
+    "missing": [
+      "fc"
+    ],
+    "caseCount": 6
+  },
+  {
+    "prov": "hainan",
+    "missing": [
+      "fw50"
+    ],
+    "caseCount": 3
+  },
+  {
+    "prov": "chongqing",
+    "missing": [
+      "fc"
+    ],
+    "caseCount": 5
+  },
+  {
+    "prov": "guizhou",
+    "missing": [
+      "fc"
+    ],
+    "caseCount": 3
+  },
+  {
+    "prov": "yunnan",
+    "missing": [
+      "fc"
+    ],
+    "caseCount": 4
+  },
+  {
+    "prov": "xizang",
+    "missing": [
+      "fw50",
+      "fc"
+    ],
+    "caseCount": 2
+  },
+  {
+    "prov": "shaanxi",
+    "missing": [
+      "fw50"
+    ],
+    "caseCount": 5
+  },
+  {
+    "prov": "gansu",
+    "missing": [
+      "fc"
+    ],
+    "caseCount": 4
+  },
+  {
+    "prov": "qinghai",
+    "missing": [
+      "fc"
+    ],
+    "caseCount": 3
+  },
+  {
+    "prov": "ningxia",
+    "missing": [
+      "fw50",
+      "fc"
+    ],
+    "caseCount": 3
+  }
+]

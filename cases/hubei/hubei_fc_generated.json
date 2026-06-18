@@ -1,0 +1,28 @@
+{
+  "case_id": "NaN",
+  "province": "hubei",
+  "gender": "女",
+  "birth": "1965年05月",
+  "work_start": "1981年10月",
+  "retire_year": 2025,
+  "retire_month": 5,
+  "total_years": 24.5,
+  "sight_years": 14.25,
+  "personal_account": 25843.25,
+  "months": 170,
+  "expected": {
+    "basic_pension": 1610.8,
+    "personal_pension": 152.02,
+    "transitional_pension": null,
+    "total": null
+  },
+  "notes": "hubei 女干部55岁退休（自动生成）",
+  "birth_year": 1970,
+  "birth_month": 5,
+  "work_year": 1981,
+  "work_month": 10,
+  "avg_index": 0.9729,
+  "base_number": 7048,
+  "genderType": "fc",
+  "generated": true
+}

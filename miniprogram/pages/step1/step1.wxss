@@ -1,0 +1,137 @@
+/* pages/step1/step1.wxss */
+
+.container {
+  padding: 40rpx 32rpx;
+}
+
+/* 进度指示 */
+.progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 48rpx;
+}
+.progress-dot {
+  width: 24rpx;
+  height: 24rpx;
+  border-radius: 50%;
+  background: #e0e0e0;
+}
+.progress-dot.active {
+  background: #07c160;
+}
+.progress-line {
+  width: 80rpx;
+  height: 4rpx;
+  background: #e0e0e0;
+  margin: 0 12rpx;
+}
+.progress-line.active {
+  background: #07c160;
+}
+
+/* 标题 */
+.page-title {
+  display: block;
+  font-size: 44rpx;
+  font-weight: bold;
+  color: #1a1a1a;
+  text-align: center;
+}
+.page-desc {
+  display: block;
+  font-size: 26rpx;
+  color: #999;
+  text-align: center;
+  margin-top: 12rpx;
+  margin-bottom: 56rpx;
+}
+
+/* 表单 */
+.form-group {
+  margin-bottom: 36rpx;
+}
+.form-label {
+  font-size: 30rpx;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 16rpx;
+  display: block;
+}
+.required {
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+/* Picker */
+.picker-value {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28rpx 28rpx;
+  border-radius: 16rpx;
+  font-size: 30rpx;
+  background: #f7f8fa;
+  border: 2rpx solid transparent;
+}
+.picker-value.selected {
+  color: #1a1a1a;
+  background: #fff;
+  border-color: #07c160;
+  box-shadow: 0 2rpx 12rpx rgba(7,193,96,0.08);
+}
+.picker-value.placeholder {
+  color: #bbb;
+}
+.picker-arrow {
+  font-size: 36rpx;
+  color: #ccc;
+}
+
+/* 信息框（单基数省份） */
+.info-box {
+  padding: 28rpx 28rpx;
+  border-radius: 16rpx;
+  background: #f0faf5;
+  border: 2rpx solid #d4edda;
+}
+.info-text {
+  font-size: 30rpx;
+  color: #155724;
+  font-weight: 500;
+  display: block;
+}
+.info-sub {
+  font-size: 24rpx;
+  color: #6c9b78;
+  display: block;
+  margin-top: 6rpx;
+}
+
+/* 提示框 */
+.tip-box {
+  display: flex;
+  align-items: flex-start;
+  padding: 24rpx;
+  background: #fffbf0;
+  border-radius: 12rpx;
+  border-left: 8rpx solid #ffc107;
+  margin-bottom: 60rpx;
+}
+.tip-icon { font-size: 28rpx; margin-right: 12rpx; }
+.tip-text { font-size: 26rpx; color: #856404; line-height: 1.5; }
+
+/* 按钮 */
+.btn-area { margin-top: 20rpx; }
+.btn-next {
+  width: 100%;
+  background: #07c160;
+  color: #fff;
+  font-size: 34rpx;
+  font-weight: 500;
+  border: none;
+  border-radius: 50rpx;
+  padding: 28rpx 0;
+  letter-spacing: 4rpx;
+}
+.btn-next::after { border: none; }

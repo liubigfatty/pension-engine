@@ -1,0 +1,32 @@
+{
+  "case_id": "1001",
+  "province": "shandong",
+  "city": "潍坊市",
+  "gender": "女",
+  "birth_year": 1970,
+  "birth_month": 7,
+  "work_year": 1981,
+  "work_month": 10,
+  "retire_year": 2025,
+  "retire_month": 9,
+  "account_start": {
+    "year": 1998,
+    "month": 11
+  },
+  "actual_years": 26.92,
+  "sight_years": 14.08,
+  "total_years": 41,
+  "avg_index": 0.682,
+  "base_number": 7678,
+  "personal_account": 95061.63,
+  "months": 170,
+  "expected": {
+    "basic_pension": 2726.76,
+    "personal_pension": 559.19,
+    "transitional_pension": null,
+    "total": null
+  },
+  "notes": "shandong 女干部55岁退休（自动生成）",
+  "genderType": "fc",
+  "generated": true
+}

@@ -1,0 +1,159 @@
+{
+  "timestamp": "2026-06-14T23:52:19.416Z",
+  "tolerance": 1,
+  "summary": {
+    "pass": 6,
+    "fail": 1,
+    "skip": 0,
+    "error": 0
+  },
+  "total": 7,
+  "results": [
+    {
+      "province": "guangdong",
+      "caseId": "guangdong-shaoguan-2026",
+      "file": "1.json",
+      "status": "pass",
+      "reason": null,
+      "maxDiff": 0.32999999999992724,
+      "diffs": null,
+      "actual": {
+        "total": 5500.52
+      },
+      "expected": {
+        "basic": 2732.4,
+        "extra": null,
+        "personal": 516.07,
+        "transitional": null,
+        "total": 5500.58
+      }
+    },
+    {
+      "province": "guangdong",
+      "caseId": "guangdong-dongguan-2026",
+      "file": "2.json",
+      "status": "fail",
+      "reason": null,
+      "maxDiff": 455.64999999999986,
+      "diffs": [
+        {
+          "label": "基础养老金",
+          "expect": 1074.61,
+          "actual": 618.96,
+          "diff": 455.64999999999986
+        },
+        {
+          "label": "月养老金合计",
+          "expect": 1763.23,
+          "actual": 1307.87,
+          "diff": 455.3600000000001
+        }
+      ],
+      "actual": {
+        "total": 1307.87
+      },
+      "expected": {
+        "basic": 1074.61,
+        "extra": null,
+        "personal": 372.22,
+        "transitional": null,
+        "total": 1763.23
+      }
+    },
+    {
+      "province": "guangdong",
+      "caseId": "guangdong-guangzhou-2026",
+      "file": "3.json",
+      "status": "pass",
+      "reason": null,
+      "maxDiff": 0.3500000000003638,
+      "diffs": null,
+      "actual": {
+        "total": 4230.29
+      },
+      "expected": {
+        "basic": 2817.42,
+        "extra": null,
+        "personal": 905.61,
+        "transitional": null,
+        "total": 4230.64
+      }
+    },
+    {
+      "province": "guangdong",
+      "caseId": "shenzhen-female-2025-10",
+      "file": "4.json",
+      "status": "pass",
+      "reason": null,
+      "maxDiff": 0.10999999999967258,
+      "diffs": null,
+      "actual": {
+        "total": 4115.3
+      },
+      "expected": {
+        "basic": 2910.71,
+        "extra": null,
+        "personal": 838.08,
+        "transitional": null,
+        "total": 4115.41
+      }
+    },
+    {
+      "province": "guangdong",
+      "caseId": "shenzhen-male-2023-05",
+      "file": "5.json",
+      "status": "pass",
+      "reason": null,
+      "maxDiff": 0.36000000000012733,
+      "diffs": null,
+      "actual": {
+        "total": 7366.17
+      },
+      "expected": {
+        "basic": 3823.29,
+        "extra": null,
+        "personal": 983.85,
+        "transitional": null,
+        "total": 7366.11
+      }
+    },
+    {
+      "province": "guangdong",
+      "caseId": "shenzhen-male-2025-04",
+      "file": "6.json",
+      "status": "pass",
+      "reason": null,
+      "maxDiff": 0.4499999999998181,
+      "diffs": null,
+      "actual": {
+        "total": 11088
+      },
+      "expected": {
+        "basic": 5059.61,
+        "extra": null,
+        "personal": 2038.63,
+        "transitional": null,
+        "total": 11087.91
+      }
+    },
+    {
+      "province": "guangdong",
+      "caseId": "guangdong-jiangmen-2024-05",
+      "file": "7.json",
+      "status": "pass",
+      "reason": null,
+      "maxDiff": 0.029999999999972715,
+      "diffs": null,
+      "actual": {
+        "total": 1417.81
+      },
+      "expected": {
+        "basic": 965.73,
+        "extra": null,
+        "personal": 284.05,
+        "transitional": null,
+        "total": 1417.78
+      }
+    }
+  ]
+}

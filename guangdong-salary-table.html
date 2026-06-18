@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>广东省近十年平均工资表（用户提供，2026-06-18）</title>
+  <style>
+    body { font-family: "Microsoft YaHei", sans-serif; margin: 40px; background: #f5f5f5; }
+    h1 { color: #333; border-bottom: 2px solid #1d4ed5; padding-bottom: 10px; }
+    table { border-collapse: collapse; width: 100%; background: white; margin: 20px 0; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+    th { background: #1d4ed5; color: white; }
+    tr:nth-child(even) { background: #f9f9f9; }
+    .note { color: #666; font-size: 14px; margin: 20px 0; padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; }
+  </style>
+</head>
+<body>
+  <h1>📊 广东省近十年平均工资表</h1>
+  <p>数据来源：用户提供（2026-06-18）</p>
+  <p>单位：元/年（年平均工资）</p>
+  
+  <div class="note">
+    <strong>⚠️ 口径说明：</strong><br>
+    2018年以后为<strong>全口径城镇单位就业人员平均工资</strong>（比在岗职工平均工资低）<br>
+    2013-2017年为<strong>在岗职工平均工资</strong><br>
+    2018年（76056）比2017年（79183）低4%，这是因为口径调整
+  </div>
+  
+  <table>
+    <tr>
+      <th>年度</th>
+      <th>年平均工资（元/年）</th>
+      <th>月平均工资（元/月）</th>
+      <th>备注</th>
+    </tr>
+    <tr><td>2013年</td><td>53318</td><td>4443.17</td><td>用户提供（在岗）</td></tr>
+    <tr><td>2014年</td><td>59481</td><td>4956.75</td><td>用户提供（在岗）</td></tr>
+    <tr><td>2015年</td><td>65788</td><td>5482.33</td><td>用户提供（在岗）</td></tr>
+    <tr><td>2016年</td><td>72852</td><td>6071.00</td><td>用户提供（在岗）</td></tr>
+    <tr><td>2017年</td><td>79183</td><td>6598.58</td><td>用户提供（在岗）</td></tr>
+    <tr><td>2018年</td><td>76056</td><td>6338.00</td><td>用户提供（全口径）</td></tr>
+    <tr><td>2019年</td><td>81072</td><td>6756.00</td><td>用户提供（全口径）</td></tr>
+    <tr><td>2020年</td><td>91792</td><td>7649.33</td><td>用户提供（全口径）</td></tr>
+    <tr><td>2021年</td><td>99720</td><td>8310.00</td><td>用户提供（全口径）</td></tr>
+    <tr><td>2022年</td><td>105684</td><td>8807.00</td><td>用户提供（全口径）</td></tr>
+    <tr><td>2023年</td><td>110004</td><td>9167.00</td><td>用户提供（全口径）</td></tr>
+    <tr><td>2024年</td><td>—</td><td>9526.00</td><td>预估（增长3.9%）</td></tr>
+    <tr><td>2025年</td><td>—</td><td>9905.00</td><td>预估（增长4.0%）</td></tr>
+  </table>
+  
+  <h2>📝 数据使用说明</h2>
+  <ul>
+    <li><strong>PROV_BASE</strong>（计发基数）：使用本表数据（2013-2023年）</li>
+    <li><strong>AVG_SALARY_HISTORY</strong>（缴费指数计算）：使用本表数据（2013-2025年）</li>
+    <li><strong>早期年份（1995-2012）</strong>：仍使用估算值，待补充官方数据</li>
+  </ul>
+  
+  <h2>🔗 相关文件</h2>
+  <ul>
+    <li><code>data/provinces/guangdong.js</code> — 广东省配置（已更新）</li>
+    <li><code>cloudfunctions/calculate/provinces/guangdong.js</code> — 云函数配置（已同步）</li>
+  </ul>
+  
+  <hr>
+  <p style="color: #999; font-size: 12px;">归档时间：2026-06-18 14:14 | 数据来源：用户提供 | 归档人：AI助手</p>
+</body>
+</html>

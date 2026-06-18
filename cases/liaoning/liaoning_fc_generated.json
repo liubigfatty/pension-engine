@@ -1,0 +1,30 @@
+{
+  "case_id": "1001",
+  "province": "liaoning",
+  "city": "沈阳市",
+  "gender": "女",
+  "birth_year": 1968,
+  "birth_month": 7,
+  "work_year": 1990,
+  "work_month": 12,
+  "retire_year": 2023,
+  "retire_month": 7,
+  "actual_years": 30.83,
+  "sight_years": 1.83,
+  "total_years": 32.67,
+  "avg_index": 1.2907,
+  "base_number": 8141,
+  "base_prov": 6987,
+  "personal_account": 170205.99,
+  "months": 170,
+  "expected": {
+    "basic_pension": 2664.58,
+    "personal_pension": 1001.21,
+    "transitional_pension": null,
+    "total": null
+  },
+  "notes": "liaoning 女干部55岁退休（自动生成）",
+  "trans_index": 1.2321,
+  "genderType": "fc",
+  "generated": true
+}

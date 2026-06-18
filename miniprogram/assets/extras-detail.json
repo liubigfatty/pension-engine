@@ -1,0 +1,104 @@
+{
+  "beijing": {
+    "name": "beijing",
+    "extras": null,
+    "MODULES": [
+      "base",
+      "personal",
+      "transition"
+    ]
+  },
+  "gansu": {
+    "name": "gansu",
+    "extras": null,
+    "MODULES": [
+      "base",
+      "personal",
+      "transition",
+      "other"
+    ]
+  },
+  "heilongjiang": {
+    "name": "heilongjiang",
+    "extras": null,
+    "MODULES": [
+      "base",
+      "personal",
+      "transition",
+      "other"
+    ]
+  },
+  "jiangsu": {
+    "name": "jiangsu",
+    "extras": null,
+    "MODULES": [
+      "base",
+      "personal",
+      "transition"
+    ]
+  },
+  "jilin": {
+    "name": "jilin",
+    "extras": {
+      "trigger": {
+        "type": "actual_years",
+        "threshold": 20
+      },
+      "brackets": [
+        {
+          "from": 21,
+          "to": 25,
+          "rate": 0.0015,
+          "years": 5
+        },
+        {
+          "from": 26,
+          "to": 30,
+          "rate": 0.002,
+          "years": 5
+        },
+        {
+          "from": 31,
+          "to": null,
+          "rate": 0.0025,
+          "years": null
+        }
+      ]
+    },
+    "MODULES": [
+      "base",
+      "extra",
+      "personal",
+      "transition"
+    ]
+  },
+  "shanghai": {
+    "name": "shanghai",
+    "extras": null,
+    "MODULES": [
+      "base",
+      "personal",
+      "transition"
+    ]
+  },
+  "sichuan": {
+    "name": "sichuan",
+    "extras": null,
+    "MODULES": [
+      "base",
+      "extra",
+      "personal",
+      "transition"
+    ]
+  },
+  "yunnan": {
+    "name": "yunnan",
+    "extras": null,
+    "MODULES": [
+      "base",
+      "personal",
+      "transition",
+      "other"
+    ]
+  }
+}

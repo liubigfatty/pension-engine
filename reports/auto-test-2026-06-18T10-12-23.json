@@ -1,0 +1,993 @@
+{
+  "timestamp": "2026-06-18T10:12:23.355Z",
+  "tolerance": 0.5,
+  "filter": {},
+  "summary": {
+    "total": 140,
+    "pass": 0,
+    "fail": 0,
+    "error": 140
+  },
+  "results": [
+    {
+      "province": "anhui",
+      "caseFile": "1.json",
+      "caseId": "anhui-hefei-2024",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "anhui",
+      "caseFile": "2.json",
+      "caseId": "anhui-hefei-2024-10",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "anhui",
+      "caseFile": "3.json",
+      "caseId": "anhui-hefei-2025-female",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "anhui",
+      "caseFile": "4.json",
+      "caseId": "anhui-hefei-2025-female-delay",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "anhui",
+      "caseFile": "5.json",
+      "caseId": "anhui-hefei-2024-male-sight",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "anhui",
+      "caseFile": "6.json",
+      "caseId": "anhui-hefei-2022-female",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "beijing",
+      "caseFile": "1.json",
+      "caseId": "1",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "beijing",
+      "caseFile": "2.json",
+      "caseId": "2",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "beijing",
+      "caseFile": "3.json",
+      "caseId": "3",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "beijing",
+      "caseFile": "4.json",
+      "caseId": "4",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "beijing",
+      "caseFile": "5.json",
+      "caseId": "5",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "chongqing",
+      "caseFile": "1.json",
+      "caseId": "chongqing-2023-male",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "chongqing",
+      "caseFile": "2.json",
+      "caseId": "chongqing-2025-male",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "chongqing",
+      "caseFile": "3.json",
+      "caseId": "chongqing-2023-female",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "chongqing",
+      "caseFile": "4.json",
+      "caseId": "chongqing-2025-female-new",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "chongqing",
+      "caseFile": "5.json",
+      "caseId": "chongqing-2025-female-low-index",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "fujian",
+      "caseFile": "1.json",
+      "caseId": "fujian-nanping-2025",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "fujian",
+      "caseFile": "2.json",
+      "caseId": "fujian-youxi-2024",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "gansu",
+      "caseFile": "1.json",
+      "caseId": "1",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "gansu",
+      "caseFile": "2.json",
+      "caseId": "2",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "gansu",
+      "caseFile": "3.json",
+      "caseId": "3",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "gansu",
+      "caseFile": "4.json",
+      "caseId": "4",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "guangdong",
+      "caseFile": "1.json",
+      "caseId": "guangdong-shaoguan-2026",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "guangdong",
+      "caseFile": "3.json",
+      "caseId": "guangdong-guangzhou-2026",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "guangdong",
+      "caseFile": "4.json",
+      "caseId": "shenzhen-female-2025-10",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "guangdong",
+      "caseFile": "5.json",
+      "caseId": "shenzhen-male-2023-05",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "guangdong",
+      "caseFile": "6.json",
+      "caseId": "shenzhen-male-2025-04",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "guangdong",
+      "caseFile": "7.json",
+      "caseId": "guangdong-jiangmen-2024-05",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "guangxi",
+      "caseFile": "1.json",
+      "caseId": "guangxi-liuzhou-2023",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "guangxi",
+      "caseFile": "2.json",
+      "caseId": "guangxi-nanning-2025-female",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "guangxi",
+      "caseFile": "3.json",
+      "caseId": "guangxi-beiliu-2025-male",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "guangxi",
+      "caseFile": "4.json",
+      "caseId": "guangxi-nanning-2023",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "guangxi",
+      "caseFile": "5.json",
+      "caseId": "guangxi-liuzhou-2025-male",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "guizhou",
+      "caseFile": "1.json",
+      "caseId": "guizhou-2023-male",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "guizhou",
+      "caseFile": "3.json",
+      "caseId": "guizhou-2024-female",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "guizhou",
+      "caseFile": "4.json",
+      "caseId": "guizhou-2023-female",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "hainan",
+      "caseFile": "1.json",
+      "caseId": "hainan-2025-male",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "hainan",
+      "caseFile": "2.json",
+      "caseId": "hainan-2025-female-high-index",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "hainan",
+      "caseFile": "3.json",
+      "caseId": "hainan-2025-male-low-index",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "hebei",
+      "caseFile": "1.json",
+      "caseId": "hebei-female-2023",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "hebei",
+      "caseFile": "2.json",
+      "caseId": "hebei-male-2025",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "hebei",
+      "caseFile": "3.json",
+      "caseId": "hebei-male-2025b",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "hebei",
+      "caseFile": "4.json",
+      "caseId": "hebei-male-2024-high",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "hebei",
+      "caseFile": "5.json",
+      "caseId": "hebei-male-2023-high",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "heilongjiang",
+      "caseFile": "1.json",
+      "caseId": "1",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "heilongjiang",
+      "caseFile": "2.json",
+      "caseId": "2",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "heilongjiang",
+      "caseFile": "3.json",
+      "caseId": "3",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "heilongjiang",
+      "caseFile": "4.json",
+      "caseId": "4",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "heilongjiang",
+      "caseFile": "5.json",
+      "caseId": "5",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "heilongjiang",
+      "caseFile": "6.json",
+      "caseId": "6",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "henan",
+      "caseFile": "1.json",
+      "caseId": "henan-yuyu-2026",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "henan",
+      "caseFile": "2.json",
+      "caseId": "henan-xinyang-2025",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "henan",
+      "caseFile": "3.json",
+      "caseId": "henan-zhengzhou-2024",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "henan",
+      "caseFile": "4.json",
+      "caseId": "henan-female-2025",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "henan",
+      "caseFile": "5.json",
+      "caseId": "henan-luoyang-2026",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "henan",
+      "caseFile": "6.json",
+      "caseId": "henan-zhengzhou-2026b",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "henan",
+      "caseFile": "7.json",
+      "caseId": "henan-female-2024",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "hubei",
+      "caseFile": "1.json",
+      "caseId": "hubei-huangshi-2025",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "hubei",
+      "caseFile": "2.json",
+      "caseId": "hubei-wuhan-2022",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "hubei",
+      "caseFile": "3.json",
+      "caseId": "hubei-jingzhou-2024",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "hubei",
+      "caseFile": "4.json",
+      "caseId": "hubei-wuhan-2024-male",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "hunan",
+      "caseFile": "1.json",
+      "caseId": "1",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "hunan",
+      "caseFile": "2.json",
+      "caseId": "2",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "hunan",
+      "caseFile": "3.json",
+      "caseId": "3",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "hunan",
+      "caseFile": "4.json",
+      "caseId": "4",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "hunan",
+      "caseFile": "5.json",
+      "caseId": "5",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "jiangsu",
+      "caseFile": "1.json",
+      "caseId": "1",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "jiangsu",
+      "caseFile": "2.json",
+      "caseId": "2",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "jiangsu",
+      "caseFile": "3.json",
+      "caseId": "3",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "jiangsu",
+      "caseFile": "4.json",
+      "caseId": "4",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "jiangsu",
+      "caseFile": "5.json",
+      "caseId": "5",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "jiangxi",
+      "caseFile": "1.json",
+      "caseId": "jiangxi-nanchang-2024",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "jiangxi",
+      "caseFile": "2.json",
+      "caseId": "jiangxi-nanchang-2025",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "jiangxi",
+      "caseFile": "3.json",
+      "caseId": "jiangxi-nanchang-2024-male",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "jiangxi",
+      "caseFile": "4.json",
+      "caseId": "jiangxi-nanchang-2025-female",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "jiangxi",
+      "caseFile": "5.json",
+      "caseId": "jiangxi-nanchang-2026-female",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "jiangxi",
+      "caseFile": "6.json",
+      "caseId": "jiangxi-nanchang-2023-male-high",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "jiangxi",
+      "caseFile": "7.json",
+      "caseId": "jiangxi-nanchang-2025-female-b",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "jiangxi",
+      "caseFile": "8.json",
+      "caseId": "jiangxi-nanchang-2023-male",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "jilin",
+      "caseFile": "1.json",
+      "caseId": "1",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "jilin",
+      "caseFile": "2.json",
+      "caseId": "2",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "jilin",
+      "caseFile": "3.json",
+      "caseId": "3",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "jilin",
+      "caseFile": "4.json",
+      "caseId": "4",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "liaoning",
+      "caseFile": "1.json",
+      "caseId": "1",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "liaoning",
+      "caseFile": "2.json",
+      "caseId": "2",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "liaoning",
+      "caseFile": "3.json",
+      "caseId": "3",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "liaoning",
+      "caseFile": "4.json",
+      "caseId": "4",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "neimenggu",
+      "caseFile": "1.json",
+      "caseId": "neimenggu-2025-male",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "ningxia",
+      "caseFile": "1.json",
+      "caseId": "ningxia-2024-male",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "ningxia",
+      "caseFile": "2.json",
+      "caseId": "ningxia-2026-male",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "ningxia",
+      "caseFile": "3.json",
+      "caseId": "ningxia-2026-male-intellectual",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "qinghai",
+      "caseFile": "1.json",
+      "caseId": "qinghai-2024-female",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "qinghai",
+      "caseFile": "2.json",
+      "caseId": "qinghai-2023-male",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "qinghai",
+      "caseFile": "3.json",
+      "caseId": "qinghai-2023-male-recalc",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "shaanxi",
+      "caseFile": "1.json",
+      "caseId": "shaanxi-xian-2023-female",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "shaanxi",
+      "caseFile": "2.json",
+      "caseId": "shaanxi-hanyin-2025-female",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "shaanxi",
+      "caseFile": "3.json",
+      "caseId": "shaanxi-xian-2024-male",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "shaanxi",
+      "caseFile": "4.json",
+      "caseId": "shaanxi-hanbin-2025-male",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "shaanxi",
+      "caseFile": "5.json",
+      "caseId": "shaanxi-hanbin-2025-male2",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "shandong",
+      "caseFile": "1.json",
+      "caseId": "1",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "shandong",
+      "caseFile": "2.json",
+      "caseId": "2",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "shandong",
+      "caseFile": "3.json",
+      "caseId": "3",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "shandong",
+      "caseFile": "4.json",
+      "caseId": "4",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "shandong",
+      "caseFile": "5.json",
+      "caseId": "5",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "shanghai",
+      "caseFile": "1.json",
+      "caseId": "1",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "shanghai",
+      "caseFile": "2.json",
+      "caseId": "2",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "shanghai",
+      "caseFile": "3.json",
+      "caseId": "3",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "shanghai",
+      "caseFile": "4.json",
+      "caseId": "4",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "shanghai",
+      "caseFile": "5.json",
+      "caseId": "5",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "shanxi",
+      "caseFile": "1.json",
+      "caseId": "shanxi-taiyuan-2025",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "shanxi",
+      "caseFile": "2.json",
+      "caseId": "shanxi-taiyuan-2024-female",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "shanxi",
+      "caseFile": "3.json",
+      "caseId": "shanxi-taiyuan-2024-male-high",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "shanxi",
+      "caseFile": "4.json",
+      "caseId": "shanxi-taiyuan-2023",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "shanxi",
+      "caseFile": "5.json",
+      "caseId": "shanxi-taiyuan-2023-female",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "sichuan",
+      "caseFile": "1.json",
+      "caseId": "1",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "sichuan",
+      "caseFile": "2.json",
+      "caseId": "2",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "sichuan",
+      "caseFile": "3.json",
+      "caseId": "3",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "sichuan",
+      "caseFile": "4.json",
+      "caseId": "4",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "sichuan",
+      "caseFile": "5.json",
+      "caseId": "5",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "tianjin",
+      "caseFile": "1.json",
+      "caseId": "1",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "tianjin",
+      "caseFile": "2.json",
+      "caseId": "2",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "tianjin",
+      "caseFile": "3.json",
+      "caseId": "3",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "tianjin",
+      "caseFile": "4.json",
+      "caseId": "4",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "tianjin",
+      "caseFile": "5.json",
+      "caseId": "5",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "xinjiang",
+      "caseFile": "1.json",
+      "caseId": "xinjiang-2023-female",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "xinjiang",
+      "caseFile": "2.json",
+      "caseId": "xinjiang-2026-male",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "xinjiang",
+      "caseFile": "3.json",
+      "caseId": "xinjiang-urumqi-2024-female",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "xizang",
+      "caseFile": "1.json",
+      "caseId": "xizang-2026-female-45",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "xizang",
+      "caseFile": "2.json",
+      "caseId": "xizang-2018-male-55",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "yunnan",
+      "caseFile": "1.json",
+      "caseId": "1",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "yunnan",
+      "caseFile": "2.json",
+      "caseId": "2",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "yunnan",
+      "caseFile": "3.json",
+      "caseId": "3",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "yunnan",
+      "caseFile": "4.json",
+      "caseId": "4",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "zhejiang",
+      "caseFile": "1.json",
+      "caseId": "zhejiang-male-2025",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "zhejiang",
+      "caseFile": "2.json",
+      "caseId": "zhejiang-male-2024",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "zhejiang",
+      "caseFile": "3.json",
+      "caseId": "zhejiang-female-2025",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "zhejiang",
+      "caseFile": "4.json",
+      "caseId": "zhejiang-female-2025b",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "zhejiang",
+      "caseFile": "5.json",
+      "caseId": "zhejiang-female-2025-high",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "zhejiang",
+      "caseFile": "6.json",
+      "caseId": "zhejiang-male-2025b",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    },
+    {
+      "province": "zhejiang",
+      "caseFile": "7.json",
+      "caseId": "zhejiang-male-2025-02",
+      "status": "ERROR",
+      "error": "Cannot read properties of undefined (reading 'name')"
+    }
+  ]
+}

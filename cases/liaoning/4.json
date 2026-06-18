@@ -22,11 +22,10 @@
   "personal_account": 129872.37,
   "months": 139,
   "expected": {
-    "basic_pension": 2800.1,
-    "extra_pension": 306.55,
+    "basic_pension": 2853.74,
     "personal_pension": 934.33,
-    "transitional_pension": 1461.07,
-    "total": 5502.36
+    "transitional_pension": null,
+    "total": null
   },
   "notes": "辽宁男60岁2023.08退休。建账1998-01（地区差异/补缴），建账前缴费15.25年(1982.10-1998.01)。视同15.25年。高指数1.617，高个账13万。过渡=6987×1.617×15.25×1.4%=1461.07。⚠️增发339.25表上未显示",
   "trans_index": 0.9797

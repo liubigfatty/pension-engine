@@ -1,0 +1,29 @@
+{
+  "case_id": "1001",
+  "province": "jilin",
+  "city": "通化市",
+  "gender": "女",
+  "birth_year": 1970,
+  "birth_month": 8,
+  "work_year": 1981,
+  "work_month": 4,
+  "retire_year": 2025,
+  "retire_month": 8,
+  "actual_years": 29.17,
+  "sight_years": 15.25,
+  "total_years": 44.42,
+  "avg_index": 0.46,
+  "base_number": 7322.08,
+  "base_prov": 7322.08,
+  "personal_account": 69844.83,
+  "months": 170,
+  "expected": {
+    "basic_pension": 2397.62,
+    "personal_pension": 410.85,
+    "transitional_pension": null,
+    "total": null
+  },
+  "notes": "jilin 女干部55岁退休（自动生成）",
+  "genderType": "fc",
+  "generated": true
+}

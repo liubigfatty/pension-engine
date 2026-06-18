@@ -1,0 +1,30 @@
+{
+  "case_id": "NaN",
+  "province": "zhejiang",
+  "gender": "女",
+  "birth": "1965年02月",
+  "work_start": "1981年11月",
+  "retire_year": 2025,
+  "retire_month": 2,
+  "total_years": 42.83,
+  "sight_years": 14.25,
+  "pre_account_years": 16.25,
+  "personal_account": 96678.71,
+  "months": 170,
+  "expected": {
+    "basic_pension": 3156.09,
+    "personal_pension": 568.7,
+    "transitional_pension": null,
+    "total": null
+  },
+  "notes": "zhejiang 女干部55岁退休（自动生成）",
+  "birth_year": 1970,
+  "birth_month": 2,
+  "work_year": 1981,
+  "work_month": 11,
+  "avg_index": 0.7219,
+  "trans_index": 0.9307,
+  "base_number": 8310,
+  "genderType": "fc",
+  "generated": true
+}
