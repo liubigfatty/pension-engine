@@ -13,6 +13,8 @@ function getGenderType(input) {
   return 'fw50'
 }
 
+const app = getApp()
+
 // 加载省份元数据（assets/province-meta.js）
 let PROVINCE_META = []
 try {
