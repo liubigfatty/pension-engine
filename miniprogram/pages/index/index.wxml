@@ -1,5 +1,21 @@
 <!--pages/index/index.wxml-->
 <view class="container">
+  <!-- 隐私协议弹窗（官方规范） -->
+  <view class="privacy-mask" wx:if="{{showPrivacy}}">
+    <view class="privacy-popup">
+      <view class="privacy-title">隐私保护指引</view>
+      <view class="privacy-content">
+        <text>本小程序需要收集省份、缴费年限、平均指数等信息用于计算养老金。信息仅本地保存，不会上传服务器。\n\n请阅读并同意{{privacyContractName || '《隐私保护指引》'}}。</text>
+      </view>
+      <view class="privacy-actions">
+        <button class="privacy-btn-view" bindtap="onViewPrivacy">查看隐私协议</button>
+        <button class="privacy-btn-disagree" bindtap="onDisagreePrivacy">不同意</button>
+        <!-- 官方隐私授权按钮 -->
+        <button class="privacy-btn-agree" open-type="agreePrivacyAuthorization" bindagreeprivacyauthorization="onAgreePrivacy">同意</button>
+      </view>
+    </view>
+  </view>
+
   <!-- 主视觉区域 -->
   <view class="hero">
     <image class="logo-img" src="/assets/logo.jpg" mode="aspectFit"></image>
