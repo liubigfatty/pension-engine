@@ -359,11 +359,14 @@ function calcTransitionalPension(params) {
     // G实用 Z实指数（transIndex），可能与基础养老金指数不同
     const zshiIdx = (transIndex != null && transIndex > 0) ? transIndex : avgIndex
     const G_shi  = provBase * preAcct * zshiIdx * coef
-    const amount  = Math.round((G_tong + G_shi) * 100) / 100
-    const desc   = 'G同' + (sightYears || 0).toFixed(2) + '年×1.0=' + G_tong.toFixed(2)
-                    + ' + G实' + preAcct.toFixed(2) + '年×指数' + avgIndex.toFixed(4) + '=' + G_shi.toFixed(2)
-                    + '，系数' + (coef * 100).toFixed(1) + '%'
-    return { amount, description: desc }
+        // transitionalPension.amount = G同（不含G实，G实单独加到total）
+    const amount  = Math.round(G_tong * 100) / 100
+    // _gShiAmount: G实的值，由调用者加到total里（不显示为独立子项）
+    const _gShiAmount = Math.round(G_shi * 100) / 100
+    const desc   = 'G同:' + (sightYears || 0).toFixed(2) + '年×1.0=' + G_tong.toFixed(2)
+                    + '；G实:' + preAcct.toFixed(2) + '年×指数' + zshiIdx.toFixed(4) + '=' + G_shi.toFixed(2)
+                    + '；系数' + (coef * 100).toFixed(1) + '%'
+    return { amount, _gShiAmount, description: desc }
   }
 
   // 上海特殊公式（沪人社规〔2021〕32号）：
@@ -1554,7 +1557,7 @@ function calculate(config, inputData) {
   })
 
   // ===== 合计 =====
-  const rawSum = basicPension.amount + extraPension.amount + personalAccount.amount + transPension.amount + specialAddition.amount + adjustmentFund.amount
+  const rawSum = basicPension.amount + extraPension.amount + personalAccount.amount + transPension.amount + (transPension._gShiAmount || 0) + specialAddition.amount + adjustmentFund.amount
   // 浙江：见分进角补足 — 合计金额向上取整到角（0.1元）
   const total = config.round_to_jiao
     ? Math.ceil(rawSum * 10) / 10

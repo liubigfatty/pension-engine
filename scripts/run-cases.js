@@ -57,7 +57,7 @@ function mapCaseToInput(c, provConfig) {
     personalAcc:    c.personal_account ?? 0,
     sightYears:      c.sight_years   ?? null,
     totalYears:      c.total_years    ?? null,
-    preAccountYears: c.pre_account_years ?? null,
+    preAccountYears: (provConfig?.province === 'yunnan' && c.pre_account_years != null) ? c.pre_account_years : null,
     actualYears:     c.actual_years     ?? null,
     months:         c.months         ?? null,
     retireType:      c.retire_type    || 'standard',
@@ -68,16 +68,19 @@ function mapCaseToInput(c, provConfig) {
 
 // ===== 运行单个案例 =====
 function runCase(prov, c, file) {
-  // 加载省份配置
+  // 加载省份配置（优先用 provinces/*.json，与 verify.js 一致）
   const configPaths = [
-    `./cloudfunctions/calculate/provinces/${prov}.js`,
-    `C:/Users/14041/WorkBuddy/pension-engine/miniprogram/cloud-functions/calculate/provinces/${prov}.js`,
+    path.join(__dirname, '..', 'provinces', `${prov}.json`),
+    path.join(__dirname, '..', 'cloudfunctions', 'calculate', 'provinces', `${prov}.json`),
   ];
   let config = null;
   for (const p of configPaths) {
-    if (fs.existsSync(p)) { config = require(path.resolve(p)); break; }
+    if (fs.existsSync(p)) { config = JSON.parse(fs.readFileSync(p, 'utf8')); break; }
+    // 也支持 .js
+    const jsPath = p.replace(/\.json$/, '.js');
+    if (fs.existsSync(jsPath)) { config = require(path.resolve(jsPath)); break; }
   }
-  if (!config) return { ok: false, msg: `省份配置 ${prov}.js 不存在` };
+  if (!config) return { ok: false, msg: `省份配置 ${prov} 不存在` };
 
   const input = mapCaseToInput(c, config);
   let result;
