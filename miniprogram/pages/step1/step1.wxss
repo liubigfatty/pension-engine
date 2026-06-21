@@ -1,143 +1,111 @@
-/* pages/step1/step1.wxss */
+/* pages/step1/step1.wxss - 使用全局设计系统 v2.0 */
 
-.container {
-  padding: 40rpx 32rpx;
-}
-
-/* 进度指示 */
-.progress {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 48rpx;
-}
-.progress-dot {
-  width: 24rpx;
-  height: 24rpx;
-  border-radius: 50%;
-  background: #e0e0e0;
-}
-.progress-dot.active {
-  background: #07c160;
-}
-.progress-line {
-  width: 80rpx;
-  height: 4rpx;
-  background: #e0e0e0;
-  margin: 0 12rpx;
-}
-.progress-line.active {
-  background: #07c160;
+/* 进度条（使用全局.progress-bar系统，覆盖部分样式） */
+.progress-bar {
+  margin-bottom: var(--space-xxl);
 }
 
-/* 标题 */
-.page-title {
-  display: block;
-  font-size: 44rpx;
-  font-weight: bold;
-  color: #1a1a1a;
-  text-align: center;
-}
-.page-desc {
-  display: block;
-  font-size: 26rpx;
-  color: #999;
-  text-align: center;
-  margin-top: 12rpx;
-  margin-bottom: 56rpx;
-}
+/* 表单（使用全局.form-group和.form-label，无需重复定义） */
 
-/* 表单 */
-.form-group {
-  margin-bottom: 36rpx;
-}
-.form-label {
-  font-size: 30rpx;
-  color: #333;
-  font-weight: 500;
-  margin-bottom: 16rpx;
-  display: block;
-}
-.required {
-  color: #e74c3c;
-  font-weight: bold;
-}
-
-/* Picker */
+/* 选择器（基于全局.picker-box，增加选中状态） */
 .picker-value {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 28rpx 28rpx;
-  border-radius: 16rpx;
-  font-size: 30rpx;
-  background: #f7f8fa;
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-round);
+  font-size: var(--font-size-base);
+  background: var(--color-bg-input);
   border: 2rpx solid transparent;
+  transition: all var(--transition-fast);
 }
+
 .picker-value.selected {
-  color: #1a1a1a;
-  background: #fff;
-  border-color: #07c160;
+  color: var(--color-text-primary);
+  background: var(--color-bg-card);
+  border-color: var(--color-primary);
   box-shadow: 0 2rpx 12rpx rgba(7,193,96,0.08);
 }
+
 .picker-value.placeholder {
-  color: #bbb;
+  color: var(--color-text-hint);
 }
+
 .picker-arrow {
-  font-size: 36rpx;
-  color: #ccc;
+  font-size: var(--font-size-md);
+  color: var(--color-text-hint);
 }
 
 /* 信息框（单基数省份） */
 .info-box {
-  padding: 28rpx 28rpx;
-  border-radius: 16rpx;
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
   background: #f0faf5;
   border: 2rpx solid #d4edda;
 }
+
 .info-text {
-  font-size: 30rpx;
+  font-size: var(--font-size-base);
   color: #155724;
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   display: block;
-}
-.info-sub {
-  font-size: 24rpx;
-  color: #6c9b78;
-  display: block;
-  margin-top: 6rpx;
 }
 
-/* 提示框 */
-.tip-box {
-  display: flex;
-  align-items: flex-start;
-  padding: 24rpx;
-  background: #e6f7ff;
-  border-radius: 12rpx;
-  border-left: 8rpx solid #1890ff;
-  margin-bottom: 60rpx;
+.info-sub {
+  font-size: var(--font-size-sm);
+  color: #6c9b78;
+  display: block;
+  margin-top: var(--space-xs);
 }
-.tip-icon { font-size: 36rpx; margin-right: 16rpx; flex-shrink: 0; }
+
+/* 提示框（使用全局.tip-box，覆盖部分样式） */
+.tip-box {
+  margin-bottom: var(--space-xxl);
+}
+
+.tip-icon { 
+  font-size: var(--font-size-md); 
+  margin-right: var(--space-sm); 
+  flex-shrink: 0; 
+}
+
 .tip-content {
   display: flex;
   flex-direction: column;
   flex: 1;
 }
-.tip-text { font-size: 28rpx; color: #1577d6; font-weight: 500; line-height: 1.5; }
-.tip-sub { font-size: 24rpx; color: #8c8c8c; margin-top: 8rpx; line-height: 1.4; }
 
-/* 按钮 */
-.btn-area { margin-top: 20rpx; }
+.tip-text { 
+  font-size: var(--font-size-base); 
+  color: var(--color-info); 
+  font-weight: var(--font-weight-medium); 
+  line-height: var(--line-height-tight); 
+}
+
+.tip-sub { 
+  font-size: var(--font-size-sm); 
+  color: var(--color-text-hint); 
+  margin-top: var(--space-xs); 
+  line-height: var(--line-height-tight); 
+}
+
+/* 按钮区域（使用全局.btn-area，覆盖部分样式） */
+.btn-area { 
+  margin-top: var(--space-md); 
+}
+
 .btn-next {
   width: 100%;
-  background: #07c160;
-  color: #fff;
-  font-size: 34rpx;
-  font-weight: 500;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  color: var(--color-text-white);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
   border: none;
-  border-radius: 50rpx;
-  padding: 28rpx 0;
+  border-radius: var(--radius-round);
+  padding: var(--space-md) 0;
   letter-spacing: 4rpx;
 }
-.btn-next::after { border: none; }
+
+.btn-next::after { 
+  border: none; 
+}

@@ -1,4 +1,4 @@
-/* pages/index/index.wxss */
+/* pages/index/index.wxss - 使用全局设计系统 v2.0 */
 
 .container {
   display: flex;
@@ -6,6 +6,7 @@
   align-items: center;
   min-height: 100vh;
   background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  padding: var(--space-lg);
 }
 
 /* 主视觉区域 */
@@ -22,38 +23,38 @@
 .logo-img {
   width: 400rpx;
   height: 300rpx;
-  border-radius: 24rpx;
+  border-radius: var(--radius-lg);
   box-shadow: 0 16rpx 48rpx rgba(0,0,0,0.3);
 }
 
 .hero-overlay {
-  margin-top: 40rpx;
+  margin-top: var(--space-lg);
   text-align: center;
 }
 
 .brand-name {
   display: block;
-  font-size: 48rpx;
-  font-weight: bold;
-  color: #fff;
+  font-size: var(--font-size-xxl);  /* 56rpx */
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-white);
   letter-spacing: 6rpx;
   text-shadow: 0 4rpx 12rpx rgba(0,0,0,0.3);
 }
 
 .brand-slogan {
   display: block;
-  margin-top: 20rpx;
-  font-size: 28rpx;
+  margin-top: var(--space-md);
+  font-size: var(--font-size-sm);  /* 26rpx */
   color: rgba(255,255,255,0.75);
   letter-spacing: 2rpx;
 }
 
 .brand-tagline {
   display: block;
-  margin-top: 12rpx;
-  font-size: 24rpx;
+  margin-top: var(--space-sm);
+  font-size: var(--font-size-xs);  /* 22rpx */
   color: rgba(7,193,96,0.9);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   letter-spacing: 1rpx;
 }
 
@@ -61,12 +62,12 @@
 .advantages {
   width: 90%;
   background: rgba(255,255,255,0.08);
-  border-radius: 24rpx;
+  border-radius: var(--radius-xl);
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding: 40rpx 20rpx;
-  margin-top: 40rpx;
+  padding: var(--space-xl) var(--space-md);
+  margin-top: var(--space-lg);
   backdrop-filter: blur(10px);
 }
 
@@ -78,19 +79,19 @@
 }
 
 .adv-num {
-  font-size: 44rpx;
-  font-weight: bold;
-  color: #07c160;
+  font-size: var(--font-size-xl);  /* 44rpx */
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
 }
 
 .adv-label {
-  font-size: 26rpx;
+  font-size: var(--font-size-sm);  /* 26rpx */
   color: rgba(255,255,255,0.85);
-  margin-top: 8rpx;
+  margin-top: var(--space-xs);
 }
 
 .adv-sub {
-  font-size: 22rpx;
+  font-size: var(--font-size-xs);  /* 22rpx */
   color: rgba(255,255,255,0.5);
   margin-top: 4rpx;
 }
@@ -101,24 +102,10 @@
   background: rgba(255,255,255,0.15);
 }
 
-/* 开始按钮 */
+/* 开始按钮（基于全局.btn-primary，增加特有的光泽动画） */
 .btn-start {
   width: 85%;
-  margin-top: 60rpx;
-  background: linear-gradient(135deg, #07c160 0%, #06ae56 100%);
-  color: #fff;
-  border: none;
-  border-radius: 50rpx;
-  padding: 32rpx 0;
-  font-size: 38rpx;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16rpx;
-  box-shadow: 0 8rpx 32rpx rgba(7,193,96,0.35);
-  position: relative;
-  overflow: hidden;
+  margin-top: var(--space-xxl);
 }
 
 /* 按钮光泽动画 */
@@ -139,23 +126,27 @@
   100% { left: 100%; }
 }
 
-.btn-text { letter-spacing: 6rpx; }
-.btn-arrow { font-size: 44rpx; line-height: 1; }
+.btn-text { 
+  letter-spacing: 6rpx; 
+}
 
-.btn-start::after { border: none; }
+.btn-arrow { 
+  font-size: 44rpx; 
+  line-height: 1; 
+}
 
 /* 底部说明 */
 .footer {
   position: fixed;
-  bottom: 40rpx;
+  bottom: var(--space-md);
   left: 0;
   right: 0;
   text-align: center;
-  padding: 0 50rpx;
+  padding: 0 var(--space-xxl);
 }
 
 .footer-text {
-  font-size: 22rpx;
+  font-size: var(--font-size-xs);  /* 22rpx */
   color: rgba(255,255,255,0.35);
 }
 
@@ -175,61 +166,61 @@
 
 .privacy-popup {
   width: 80%;
-  background: #fff;
-  border-radius: 24rpx;
-  padding: 48rpx 40rpx;
+  background: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xxl) var(--space-xl);
   box-shadow: 0 16rpx 48rpx rgba(0,0,0,0.3);
 }
 
 .privacy-title {
-  font-size: 36rpx;
-  font-weight: bold;
-  color: #333;
+  font-size: var(--font-size-lg);  /* 38rpx */
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
   text-align: center;
-  margin-bottom: 32rpx;
+  margin-bottom: var(--space-xl);
 }
 
 .privacy-content {
-  font-size: 28rpx;
-  color: #666;
-  line-height: 1.6;
-  margin-bottom: 40rpx;
+  font-size: var(--font-size-base);  /* 30rpx */
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-normal);
+  margin-bottom: var(--space-xxl);
   text-align: justify;
 }
 
 .privacy-actions {
   display: flex;
   flex-direction: column;
-  gap: 20rpx;
+  gap: var(--space-md);
 }
 
 .privacy-btn-view {
-  background: #f5f5f5;
-  color: #07c160;
-  border: 2rpx solid #07c160;
-  border-radius: 12rpx;
-  font-size: 28rpx;
-  padding: 20rpx 0;
+  background: var(--color-bg-input);
+  color: var(--color-primary);
+  border: 2rpx solid var(--color-primary);
+  border-radius: var(--radius-round);
+  font-size: var(--font-size-base);  /* 30rpx */
+  padding: var(--space-md) 0;
 }
 
 .privacy-btn-disagree {
-  background: #fff;
-  color: #999;
-  border: 2rpx solid #ddd;
-  border-radius: 12rpx;
-  font-size: 28rpx;
-  padding: 20rpx 0;
+  background: var(--color-bg-card);
+  color: var(--color-text-hint);
+  border: 2rpx solid var(--color-border);
+  border-radius: var(--radius-round);
+  font-size: var(--font-size-base);  /* 30rpx */
+  padding: var(--space-md) 0;
 }
 
 .privacy-btn-agree {
-  background: linear-gradient(135deg, #07c160 0%, #06ae56 100%);
-  color: #fff;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  color: var(--color-text-white);
   border: none;
-  border-radius: 12rpx;
-  font-size: 32rpx;
-  font-weight: 600;
-  padding: 24rpx 0;
-  box-shadow: 0 8rpx 24rpx rgba(7,193,96,0.35);
+  border-radius: var(--radius-round);
+  font-size: var(--font-size-md);  /* 34rpx */
+  font-weight: var(--font-weight-medium);
+  padding: var(--space-md) 0;
+  box-shadow: var(--shadow-primary);
 }
 
 .privacy-btn-agree::after {

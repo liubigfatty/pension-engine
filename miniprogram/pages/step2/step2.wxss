@@ -1,25 +1,34 @@
-/* pages/step2/step2.wxss */
+/* pages/step2/step2.wxss - 使用全局设计系统 v2.0 */
 
-/* 退休年龄预览卡片样式 */
+/* 退休年龄预览卡片样式（特有样式，保留） */
 .retire-preview {
   display: flex;
   align-items: center;
   background: linear-gradient(135deg, #ebf5ff 0%, #f0f9ff 100%);
   border: 1rpx solid #b3d9ff;
-  border-radius: 12rpx;
-  padding: 24rpx 28rpx;
-  margin: 24rpx 0;
-  box-shadow: 0 2rpx 8rpx rgba(0, 150, 255, 0.08);
+  border-radius: var(--radius-md);
+  padding: var(--space-md) var(--space-lg);
+  margin: var(--space-md) 0;
+  box-shadow: var(--shadow-sm);
 }
 
 .retire-icon {
   font-size: 40rpx;
-  margin-right: 16rpx;
+  margin-right: var(--space-md);
 }
 
 .retire-text {
-  font-size: 28rpx;
-  color: #1a6fc4;
-  font-weight: 500;
-  line-height: 1.5;
+  font-size: var(--font-size-sm);  /* 26rpx */
+  color: var(--color-info);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-tight);
+}
+
+/* 表单验证提示（特有样式，保留） */
+.form-hint {
+  font-size: var(--font-size-xs);  /* 22rpx */
+  color: var(--color-warning);
+  margin-top: var(--space-xs);
+  display: block;
+  line-height: var(--line-height-tight);
 }
