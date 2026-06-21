@@ -193,6 +193,13 @@ Page({
     return this.data.indexOptions[this.data.selectedIndex].value
   },
 
+  // 表单验证（供 WXML 调用）
+  isFormValid() {
+    const idx = this.getSelectedIndexValue()
+    const balance = parseFloat(this.data.accountBalance)
+    return !!(idx && idx > 0 && balance >= 0)
+  },
+
   onCalculate() {
     if (this.data.loading) return
 
