@@ -359,8 +359,8 @@ function calcTransitionalPension(params) {
     // G实用 Z实指数（transIndex），可能与基础养老金指数不同
     const zshiIdx = (transIndex != null && transIndex > 0) ? transIndex : avgIndex
     const G_shi  = provBase * preAcct * zshiIdx * coef
-        // transitionalPension.amount = G同（不含G实，G实单独加到total）
-    const amount  = Math.round(G_tong * 100) / 100
+        // transitionalPension.amount = G同 + G实（合计，不再分开）
+    const amount  = Math.round((G_tong + G_shi) * 100) / 100
     // _gShiAmount: G实的值，由调用者加到total里（不显示为独立子项）
     const _gShiAmount = Math.round(G_shi * 100) / 100
     const desc   = 'G同:' + (sightYears || 0).toFixed(2) + '年×1.0=' + G_tong.toFixed(2)
@@ -1384,6 +1384,19 @@ function calculate(config, inputData) {
     preAccountYears = parseFloat(data.preAccountYearsInput)
   }
 
+  // 北京特殊：自动计算建账前实际缴费年限（用于G实）
+
+  // 北京特殊：自动计算建账前实际缴费年限（用于G实）
+  // preAccountYears = max(工作起始, 建账时间) 到 cutoff_date 的年数
+  // 例如：1995-11工作，account_start=1992-10，cutoff=1998-06 → preAccountYears=1995-11~1998-06 ≈ 2.58年
+  if (preAccountYears === null && (config.province === 'bj' || config.province === 'beijing')) {
+    console.log('[engine] 北京 preAccountYears 自动计算: work=', data.work, 'accountStart=', accountStartConfigured, 'cutoff=', config.cutoff_date)
+    const cutoffConfigured = config.cutoff_date || { year: 1998, month: 6 }
+    const preStart = (data.work.year < accountStartConfigured.year || (data.work.year === accountStartConfigured.year && data.work.month < accountStartConfigured.month)) ? accountStartConfigured : data.work
+    preAccountYears = calcYears(preStart, cutoffConfigured)
+    console.log('[engine] 北京 preAccountYears 计算结果:', preAccountYears)
+  }
+
   // ===== 省份特殊取整规则 =====
   // 安徽等省份：缴费年限取1位小数，指数保留4位，结果保留2位
   // 福建等省份：年限按半段进整（不足半年按半年，大于半年不足一年按一年）
@@ -1557,7 +1570,7 @@ function calculate(config, inputData) {
   })
 
   // ===== 合计 =====
-  const rawSum = basicPension.amount + extraPension.amount + personalAccount.amount + transPension.amount + (transPension._gShiAmount || 0) + specialAddition.amount + adjustmentFund.amount
+  const rawSum = basicPension.amount + extraPension.amount + personalAccount.amount + transPension.amount + specialAddition.amount + adjustmentFund.amount
   // 浙江：见分进角补足 — 合计金额向上取整到角（0.1元）
   const total = config.round_to_jiao
     ? Math.ceil(rawSum * 10) / 10
