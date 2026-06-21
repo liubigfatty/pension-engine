@@ -28,7 +28,7 @@
 
     <!-- 退休时间 -->
     <view class="retire-info" wx:if="{{exactAge || retireAge}}">
-      <text class="retire-label">{{exactAge || retireAge}}法定退休</text>
+      <text class="retire-label">{{exactAge || retireAge}}{{retireAgeLabel}}</text>
       <text class="retire-note" wx:if="{{retireAge && retireAge.includes('岁')}}">（已纳入延迟退休政策）</text>
     </view>
   </view>
@@ -72,7 +72,7 @@
     <view class="section-title"><text>计算参数</text></view>
     <view class="detail-list">
       <view class="detail-item">
-        <text class="detail-label">法定退休年龄</text>
+        <text class="detail-label">{{retireAgeLabel || '法定退休年龄'}}</text>
         <text class="detail-value highlight">{{retireAge != null ? retireAge : '--'}}</text>
       </view>
       <view class="detail-item">

@@ -48,10 +48,19 @@ Page({
 
     this.setData({ hasValidData: true })
 
+    // 退休方式：'normal'法定 / 'early'弹性提前
+    const retirementType = r.retirementType || 'normal'
+    const isEarly = retirementType === 'early'
+
     // 展平数据，多重容错
     const raw = r._raw || {}
     const legal = raw.legal || {}
-    const meta = raw.metaData || {}
+    // 弹性提前退休数据（云函数返回值）
+    const flex = raw.flex || {}
+
+    // 根据退休方式选择数据源
+    const source = isEarly && flex.total ? flex : legal
+    const sourceLabel = isEarly && flex.total ? '弹性提前退休' : '法定年龄退休'
 
     // fmt: 安全数字格式化，失败返回 null（WXML 里用 != null 判断）
     const fmt = (v, d = 2) => {
@@ -60,22 +69,21 @@ Page({
       return !isNaN(n) && isFinite(n) ? n.toFixed(d) : null
     }
 
-    // extraPension 多重 fallback
+    // extraPension 多重 fallback（用 source 动态选择 legal 或 flex）
     const extraVal = r.extraPension != null
       ? r.extraPension
-      : ((legal.extraPension?.amount || 0) + (legal.specialAddition?.amount || 0))
+      : ((source.extraPension?.amount || 0) + (source.specialAddition?.amount || 0))
     const extraPensionFmt = (extraVal != null && Number(extraVal) > 0) ? fmt(extraVal) : null
 
-    // 核心金额字段：优先用 step3 已算好的值，其次用引擎返回值
-    const totalAmount = r.totalAmount != null ? r.totalAmount : fmt(legal.total)
-    const basePension = r.basePension != null ? r.basePension : fmt(legal.basicPension?.amount)
-    const personalPension = r.personalPension != null ? r.personalPension : fmt(legal.personalAccount?.amount)
-    const transitionPension = r.transitionPension != null ? r.transitionPension : fmt(legal.transitionalPension?.amount)
+    // 核心金额字段：优先用 step3 已算好的值，其次用引擎返回值（source 动态选择）
+    const totalAmount = r.totalAmount != null ? r.totalAmount : fmt(source.total)
+    const basePension = r.basePension != null ? r.basePension : fmt(source.basicPension?.amount)
+    const personalPension = r.personalPension != null ? r.personalPension : fmt(source.personalAccount?.amount)
+    const transitionPension = r.transitionPension != null ? r.transitionPension : fmt(source.transitionalPension?.amount)
 
-    // 计算参数：优先用 step3 已算好的值
-    // workYears: 可能是数字或字符串，统一转数字再格式化
-    let workYearsVal = r.workYears != null ? r.workYears : (legal.totalYears != null ? legal.totalYears : null)
-    if (workYearsVal != null) workYearsVal = fmt(workYearsVal, 2)  // 变成 "32.50" 这样的字符串
+    // 计算参数：优先用 step3 已算好的值，其次用 source（动态选择）
+    let workYearsVal = r.workYears != null ? r.workYears : (source.totalYears != null ? source.totalYears : null)
+    if (workYearsVal != null) workYearsVal = fmt(workYearsVal, 2)
 
     // accountBalance: 优先用 step3 传入的用户输入值
     let accountBalanceVal = null
@@ -83,8 +91,8 @@ Page({
       const n = Number(r.accountBalance)
       if (!isNaN(n) && isFinite(n)) accountBalanceVal = n.toFixed(2)
     }
-    if (accountBalanceVal === null && legal.personalAccount?.balance != null) {
-      accountBalanceVal = fmt(legal.personalAccount.balance, 2)
+    if (accountBalanceVal === null && source.personalAccount?.balance != null) {
+      accountBalanceVal = fmt(source.personalAccount.balance, 2)
     }
 
     // baseNumber: 退休地计发基数
@@ -93,22 +101,22 @@ Page({
       const n = Number(r.baseNumber)
       if (!isNaN(n) && isFinite(n)) baseNumberVal = n.toFixed(2)
     }
-    if (baseNumberVal === null && legal.baseRetire != null) {
-      baseNumberVal = fmt(legal.baseRetire)
+    if (baseNumberVal === null && source.baseRetire != null) {
+      baseNumberVal = fmt(source.baseRetire)
     }
 
     // averageIndex: 平均缴费指数
     const averageIndexVal = r.averageIndex != null ? r.averageIndex : null
 
-    // months: 计发月数
-    const monthsVal = r.months != null ? r.months : (legal.months || null)
+    // months: 计发月数（用 source 动态选择）
+    const monthsVal = r.months != null ? r.months : (source.months || null)
 
-    // retireAge: 法定退休年龄（精确：62岁10个月）
-    const retireAgeVal = r.retireAge || legal.ageStr || null
-    // 精确退休年龄（岁+月）
+    // retireAge: 退休年龄（根据退休方式显示）
+    const retireAgeVal = r.retireAge || source.ageStr || null
+    // 精确退休年龄（岁+月）— 用 source.date 动态选择
     let exactAgeStr = retireAgeVal || ''
-    if (r.birthYear && r.birthMonth && legal.date) {
-      exactAgeStr = calcExactAge(r.birthYear, r.birthMonth, legal.date.year, legal.date.month)
+    if (r.birthYear && r.birthMonth && source.date) {
+      exactAgeStr = calcExactAge(r.birthYear, r.birthMonth, source.date.year, source.date.month)
     }
 
     this.setData({
@@ -129,8 +137,12 @@ Page({
       baseNumber: baseNumberVal,
 
       // 地区信息
-      provinceName: r.provinceName || meta.name || '',
-      cityLabel: r.cityLabel || ''
+      provinceName: r.provinceName || '',
+      cityLabel: r.cityLabel || '',
+
+      // 退休方式（用于 WXML 显示不同文案）
+      retirementType: retirementType,
+      retireAgeLabel: sourceLabel  // "法定年龄退休" 或 "弹性提前退休"
     })
 
     // 生成分享图（异步，不阻塞页面渲染）

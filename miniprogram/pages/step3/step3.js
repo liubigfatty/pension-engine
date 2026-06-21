@@ -246,12 +246,19 @@ Page({
       workStartDate: `${input.workYear}-${pad(input.workMonth)}`,
       averageIndex: idx,
       personalAccount: balance,
-      extras: this.data.extraValues
+      extras: this.data.extraValues,
+      retireType: retireType  // 退休方式：'standard'法定 / 'early'弹性提前
     }
 
     // 辅助函数：安全数字转换
     const safeNum = (v) => (v != null && !isNaN(v) && isFinite(v) ? v : null)
     const fmt = (v, d = 2) => v != null ? Number(v).toFixed(d) : null
+
+    // 退休方式映射：小程序用 retirementType，云函数用 retireType
+    //   'normal' → 'standard'（法定年龄退休）
+    //   'early'  → 'early'   （弹性提前退休）
+    const retireTypeMap = { normal: 'standard', early: 'early' }
+    const retireType = retireTypeMap[input.retirementType] || 'standard'
 
     wx.cloud.callFunction({
       name: 'calculate',
@@ -293,6 +300,8 @@ Page({
               // 地区
               provinceName: meta.name || '',
               cityLabel: this.getCityLabel(params.cityType, meta),
+              // 退休方式（用于 result 页显示）
+              retirementType: input.retirementType || 'normal',
               // 保留原始数据（result 页 fallback 用）
               _raw: raw
             }
