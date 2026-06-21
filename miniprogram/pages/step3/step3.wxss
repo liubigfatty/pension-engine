@@ -86,7 +86,7 @@
 
 .custom-input {
   margin-top: var(--space-md);
-  padding: var(--space-md);  /* 缩小padding */
+  padding: var(--space-md) var(--space-lg);  /* 增大padding，避免数字被遮挡 */
   border-radius: var(--radius-lg);
   font-size: var(--font-size-base);
   color: var(--color-text-primary);
@@ -103,7 +103,7 @@
 
 /* 账户余额输入优化 */
 .balance-input {
-  padding: var(--space-sm) var(--space-md);  /* 缩小padding */
+  padding: var(--space-md) var(--space-lg);  /* 增大padding，避免数字被遮挡 */
   border-radius: var(--radius-round);
   font-size: var(--font-size-base);
   color: var(--color-text-primary);

@@ -1,4 +1,4 @@
-/* pages/index/index.wxss - 优化版（更紧凑）*/
+/* pages/index/index.wxss - 回退到宽松布局（用户反馈：太紧凑了）*/
 
 .container {
   display: flex;
@@ -6,7 +6,7 @@
   align-items: center;
   min-height: 100vh;
   background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-  padding: var(--space-md);  /* 缩小padding */
+  padding: var(--space-lg);  /* 回退到宽松padding */
 }
 
 /* 主视觉区域 */
@@ -16,49 +16,49 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 80rpx;  /* 缩小顶部间距 */
-  padding-bottom: 40rpx;  /* 缩小底部间距 */
+  padding-top: 120rpx;  /* 回退到宽松的顶部间距 */
+  padding-bottom: 60rpx;  /* 回退到宽松的底部间距 */
 }
 
 .logo-img {
-  width: 320rpx;  /* 缩小logo */
-  height: 240rpx;  /* 缩小logo */
+  width: 400rpx;  /* 回退到大的logo */
+  height: 300rpx;  /* 回退到大的logo */
   border-radius: var(--radius-lg);
-  box-shadow: 0 8rpx 32rpx rgba(0,0,0,0.3);  /* 缩小阴影 */
+  box-shadow: 0 16rpx 48rpx rgba(0,0,0,0.3);  /* 回退到大的阴影 */
 }
 
 .hero-overlay {
-  margin-top: var(--space-md);  /* 缩小margin */
+  margin-top: var(--space-lg);  /* 回退到宽松的margin */
   text-align: center;
 }
 
 .brand-name {
   display: block;
-  font-size: var(--font-size-xxl);  /* 48rpx（原来56rpx） */
+  font-size: 52rpx;  /* 回退到大的品牌名（原来56rpx，略缩小一点） */
   font-weight: var(--font-weight-bold);
   color: var(--color-text-white);
-  letter-spacing: 4rpx;  /* 缩小字间距 */
-  text-shadow: 0 2rpx 8rpx rgba(0,0,0,0.3);  /* 缩小阴影 */
+  letter-spacing: 6rpx;  /* 回退到大的字间距 */
+  text-shadow: 0 4rpx 12rpx rgba(0,0,0,0.3);  /* 回退到大的阴影 */
 }
 
 .brand-slogan {
   display: block;
-  margin-top: var(--space-sm);  /* 缩小margin */
-  font-size: var(--font-size-base);  /* 28rpx（原来26rpx，略增大提高可读性） */
+  margin-top: var(--space-md);  /* 回退到宽松的margin */
+  font-size: var(--font-size-sm);  /* 26rpx */
   color: rgba(255,255,255,0.75);
-  letter-spacing: 1rpx;  /* 缩小字间距 */
+  letter-spacing: 2rpx;  /* 回退到大的字间距 */
 }
 
 .brand-tagline {
   display: block;
-  margin-top: var(--space-xs);  /* 缩小margin */
-  font-size: var(--font-size-sm);  /* 24rpx（原来22rpx，略增大） */
+  margin-top: var(--space-sm);  /* 回退到宽松的margin */
+  font-size: var(--font-size-xs);  /* 22rpx */
   color: rgba(7,193,96,0.9);
   font-weight: var(--font-weight-medium);
-  letter-spacing: 0.5rpx;  /* 缩小字间距 */
+  letter-spacing: 1rpx;  /* 回退到大的字间距 */
 }
 
-/* 核心优势 - 优化：更紧凑 */
+/* 核心优势 - 回退到宽松布局 */
 .advantages {
   width: 90%;
   background: rgba(255,255,255,0.08);
@@ -66,8 +66,8 @@
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding: var(--space-lg) var(--space-md);  /* 缩小padding */
-  margin-top: var(--space-xl);  /* 缩小margin */
+  padding: var(--space-xl) var(--space-md);  /* 回退到宽松的padding */
+  margin-top: var(--space-xl);  /* 回退到宽松的margin */
   backdrop-filter: blur(10px);
 }
 
@@ -79,60 +79,60 @@
 }
 
 .adv-num {
-  font-size: var(--font-size-xl);  /* 40rpx（原来44rpx） */
+  font-size: var(--font-size-xl);  /* 44rpx（回退到大的数字） */
   font-weight: var(--font-weight-bold);
   color: var(--color-primary);
 }
 
 .adv-label {
-  font-size: var(--font-size-sm);  /* 24rpx（原来26rpx） */
+  font-size: var(--font-size-sm);  /* 26rpx（回退到原来的大小） */
   color: rgba(255,255,255,0.85);
-  margin-top: var(--space-xs);  /* 缩小margin */
+  margin-top: var(--space-xs);  /* 回退到宽松的margin */
 }
 
 .adv-sub {
-  font-size: var(--font-size-xs);  /* 20rpx（原来22rpx） */
+  font-size: var(--font-size-xs);  /* 22rpx（回退到原来的大小） */
   color: rgba(255,255,255,0.5);
-  margin-top: 2rpx;  /* 缩小margin */
+  margin-top: 4rpx;  /* 回退到宽松的margin */
 }
 
 .adv-divider {
   width: 1rpx;
-  height: 60rpx;  /* 缩小高度 */
+  height: 80rpx;  /* 回退到高的divider */
   background: rgba(255,255,255,0.15);
 }
 
-/* 开始按钮 - 优化：更紧凑 */
+/* 开始按钮 - 回退到宽松布局 */
 .btn-start {
-  width: 75%;  /* 缩小宽度（原来85%） */
-  margin-top: var(--space-xl);  /* 缩小margin */
+  width: 85%;  /* 回退到宽的按钮 */
+  margin-top: var(--space-xxl);  /* 回退到宽松的margin */
 }
 
 .btn-text { 
-  letter-spacing: 4rpx;  /* 缩小字间距 */
+  letter-spacing: 6rpx;  /* 回退到大的字间距 */
 }
 
 .btn-arrow { 
-  font-size: 36rpx;  /* 缩小箭头（原来44rpx） */
+  font-size: 44rpx;  /* 回退到大的箭头 */
   line-height: 1; 
 }
 
-/* 底部说明 - 优化：更紧凑 */
+/* 底部说明 - 回退到宽松布局 */
 .footer {
   position: fixed;
-  bottom: var(--space-md);  /* 缩小底部间距 */
+  bottom: var(--space-md);  /* 回退到宽松的底部间距 */
   left: 0;
   right: 0;
   text-align: center;
-  padding: 0 var(--space-xl);  /* 缩小左右padding */
+  padding: 0 var(--space-xxl);  /* 回退到宽松的左右padding */
 }
 
 .footer-text {
-  font-size: var(--font-size-xs);  /* 20rpx（原来22rpx） */
+  font-size: var(--font-size-xs);  /* 22rpx（回退到原来的大小） */
   color: rgba(255,255,255,0.35);
 }
 
-/* 隐私协议弹窗 - 优化：更紧凑 */
+/* 隐私协议弹窗 - 回退到宽松布局 */
 .privacy-mask {
   position: fixed;
   top: 0;
@@ -150,30 +150,30 @@
   width: 80%;
   background: var(--color-bg-card);
   border-radius: var(--radius-xl);
-  padding: var(--space-xl) var(--space-xl);  /* 缩小padding */
-  box-shadow: 0 8rpx 32rpx rgba(0,0,0,0.3);  /* 缩小阴影 */
+  padding: var(--space-xxl) var(--space-xl);  /* 回退到宽松的padding */
+  box-shadow: 0 16rpx 48rpx rgba(0,0,0,0.3);  /* 回退到大的阴影 */
 }
 
 .privacy-title {
-  font-size: var(--font-size-lg);  /* 36rpx（原来38rpx） */
+  font-size: var(--font-size-lg);  /* 38rpx（回退到原来的大小） */
   font-weight: var(--font-weight-bold);
   color: var(--color-text-primary);
   text-align: center;
-  margin-bottom: var(--space-xl);  /* 缩小margin */
+  margin-bottom: var(--space-xxl);  /* 回退到宽松的margin */
 }
 
 .privacy-content {
-  font-size: var(--font-size-base);  /* 28rpx（原来30rpx） */
+  font-size: var(--font-size-base);  /* 30rpx（回退到原来的大小） */
   color: var(--color-text-secondary);
   line-height: var(--line-height-normal);
-  margin-bottom: var(--space-xl);  /* 缩小margin */
+  margin-bottom: var(--space-xxl);  /* 回退到宽松的margin */
   text-align: justify;
 }
 
 .privacy-actions {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);  /* 缩小间距 */
+  gap: var(--space-md);  /* 回退到宽松的间距 */
 }
 
 .privacy-btn-view {
@@ -181,8 +181,8 @@
   color: var(--color-primary);
   border: 2rpx solid var(--color-primary);
   border-radius: var(--radius-round);
-  font-size: var(--font-size-base);  /* 28rpx（原来30rpx） */
-  padding: var(--space-sm) 0;  /* 缩小padding */
+  font-size: var(--font-size-base);  /* 30rpx（回退到原来的大小） */
+  padding: var(--space-md) 0;  /* 回退到宽松的padding */
 }
 
 .privacy-btn-disagree {
@@ -190,8 +190,8 @@
   color: var(--color-text-hint);
   border: 2rpx solid var(--color-border);
   border-radius: var(--radius-round);
-  font-size: var(--font-size-base);  /* 28rpx（原来30rpx） */
-  padding: var(--space-sm) 0;  /* 缩小padding */
+  font-size: var(--font-size-base);  /* 30rpx（回退到原来的大小） */
+  padding: var(--space-md) 0;  /* 回退到宽松的padding */
 }
 
 .privacy-btn-agree {
@@ -199,9 +199,9 @@
   color: var(--color-text-white);
   border: none;
   border-radius: var(--radius-round);
-  font-size: var(--font-size-md);  /* 32rpx（原来34rpx） */
+  font-size: var(--font-size-md);  /* 34rpx（回退到原来的大小） */
   font-weight: var(--font-weight-medium);
-  padding: var(--space-sm) 0;  /* 缩小padding */
+  padding: var(--space-md) 0;  /* 回退到宽松的padding */
   box-shadow: var(--shadow-primary);
 }
 

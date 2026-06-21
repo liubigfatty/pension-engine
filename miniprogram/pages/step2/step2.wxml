@@ -89,6 +89,19 @@
     <text class="form-hint" wx:if="{{workYear < birthYear + 16}}">⚠️ 参加工作年龄小于16岁，请确认</text>
   </view>
 
+  <!-- 退休方式选择 -->
+  <view class="form-group" wx:if="{{workYear && workMonth}}">
+    <text class="form-label"><text class="form-required">*</text> 退休方式</text>
+    <view class="radio-group">
+      <view class="radio-item {{retirementType === 'normal' ? 'active' : ''}}" bindtap="onRetirementTypeSelect" data-value="normal">
+        <text class="radio-text">法定年龄退休</text>
+      </view>
+      <view class="radio-item {{retirementType === 'early' ? 'active' : ''}}" bindtap="onRetirementTypeSelect" data-value="early">
+        <text class="radio-text">弹性提前退休</text>
+      </view>
+    </view>
+  </view>
+
   <!-- 按钮 -->
   <view class="btn-area">
     <button class="btn-secondary" bindtap="onPrev">上一步</button>

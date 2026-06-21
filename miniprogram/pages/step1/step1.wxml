@@ -1,4 +1,4 @@
-<!--pages/step1/step1.wxml - 优化版（统一选择器样式）-->
+<!--pages/step1/step1.wxml - 修复版（地区选择器常显示）-->
 <view class="step-container">
   <!-- 进度条 -->
   <view class="progress-bar">
@@ -33,27 +33,36 @@
     </picker>
   </view>
 
-  <!-- 城市/基数类型选择 -->
-  <view class="form-group" wx:if="{{cityTypeNames.length > 0}}">
+  <!-- 地区选择（常显示） -->
+  <view class="form-group">
     <text class="form-label"><text class="form-required">*</text> {{cityTypeNames.length > 1 ? '基数类型' : '地区'}}</text>
-    <picker mode="selector" range="{{cityTypeNames}}" value="{{cityTypeIndex}}" bindchange="onCityTypeChange">
+    <!-- 多基数省份：可以选择 -->
+    <picker mode="selector" range="{{cityTypeNames}}" value="{{cityTypeIndex}}" bindchange="onCityTypeChange" wx:if="{{provinceIndex >= 0 && cityTypeNames.length > 1}}">
       <view class="picker-box">
         {{cityTypeNames[cityTypeIndex]}}
         <text class="picker-arrow">›</text>
       </view>
     </picker>
+    <!-- 单基数省份：显示唯一选项（不可更改） -->
+    <view class="picker-box disabled" wx:if="{{provinceIndex >= 0 && cityTypeNames.length === 1}}">
+      {{cityTypeNames[0]}}
+    </view>
+    <!-- 未选择省份：提示先选择省份 -->
+    <view class="picker-box placeholder" wx:if="{{provinceIndex < 0}}">
+      请先选择省份
+    </view>
   </view>
 
   <!-- 提示信息 -->
   <view class="tip-box" wx:if="{{provinceIndex >= 0}}">
     <text class="tip-icon">💡</text>
     <view class="tip-content">
-      <text class="tip-text">已选择：{{provinceNames[provinceIndex]}} · {{cityTypeNames[cityTypeIndex] || '全省统一'}}</text>
+      <text class="tip-text">已选择：{{provinceNames[provinceIndex]}} · {{cityTypeNames[cityTypeIndex] || cityTypeNames[0]}}</text>
     </view>
   </view>
 
-  <!-- 下一步按钮 -->
+  <!-- 下一步按钮（使用.btn-next样式：绿色填充） -->
   <view class="btn-area">
-    <button class="btn-primary" bindtap="onNext">下一步</button>
+    <button class="btn-next" bindtap="onNext">下一步</button>
   </view>
 </view>

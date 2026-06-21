@@ -22,18 +22,6 @@
   <text class="page-title">缴费信息</text>
   <text class="page-desc">请填写缴费相关信息</text>
 
-  <!-- 顶部信息摘要 -->
-  <view class="summary-card">
-    <view class="summary-row">
-      <text class="summary-label">参保地区</text>
-      <text class="summary-value">{{provinceName}} · {{cityLabel}}</text>
-    </view>
-    <view class="summary-row">
-      <text class="summary-label">个人信息</text>
-      <text class="summary-value">{{genderLabel}} · {{identityLabel}}</text>
-    </view>
-  </view>
-
   <!-- 平均缴费指数 -->
   <view class="form-group">
     <text class="form-label"><text class="form-required">*</text> 平均缴费指数</text>
@@ -81,6 +69,6 @@
   <!-- 计算按钮 -->
   <view class="btn-area">
     <button class="btn-secondary" bindtap="onPrev">上一步</button>
-    <button class="btn-primary {{!isFormValid() ? 'disabled' : ''}}" bindtap="onCalculate" disabled="{{!isFormValid()}}">计算养老金</button>
+    <button class="btn-calculate {{!isFormValid() ? 'disabled' : ''}}" bindtap="onCalculate" disabled="{{!isFormValid()}}">计算养老金</button>
   </view>
 </view>

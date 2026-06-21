@@ -42,7 +42,8 @@
 /* 日期选择器行优化 */
 .date-row {
   display: flex;
-  gap: var(--space-sm);  /* 缩小间距 */
+  gap: var(--space-sm);
+  width: 100%;  /* 增加：占满父容器 */
 }
 
 .date-picker {
@@ -50,7 +51,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-sm) var(--space-md);  /* 缩小padding */
+  padding: var(--space-sm) var(--space-md);
   border-radius: var(--radius-round);
   font-size: var(--font-size-base);
   color: var(--color-text-primary);

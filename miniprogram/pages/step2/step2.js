@@ -84,6 +84,9 @@ Page({
     // 女职工退休年龄选择（仅女职工显示）
     femaleEmployeeAge: '50',       // 50 或 55
 
+    // 退休方式选择
+    retirementType: 'normal',     // 'normal' = 法定年龄退休，'early' = 弹性提前退休
+
     // 退休年龄预览
     retirePreview: '',
 
@@ -147,6 +150,11 @@ Page({
   onFemaleAgeSelect(e) {
     this.setData({ femaleEmployeeAge: e.currentTarget.dataset.value })
     this.updateRetirePreview()
+  },
+
+  // 退休方式选择
+  onRetirementTypeSelect(e) {
+    this.setData({ retirementType: e.currentTarget.dataset.value })
   },
 
   // 出生年份变化 → 自动调整参加工作时间
@@ -255,7 +263,8 @@ Page({
       workMonth: this.data.workMonth,
       femaleEmployeeAge: this.data.gender === 'female' && this.data.identity === 'employee'
         ? this.data.femaleEmployeeAge
-        : undefined
+        : undefined,
+      retirementType: this.data.retirementType  // 保存退休方式
     })
 
     app.globalData.calcInput = calcInput
