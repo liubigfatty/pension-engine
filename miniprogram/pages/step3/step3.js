@@ -134,8 +134,11 @@ Page({
       success: (res) => {
         this.setData({ estimating: false })
         if (res.result && res.result.success) {
-          const balance = res.result.data?.legal?.personalAccount?.balance
-          console.log('[step3] 引擎估算余额:', balance)
+          const raw = res.result.data || {}
+          // 根据退休方式选择数据源：弹性提前退休用 flex，否则用 legal
+          const source = rt === 'early' && raw.flex ? raw.flex : raw.legal
+          const balance = source?.personalAccount?.balance
+          console.log('[step3] 引擎估算余额:', balance, '(退休方式:', rt, ', 数据源:', rt === 'early' && raw.flex ? 'flex' : 'legal', ')')
           this.setData({
             estimatedBalance: balance,
             accountBalance: balance != null ? String(Math.round(balance)) : null
