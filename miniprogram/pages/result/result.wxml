@@ -1,5 +1,17 @@
 <!--pages/result/result.wxml-->
 <view class="container">
+
+  <!-- 数据异常提示（Step3未成功计算时显示） -->
+  <view class="error-tip" wx:if="{{!hasValidData}}">
+    <view class="error-icon">⚠️</view>
+    <text class="error-title">未获取到计算结果</text>
+    <text class="error-desc">{{errorMsg || '请返回并重新计算'}}</text>
+    <button class="btn-recalc" bindtap="onRecalculate">返回重新计算</button>
+  </view>
+
+  <!-- 正常结果展示（数据有效时显示） -->
+  <block wx:if="{{hasValidData}}">
+
   <!-- 头部 -->
   <view class="result-header">
     <text class="result-title">您的养老金测算结果</text>
@@ -100,4 +112,5 @@
 
   <!-- 隐藏Canvas，用于生成分享图 -->
   <canvas type="2d" id="shareCanvas" style="position:fixed;left:-9999px;top:-9999px;width:750px;height:1000px;"></canvas>
+  </block>
 </view>

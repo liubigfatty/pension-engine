@@ -20,6 +20,7 @@ function calcExactAge(birthYear, birthMonth, retireYear, retireMonth) {
 
 Page({
   data: {
+    hasValidData: true,   // 数据是否有效（ Step3 未成功计算时为 false）
     result: {},
     provinceName: '',
     cityLabel: '',
@@ -33,6 +34,19 @@ Page({
 
     // 调试：打印原始数据（上线前可删除）
     console.log('[result] calcResult:', JSON.stringify(r))
+
+    // 保护：如果数据无效，提示用户返回重新计算
+    if (!r || !r.totalAmount || r.totalAmount === null) {
+      console.warn('[result] 数据无效，显示引导')
+      this.setData({
+        result: {},
+        hasValidData: false,
+        errorMsg: '未获取到计算结果，请返回重新计算'
+      })
+      return  // 不再执行后续逻辑
+    }
+
+    this.setData({ hasValidData: true })
 
     // 展平数据，多重容错
     const raw = r._raw || {}
