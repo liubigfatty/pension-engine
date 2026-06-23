@@ -1,29 +1,31 @@
-/* pages/step1/step1.wxss - 个人信息页样式 */
+/* pages/step1/step1.wxss - 布局优化版 */
 
 .container {
   min-height: 100vh;
-  background: var(--color-bg-page);
-  padding: 32rpx;
+  background: #F5F3F0;
+  padding: 24rpx 28rpx 60rpx;
   box-sizing: border-box;
 }
 
-/* 进度条 */
-.progress-bar {
+/* ══════════════════════════════
+   步骤指示 - 更紧凑
+   ══════════════════════════════ */
+.step-indicator {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 32rpx 0 40rpx;
+  padding: 20rpx 0 28rpx;
 }
 
-.progress-step {
+.step-item {
   display: flex;
-  flex-direction: column;
   align-items: center;
+  gap: 10rpx;
 }
 
 .step-dot {
-  width: 48rpx;
-  height: 48rpx;
+  width: 40rpx;
+  height: 40rpx;
   border-radius: 50%;
   background: #D5CEC3;
   color: #AAAAAA;
@@ -34,167 +36,150 @@
   justify-content: center;
 }
 
-.progress-step.active .step-dot {
+.step-item.active .step-dot {
   background: #8B7355;
   color: #FFFFFF;
 }
 
-.progress-step.done .step-dot {
-  background: #8B7355;
-  color: #FFFFFF;
-}
-
-.step-label {
-  font-size: 20rpx;
+.step-name {
+  font-size: 24rpx;
   color: #AAAAAA;
-  margin-top: 8rpx;
 }
 
-.progress-step.active .step-label {
+.step-item.active .step-name {
   color: #8B7355;
+  font-weight: 500;
 }
 
-.progress-line {
-  width: 80rpx;
-  height: 4rpx;
+.step-line {
+  width: 60rpx;
+  height: 3rpx;
   background: #D5CEC3;
   margin: 0 16rpx;
+  margin-bottom: 2rpx;
+}
+
+/* ══════════════════════════════
+   表单卡片 - 更紧凑
+   ══════════════════════════════ */
+.form-card {
+  background: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 36rpx 32rpx 32rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.05);
+}
+
+/* ══════════════════════════════
+   表单项 - 标签+输入框
+   ══════════════════════════════ */
+.form-item {
   margin-bottom: 28rpx;
 }
 
-/* 表单卡片 */
-.form-card {
-  background: var(--color-bg-card);
-  border-radius: 24rpx;
-  padding: 40rpx 32rpx;
-  box-shadow: 0 4rpx 20rpx rgba(40,41,43,0.08);
+.form-item:last-child {
+  margin-bottom: 0;
 }
 
-.card-header {
+/* 标签行：标签名 + 必填星号 */
+.form-label-row {
   display: flex;
   align-items: center;
-  margin-bottom: 40rpx;
-}
-
-.step-number {
-  width: 48rpx;
-  height: 48rpx;
-  border-radius: 50%;
-  background: #8B7355;
-  color: #FFFFFF;
-  font-size: 24rpx;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 16rpx;
-}
-
-.card-title {
-  font-size: 34rpx;
-  font-weight: 600;
-  color: var(--color-text-primary);
-}
-
-/* 表单项 */
-.form-item {
-  margin-bottom: 32rpx;
+  gap: 6rpx;
+  margin-bottom: 10rpx;
 }
 
 .form-label {
-  display: block;
-  font-size: 26rpx;
-  color: var(--color-text-secondary);
-  margin-bottom: 12rpx;
+  font-size: 27rpx;
+  color: #555555;
+  font-weight: 500;
 }
 
+.form-required {
+  color: #C0392B;
+  font-size: 24rpx;
+}
+
+/* ══════════════════════════════
+   选择器/输入框 - 统一样式
+   ══════════════════════════════ */
 .picker-box {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: var(--color-bg-input);
-  border: 2rpx solid var(--color-border);
-  border-radius: 48rpx;
-  padding: 24rpx 32rpx;
-  font-size: 28rpx;
-  color: var(--color-text-primary);
+  padding: 24rpx 28rpx;
+  background: #FAFAFA;
+  border: 2rpx solid #E5E5EA;
+  border-radius: 14rpx;
+  font-size: 29rpx;
+  color: #28292B;
   transition: all 0.2s ease;
 }
 
 .picker-box.selected {
-  border-color: var(--color-primary);
-  background: var(--color-bg-card);
+  border-color: #8B7355;
+  background: #FFFFFF;
 }
 
-.picker-value {
-  flex: 1;
+.picker-box.placeholder text,
+.picker-box .placeholder {
+  color: #BBBBBB;
 }
 
 .picker-arrow {
-  font-size: 20rpx;
-  color: var(--color-text-hint);
+  font-size: 18rpx;
+  color: #CCCCCC;
   margin-left: 12rpx;
+  flex-shrink: 0;
 }
 
-/* 单选组（退休方案） */
+/* ══════════════════════════════
+   单选按钮组
+   ══════════════════════════════ */
 .radio-group {
   display: flex;
   gap: 20rpx;
 }
 
-.radio-item {
+.radio-btn {
   flex: 1;
   text-align: center;
-  padding: 24rpx 0;
-  border: 2rpx solid var(--color-border);
-  border-radius: 48rpx;
-  font-size: 26rpx;
-  color: var(--color-text-secondary);
-  background: var(--color-bg-input);
+  padding: 22rpx 0;
+  background: #FAFAFA;
+  border: 2rpx solid #E5E5EA;
+  border-radius: 14rpx;
+  font-size: 27rpx;
+  color: #555555;
   transition: all 0.2s ease;
 }
 
-.radio-item.active {
-  background: #8B7355;
+.radio-btn.active {
+  background: linear-gradient(135deg, #8B7355, #A08566);
   color: #FFFFFF;
-  border-color: #8B7355;
+  border-color: transparent;
+  box-shadow: 0 4rpx 14rpx rgba(139,115,85,0.25);
 }
 
-/* 下一步按钮 */
-.btn-area {
-  margin-top: 60rpx;
-  padding: 0 0 60rpx;
+/* ══════════════════════════════
+   下一步按钮
+   ══════════════════════════════ */
+.btn-wrap {
+  margin-top: 40rpx;
 }
 
-.btn-next {
+.btn-primary {
   width: 100%;
   background: linear-gradient(135deg, #8B7355 0%, #A08566 100%);
   color: #FFFFFF !important;
-  border: none;
-  border-radius: 48rpx;
-  padding: 28rpx 0;
-  font-size: 32rpx;
-  font-weight: 600;
-  letter-spacing: 6rpx;
-  box-shadow: 0 8rpx 24rpx rgba(139,115,85,0.35);
-  position: relative;
-  overflow: hidden;
+  border: none !important;
+  border-radius: 48rpx !important;
+  padding: 26rpx 0;
+  font-size: 30rpx !important;
+  font-weight: 600 !important;
+  letter-spacing: 4rpx;
+  box-shadow: 0 6rpx 20rpx rgba(139,115,85,0.3);
   line-height: normal;
 }
 
-.btn-next::after {
-  border: none;
-}
-
-/* ═══════════════════════════════
-   日期选择器（年月并排）
-   ═══════════════════════════════ */
-.date-row {
-  display: flex;
-  gap: 20rpx;
-}
-
-.date-picker {
-  flex: 1;
-  min-width: 0;
+.btn-primary::after {
+  border: none !important;
 }

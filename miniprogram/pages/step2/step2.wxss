@@ -1,221 +1,220 @@
-/* pages/step2/step2.wxss - 卡片式表单布局 v4 */
+/* pages/step2/step2.wxss - 布局优化版 */
 
-/* ════════════════════════════════
-   卡片容器
-   ════════════════════════════════ */
-.form-card {
-  background: #FFFFFF;
-  border-radius: 24rpx;
-  padding: 40rpx 36rpx 36rpx;
-  box-shadow:
-    0 4rpx 20rpx rgba(0,0,0,0.06),
-    0 1rpx 4rpx rgba(0,0,0,0.04);
-  margin-top: 24rpx;
+.container {
+  min-height: 100vh;
+  background: #F5F3F0;
+  padding: 24rpx 28rpx 60rpx;
+  box-sizing: border-box;
 }
 
-/* 卡片头部 - 编号+标题 */
-.form-card-header {
-  display: flex;
-  align-items: center;
-  gap: 16rpx;
-  margin-bottom: 36rpx;
-  padding-bottom: 28rpx;
-  border-bottom: 1rpx solid #F0EDE8;
-}
-
-.form-card-num {
-  width: 48rpx;
-  height: 48rpx;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #8B7355, #A08566);
-  color: #FFFFFF;
-  font-size: 28rpx;
-  font-weight: 700;
+/* ════════════════════════════
+   步骤指示 - 与step1统一
+   ════════════════════════════ */
+.step-indicator {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
+  padding: 20rpx 0 28rpx;
 }
 
-.form-card-title {
-  font-size: 32rpx;
+.step-item {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+}
+
+.step-dot {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  background: #D5CEC3;
+  color: #AAAAAA;
+  font-size: 22rpx;
   font-weight: 600;
-  color: #28292B;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* ════════════════════════════════
-   表单项 - 标签在上、输入框在下
-   ════════════════════════════════ */
+.step-item.active .step-dot,
+.step-item.done .step-dot {
+  background: #8B7355;
+  color: #FFFFFF;
+}
+
+.step-name {
+  font-size: 24rpx;
+  color: #AAAAAA;
+}
+
+.step-item.active .step-name {
+  color: #8B7355;
+  font-weight: 500;
+}
+
+.step-item.done .step-name {
+  color: #8B7355;
+}
+
+.step-line {
+  width: 60rpx;
+  height: 3rpx;
+  background: #D5CEC3;
+  margin: 0 16rpx;
+  margin-bottom: 2rpx;
+}
+
+/* ════════════════════════════
+   表单卡片
+   ════════════════════════════ */
+.form-card {
+  background: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 36rpx 32rpx 32rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.05);
+}
+
+/* ════════════════════════════
+   表单项
+   ════════════════════════════ */
 .form-item {
-  margin-bottom: 32rpx;
+  margin-bottom: 28rpx;
 }
 
-.form-item:last-of-type {
-  margin-bottom: 40rpx;
+.form-item:last-child {
+  margin-bottom: 0;
 }
 
-/* 标签 */
+/* 标签行 */
+.form-label-row {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  margin-bottom: 10rpx;
+}
+
 .form-label {
-  font-size: 28rpx;
+  font-size: 27rpx;
   color: #555555;
-  margin-bottom: 12rpx;
-  display: block;
   font-weight: 500;
 }
 
 .form-required {
   color: #C0392B;
-  margin-right: 4rpx;
+  font-size: 24rpx;
 }
 
-/* ════════════════════════════════
-   选择器/输入框 - 统一样式
-   ════════════════════════════════ */
-.form-picker {
-  position: relative;
+.form-hint {
+  font-size: 22rpx;
+  color: #999999;
+  margin-left: auto;
+}
+
+/* ════════════════════════════
+   选择器 - 统一款式
+   ════════════════════════════ */
+.picker-box {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 26rpx 28rpx;
+  padding: 24rpx 28rpx;
   background: #FAFAFA;
   border: 2rpx solid #E5E5EA;
-  border-radius: 16rpx;
-  font-size: 30rpx;
+  border-radius: 14rpx;
+  font-size: 29rpx;
   color: #28292B;
   transition: all 0.2s ease;
 }
 
-.form-picker::after {
-  /* 覆盖微信默认边框 */
-  border: none;
-}
-
-.form-picker:active {
+.picker-box.selected {
   border-color: #8B7355;
   background: #FFFFFF;
 }
 
-.picker-content {
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.picker-content.placeholder {
+.picker-box.placeholder text,
+.picker-box .placeholder {
   color: #BBBBBB;
 }
 
-.picker-content.warn {
-  color: #C0392B;
-}
-
-/* 下拉箭头 */
 .picker-arrow {
-  font-size: 20rpx;
+  font-size: 18rpx;
   color: #CCCCCC;
   margin-left: 12rpx;
   flex-shrink: 0;
 }
 
-/* 全宽选择器 */
-.form-picker-full {
-  width: 100%;
-}
-
-/* ════════════════════════════════
-   单选按钮组 - 改为标签式
-   ════════════════════════════════ */
-.radio-group {
+/* ════════════════════════════
+   输入框
+   ════════════════════════════ */
+.input-row {
   display: flex;
-  gap: 20rpx;
-  flex-wrap: wrap;
-}
-
-.radio-small .radio-item {
-  min-width: auto;
-  padding: 18rpx 28rpx;
-  font-size: 26rpx;
-}
-
-.radio-item {
-  min-width: 180rpx;
-  padding: 22rpx 32rpx;
+  align-items: center;
+  padding: 24rpx 28rpx;
   background: #FAFAFA;
   border: 2rpx solid #E5E5EA;
-  border-radius: 16rpx;
-  text-align: center;
-  font-size: 28rpx;
-  color: #555555;
+  border-radius: 14rpx;
   transition: all 0.2s ease;
 }
 
-.radio-item:active {
-  transform: scale(0.97);
+.input-row:focus-within {
+  border-color: #8B7355;
+  background: #FFFFFF;
 }
 
-.radio-item.active {
-  background: linear-gradient(135deg, #8B7355, #A08566);
-  color: #FFFFFF;
-  border-color: transparent;
-  box-shadow: 0 4rpx 14rpx rgba(139,115,85,0.25);
+.input-box {
+  flex: 1;
+  font-size: 29rpx;
+  color: #28292B;
+  background: transparent;
 }
 
-.radio-text {
-  font-weight: 500;
+/* 双输入框并排 */
+.double-input-row {
+  display: flex;
+  gap: 16rpx;
 }
 
-/* ════════════════════════════════
+.flex-1 {
+  flex: 1;
+}
+
+/* ════════════════════════════
    提示文字
-   ════════════════════════════════ */
+   ════════════════════════════ */
 .form-hint {
   display: block;
-  font-size: 24rpx;
+  font-size: 23rpx;
   color: #999999;
-  margin-top: 10rpx;
-  line-height: 1.5;
-  padding-left: 6rpx;
+  margin-top: 8rpx;
+  padding-left: 4rpx;
 }
 
-.hint-warn {
-  color: #D4A84B;
-  background: rgba(212,168,75,0.08);
-  padding: 10rpx 16rpx;
-  border-radius: 8rpx;
-  margin-top: 12rpx;
-}
-
-/* ════════════════════════════════
-   提交按钮 - 全宽渐变
-   ════════════════════════════════ */
-.btn-submit {
+/* ════════════════════════════
+   计算按钮
+   ════════════════════════════ */
+.btn-primary {
   width: 100%;
   background: linear-gradient(135deg, #8B7355 0%, #A08566 100%);
   color: #FFFFFF !important;
   border: none !important;
-  border-radius: 16rpx !important;
-  padding: 28rpx 0;
-  font-size: 32rpx !important;
+  border-radius: 48rpx !important;
+  padding: 26rpx 0;
+  font-size: 30rpx !important;
   font-weight: 600 !important;
   letter-spacing: 4rpx;
   box-shadow: 0 6rpx 20rpx rgba(139,115,85,0.3);
   line-height: normal;
-  margin-top: 8rpx;
+  margin-top: 12rpx;
 }
 
-.btn-submit::after {
+.btn-primary::after {
   border: none !important;
 }
 
-.btn-submit:active {
-  opacity: 0.9;
-  transform: scale(0.98);
-}
-
-/* ════════════════════════════════
-   返回按钮（卡片外面）
-   ════════════════════════════════ */
-.btn-back-wrap {
+/* ════════════════════════════
+   返回按钮
+   ════════════════════════════ */
+.btn-wrap {
   margin-top: 28rpx;
   text-align: center;
 }
@@ -233,48 +232,4 @@
 
 .btn-back::after {
   border: none !important;
-}
-
-/* ═══════════════════════════════
-   双指数并排显示
-   ═══════════════════════════════ */
-.double-index-row {
-  display: flex;
-  gap: 20rpx;
-}
-
-.flex-1 {
-  flex: 1;
-}
-
-/* ═══════════════════════════════
-   输入框样式增强
-   ═══════════════════════════════ */
-.input-row {
-  display: flex;
-  align-items: center;
-  background: #FAFAFA;
-  border: 2rpx solid #E5E5EA;
-  border-radius: 16rpx;
-  padding: 26rpx 28rpx;
-  transition: all 0.2s ease;
-}
-
-.input-row:focus-within {
-  border-color: #8B7355;
-  background: #FFFFFF;
-}
-
-.input-box {
-  flex: 1;
-  font-size: 30rpx;
-  color: #28292B;
-  background: transparent;
-}
-
-.input-unit {
-  font-size: 26rpx;
-  color: #999999;
-  margin-left: 12rpx;
-  flex-shrink: 0;
 }
