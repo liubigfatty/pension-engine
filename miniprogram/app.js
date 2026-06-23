@@ -1,8 +1,6 @@
 // app.js
 App({
   globalData: {
-    // 云开发环境ID（从云开发控制台获取）
-    envId: 'cloud1-2d2gfe2lrpe9cdf8a0',
     // 隐私协议是否已检查
     privacyChecked: false,
     // 是否需要弹出隐私协议
@@ -13,12 +11,15 @@ App({
     console.log('[app.js] 小程序启动')
     
     // 初始化云开发环境
+    // 不传 env 参数，让微信自动使用开发者工具当前选中的环境
+    // 这样可以避免 envId 不匹配的问题
     if (wx.cloud) {
       wx.cloud.init({
-        env: this.globalData.envId,
         traceUser: true
       })
-      console.log('[app.js] 云开发初始化成功')
+      console.log('[app.js] 云开发初始化成功（使用当前环境）')
+    } else {
+      console.error('[app.js] wx.cloud 不存在，云开发初始化失败')
     }
 
     // 隐私协议检查（启动时检查，防止首页检查失败）
