@@ -4,8 +4,8 @@ const app = getApp()
 // 双指数省份（浙江、广东、陕西）
 const DOUBLE_INDEX_PROVINCES = [10, 18, 26]  // 浙江=10, 广东=18, 陕西=26
 
-// 双基数省份（河南=13, 吉林=15）
-const DOUBLE_BASE_PROVINCES = [13, 15]
+// 双基数省份（河南=13, 吉林=15, 广东=18, 辽宁=16）
+const DOUBLE_BASE_PROVINCES = [13, 15, 16, 18]
 
 Page({
   data: {
@@ -56,6 +56,12 @@ Page({
     } else if (step1.provinceIndex === 15) {  // 吉林
       showCityType = true
       cityTypeNames = ['长春市', '全省其他']
+    } else if (step1.provinceIndex === 16) {  // 辽宁
+      showCityType = true
+      cityTypeNames = ['沈阳市', '大连市', '全省其他']
+    } else if (step1.provinceIndex === 18) {  // 广东
+      showCityType = true
+      cityTypeNames = ['深圳市', '全省其他']
     }
     
     this.setData({
@@ -118,8 +124,18 @@ Page({
     // 确定 cityType（双基数省份）
     let cityType = null
     if (d.showCityType) {
-      // 0=郑州市/长春市, 1=全省其他
-      cityType = d.cityTypeIndex === 0 ? (step1.provinceIndex === 13 ? 'zz' : 'cc') : 'prov'
+      if (d.cityTypeIndex === 0) {
+        // 根据省份设置 cityType
+        if (step1.provinceIndex === 13) cityType = 'zz'  // 郑州
+        else if (step1.provinceIndex === 15) cityType = 'cc'  // 长春
+        else if (step1.provinceIndex === 16) cityType = 'shenyang'  // 沈阳
+        else if (step1.provinceIndex === 18) cityType = 'sz'  // 深圳
+      } else if (d.cityTypeIndex === 1 && step1.provinceIndex === 16) {
+        // 辽宁特殊情况：index=1 是大连市
+        cityType = 'dalian'  // 大连
+      } else {
+        cityType = 'prov'  // 全省其他
+      }
     }
 
     try {
