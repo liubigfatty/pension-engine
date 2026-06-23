@@ -185,8 +185,8 @@ Page({
   },
 
   // 自动估算个人账户余额
-  // 使用历年真实记账利率做复利计算（不再用固定1.4系数）
-  // 逐年模拟：每年缴费额从次年开始按历年利率复利增长
+  // 简化估算：用近几年平均缴费额 × 缴费年数 × 经验系数
+  // 不用复利计算（用2025年基数估算历史缴费会严重偏高）
   estimateBalance() {
     const step1 = wx.getStorageSync("form_step1")
     if (!step1 || step1.provinceIndex < 0) return
@@ -194,12 +194,12 @@ Page({
     if (this.data.levelIndex < 0) return
 
     const provinceIndex = step1.provinceIndex
-    const avgSalary = PROV_AVG_SALARY[provinceIndex]
+    const avgSalary = PROV_AVG_SALARY[provinceIndex]  // 2025年计发基数（元/月）
     if (!avgSalary) return
 
-    const percent = LEVEL_PERCENTS[this.data.levelIndex]
+    const percent = LEVEL_PERCENTS[this.data.levelIndex]  // 0.6, 0.8, 1.0, ...
 
-    // 参加工作年份
+    // 缴费年数
     let workStartYear
     if (step1.workYearIndex != null) {
       workStartYear = 1980 + step1.workYearIndex
@@ -208,39 +208,23 @@ Page({
     } else {
       workStartYear = 1995
     }
+    
+    const currentYear = new Date().getFullYear()
+    const contribYears = Math.max(1, currentYear - workStartYear)
 
-    // 预计退休年份（用于估算未来利息）
-    let retireYear
-    if (step1.birthYearIndex != null && step1.retireTypeIndex != null) {
-      const birthYear = 1960 + step1.birthYearIndex
-      const ages = [60, 50, 55, 60, 55]
-      retireYear = birthYear + (ages[step1.retireTypeIndex] || 60)
-    } else {
-      retireYear = new Date().getFullYear() + 10
-    }
+    // 简化估算公式：
+    // 年缴费额 = 计发基数 × 档次% × 8% × 12
+    // 但考虑到早期工资低，实际平均缴费额约为近年的 60~70%
+    // 所以用经验系数 0.65 来修正
+    const annualContrib = avgSalary * percent * 0.08 * 12 * 0.65
+    
+    // 估算余额 = 年缴费额 × 缴费年数
+    // 再加上粗略的利息（约 20~30%）
+    const estimated = Math.round(annualContrib * contribYears * 1.25)
 
-    // 逐年模拟个人账户积累
-    let balance = 0
-    const endYear = Math.max(retireYear, new Date().getFullYear())
-
-    for (let y = workStartYear; y < endYear; y++) {
-      // 当年月缴费额 = 计发基数 × 档次% × 8% × 12
-      const annualContrib = avgSalary * percent * 0.08 * 12
-
-      // 该笔缴费从 y+1 年到 endYear-1 年之间的复利增长
-      let growth = 1.0
-      for (let r = y + 1; r < endYear; r++) {
-        growth *= (1 + getInterestRate(r))
-      }
-
-      balance += annualContrib * growth
-    }
-
-    const estimated = Math.round(balance)
-    console.log("[estimateBalance] 省份=" + provinceIndex +
+    console.log("[estimateBalance] 省份=" + provinceIndex + 
       " 档次=" + (percent*100) + "%" +
-      " 工作年=" + workStartYear +
-      " 退休年=" + retireYear +
+      " 缴费年数=" + contribYears +
       " 估算余额=" + estimated)
 
     this.setData({ accountBalanceInput: String(estimated) })
