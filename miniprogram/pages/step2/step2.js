@@ -40,10 +40,6 @@ Page({
     // 个人账户余额
     accountBalanceInput: '',
 
-    // 预估个人账户余额（灵活就业时自动计算）
-    estimatedBalance: '',
-    showEstimated: false,
-
     // 小贴士弹窗
     showTip: false
   },
@@ -99,11 +95,10 @@ Page({
     this.setData({ accountBalanceInput: e.detail.value })
   },
 
-  // 计算预估个人账户余额（灵活就业时）
+  // 计算预估个人账户余额（灵活就业时，直接填入输入框）
   calculateEstimatedBalance() {
     const step1 = wx.getStorageSync('form_step1')
     if (!step1 || !step1.workDate || !step1.birthDate) {
-      this.setData({ showEstimated: false, estimatedBalance: '' })
       return
     }
 
@@ -129,7 +124,6 @@ Page({
     const totalMonths = Math.floor(years * 12)
 
     if (totalMonths <= 0) {
-      this.setData({ showEstimated: false, estimatedBalance: '' })
       return
     }
 
@@ -139,9 +133,9 @@ Page({
     const monthlyToAccount = monthlyPay * personalRate
     const totalBalance = Math.floor(monthlyToAccount * totalMonths * 0.6) // 考虑利息等因素，打6折
 
+    // 直接填入个人账户余额输入框
     this.setData({
-      estimatedBalance: totalBalance.toString(),
-      showEstimated: true
+      accountBalanceInput: totalBalance.toString()
     })
   },
 
