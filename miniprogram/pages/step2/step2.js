@@ -319,7 +319,11 @@ Page({
       wx.hideLoading()
 
       if (res.result && res.result.success) {
-        wx.setStorageSync('calc_result', res.result.data)
+        // 存缓存时包一层 _raw，兼容 result.js 的数据结构检测
+        wx.setStorageSync('calc_result', {
+          _raw: res.result.data,
+          retirePlan: step1.retirePlan || 'normal'
+        })
         wx.navigateTo({ url: '/pages/result/result' })
       } else {
         const msg = (res.result && res.result.message) || '计算失败，请重试'

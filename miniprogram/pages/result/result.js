@@ -39,7 +39,18 @@ Page({
     console.log('[result] calcResult:', JSON.stringify(r))
 
     // 保护：如果数据无效，提示用户返回重新计算
-    if (!r || !r.totalAmount || r.totalAmount === null) {
+    // 支持两种结构：扁平结构（有 totalAmount）或 _raw 结构（有 legal/flex）
+    let hasValidData = false
+    if (r && r.totalAmount != null) {
+      hasValidData = true
+    } else if (r && r._raw) {
+      const raw = r._raw
+      if (raw.legal?.total != null || raw.flex?.total != null) {
+        hasValidData = true
+      }
+    }
+
+    if (!hasValidData) {
       console.warn('[result] 数据无效，显示引导')
       this.setData({
         result: {},
@@ -54,8 +65,8 @@ Page({
     // 异步加载小程序码（不阻塞页面渲染）
     this.loadQRCode()
 
-    // 退休方式：'normal'法定 / 'early'弹性提前
-    const retirementType = r.retirementType || 'normal'
+    // 退休方式：优先用缓存里的 retirePlan，其次用 r.retirementType
+    const retirementType = r.retirePlan || r.retirementType || 'normal'
     const isEarly = retirementType === 'early'
 
     // 展平数据，多重容错
