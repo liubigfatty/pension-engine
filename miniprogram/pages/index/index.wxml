@@ -10,8 +10,8 @@
       <view class="privacy-actions">
         <button class="privacy-btn-view" bindtap="onViewPrivacy">查看隐私协议</button>
         <button class="privacy-btn-disagree" bindtap="onDisagreePrivacy">不同意</button>
-        <!-- 官方隐私授权按钮 -->
-        <button class="privacy-btn-agree" open-type="agreePrivacyAuthorization" bindagreeprivacyauthorization="onAgreePrivacy">同意</button>
+        <!-- 同意按钮：优先使用官方API，fallback到本地记录 -->
+        <button class="privacy-btn-agree" bindtap="onAgreePrivacy">同意并继续</button>
       </view>
     </view>
   </view>

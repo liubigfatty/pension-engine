@@ -2,56 +2,80 @@
 App({
   globalData: {
     // 云开发环境ID（从云开发控制台获取）
-    envId: 'cloud1-d2gfe2lrpe9cdf8a0',
-    // 省份列表（从云存储加载，这里先硬编码）
-    provinceList: [
-      { code: 'jilin', name: '吉林省' },
-      { code: 'liaoning', name: '辽宁省' },
-      { code: 'heilongjiang', name: '黑龙江省' },
-      { code: 'beijing', name: '北京市' },
-      { code: 'shanghai', name: '上海市' },
-      { code: 'guangdong', name: '广东省' },
-      { code: 'jiangsu', name: '江苏省' },
-      { code: 'zhejiang', name: '浙江省' },
-      { code: 'shandong', name: '山东省' },
-      { code: 'henan', name: '河南省' },
-      { code: 'hebei', name: '河北省' },
-      { code: 'hubei', name: '湖北省' },
-      { code: 'hunan', name: '湖南省' },
-      { code: 'sichuan', name: '四川省' },
-      { code: 'fujian', name: '福建省' },
-      { code: 'anhui', name: '安徽省' },
-      { code: 'shaanxi', name: '陕西省' },
-      { code: 'tianjin', name: '天津市' },
-      { code: 'chongqing', name: '重庆市' },
-      { code: 'liaoning', name: '辽宁省' },
-      { code: 'shanxi', name: '山西省' },
-      { code: 'jiangxi', name: '江西省' },
-      { code: 'yunnan', name: '云南省' },
-      { code: 'guangxi', name: '广西壮族自治区' },
-      { code: 'guizhou', name: '贵州省' },
-      { code: 'gansu', name: '甘肃省' },
-      { code: 'hainan', name: '海南省' },
-      { code: 'neimenggu', name: '内蒙古自治区' },
-      { code: 'xinjiang', name: '新疆维吾尔自治区' },
-      { code: 'xizang', name: '西藏自治区' },
-      { code: 'ningxia', name: '宁夏回族自治区' },
-      { code: 'qinghai', name: '青海省' }
-    ],
-    // 计算结果
-    calcResult: null,
-    // 用户输入（跨页面共享）
-    calcInput: {}
+    envId: 'cloud1-2d2gfe2lrpe9cdf8a0',
+    // 隐私协议是否已检查
+    privacyChecked: false,
+    // 是否需要弹出隐私协议
+    needPrivacyPopup: false
   },
 
   onLaunch() {
+    console.log('[app.js] 小程序启动')
+    
     // 初始化云开发环境
     if (wx.cloud) {
       wx.cloud.init({
         env: this.globalData.envId,
         traceUser: true
       })
-      console.log('云开发初始化成功，环境ID：', this.globalData.envId)
+      console.log('[app.js] 云开发初始化成功')
     }
+
+    // 隐私协议检查（启动时检查，防止首页检查失败）
+    this.checkPrivacySetting()
+  },
+
+  // 检查隐私协议授权状态
+  checkPrivacySetting() {
+    console.log('[app.js] 开始检查隐私协议')
+    
+    if (!wx.getPrivacySetting) {
+      console.log('[app.js] 基础库不支持隐私协议API，跳过')
+      this.globalData.privacyChecked = true
+      return
+    }
+
+    wx.getPrivacySetting({
+      success: (res) => {
+        console.log('[app.js] 隐私授权状态：', JSON.stringify(res))
+        this.globalData.privacyChecked = true
+        
+        if (res.needAuthorization) {
+          // 需要授权
+          this.globalData.needPrivacyPopup = true
+          console.log('[app.js] ⚠️ 需要弹出隐私协议弹窗')
+          
+          // 可选：这里可以直接调用官方API弹出弹窗
+          // this.requirePrivacyAuthorization()
+        } else {
+          console.log('[app.js] ✅ 已授权，无需弹窗')
+        }
+      },
+      fail: (err) => {
+        console.error('[app.js] 获取隐私设置失败：', err)
+        this.globalData.privacyChecked = true
+      }
+    })
+  },
+
+  // 调用官方API弹出隐私协议弹窗（可选方案）
+  requirePrivacyAuthorization() {
+    if (!wx.requirePrivacyAuthorize) {
+      console.log('[app.js] 基础库不支持 requirePrivacyAuthorize')
+      return
+    }
+
+    wx.requirePrivacyAuthorize({
+      success: () => {
+        console.log('[app.js] 用户同意隐私协议（官方API）')
+        wx.setStorageSync('privacy_agreed', true)
+      },
+      fail: () => {
+        console.log('[app.js] 用户拒绝隐私协议（官方API）')
+      },
+      complete: () => {
+        console.log('[app.js] 隐私协议弹窗完成')
+      }
+    })
   }
 })
