@@ -31,7 +31,10 @@ Page({
     cityTypeIndex: -1,
 
     // 个人账户余额
-    accountBalanceInput: ''
+    accountBalanceInput: '',
+
+    // 小贴士弹窗
+    showBalanceTip: false
   },
 
   onLoad() {
@@ -105,6 +108,19 @@ Page({
   onBalanceInput(e) {
     this.setData({ accountBalanceInput: e.detail.value })
   },
+
+  // 显示小贴士弹窗
+  onShowBalanceTip() {
+    this.setData({ showBalanceTip: true })
+  },
+
+  // 关闭小贴士弹窗
+  onCloseBalanceTip() {
+    this.setData({ showBalanceTip: false })
+  },
+
+  // 阻止事件冒泡（点击弹窗内容区不关闭）
+  stopProp() {},
 
   // 计算养老金
   async onCalculate() {
