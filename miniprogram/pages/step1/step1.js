@@ -60,8 +60,8 @@ Page({
 
   // 选择出生日期
   onBirthDateChange(e) {
-    // 只取年月部分（格式：1970-06）
-    const date = e.detail.value  // 格式：1970-06-01
+    // 格式：1970-06-01
+    const date = e.detail.value
     const yearMonth = date.substring(0, 7)  // 取前7位：1970-06
     this.setData({ birthDate: yearMonth })
   },
@@ -71,6 +71,15 @@ Page({
     const date = e.detail.value
     const yearMonth = date.substring(0, 7)
     this.setData({ workDate: yearMonth })
+  },
+
+  // 把 "1970-06" 拆成 yearIndex 和 monthIndex
+  _parseDateToIndex(dateStr, startYear) {
+    if (!dateStr) return { yearIndex: -1, monthIndex: -1 }
+    const [year, month] = dateStr.split('-').map(Number)
+    const yearIndex = year - startYear
+    const monthIndex = month - 1  // 月份转0-11
+    return { yearIndex, monthIndex }
   },
 
   // 选择退休方案
@@ -87,12 +96,21 @@ Page({
     if (!d.birthDate) return wx.showToast({ title: '请选择出生日期', icon: 'none' })
     if (!d.workDate) return wx.showToast({ title: '请选择参加工作时间', icon: 'none' })
 
-    // 保存数据到缓存（只保存年月部分）
+    // 保存数据到缓存
+    const birth = this._parseDateToIndex(d.birthDate, 1960)  // 出生日期从1960年开始
+    const work = this._parseDateToIndex(d.workDate, 1980)  // 参加工作从1980年开始
+
     wx.setStorageSync('form_step1', {
       provinceIndex: d.provinceIndex,
       retireTypeIndex: d.retireTypeIndex,
-      birthDate: d.birthDate,  // 格式：1970-06
-      workDate: d.workDate,    // 格式：1995-07
+      // 出生日期
+      birthDate: d.birthDate,          // 字符串：1970-06
+      birthYearIndex: birth.yearIndex,   // 索引：10（1970-1960=10）
+      birthMonthIndex: birth.monthIndex,  // 索引：5（6月-1=5）
+      // 参加工作时间
+      workDate: d.workDate,             // 字符串：1995-07
+      workYearIndex: work.yearIndex,     // 索引：15（1995-1980=15）
+      workMonthIndex: work.monthIndex,   // 索引：6（7月-1=6）
       retirePlan: d.retirePlan
     })
 

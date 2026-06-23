@@ -5,7 +5,7 @@ const app = getApp()
 const DOUBLE_INDEX_PROVINCES = [10, 18, 26]  // 浙江=10, 广东=18, 陕西=26
 
 // 双基数省份（河南=13, 吉林=15, 广东=18, 辽宁=16）
-const DOUBLE_BASE_PROVINCES = [13, 15, 16, 18]
+const DOUBLE_BASE_PROVINCES = [15, 6, 5, 18]  // 河南=15, 吉林=6, 辽宁=5, 广东=18
 
 Page({
   data: {
@@ -50,16 +50,16 @@ Page({
     // 判断是否为双基数省份，并设置城市选项
     let showCityType = false
     let cityTypeNames = []
-    if (step1.provinceIndex === 13) {  // 河南
+    if (step1.provinceIndex === 15) {  // 河南（郑州）
       showCityType = true
       cityTypeNames = ['郑州市', '全省其他']
-    } else if (step1.provinceIndex === 15) {  // 吉林
+    } else if (step1.provinceIndex === 6) {  // 吉林（长春）
       showCityType = true
       cityTypeNames = ['长春市', '全省其他']
-    } else if (step1.provinceIndex === 16) {  // 辽宁
+    } else if (step1.provinceIndex === 5) {  // 辽宁（沈阳、大连）
       showCityType = true
       cityTypeNames = ['沈阳市', '大连市', '全省其他']
-    } else if (step1.provinceIndex === 18) {  // 广东
+    } else if (step1.provinceIndex === 18) {  // 广东（深圳）
       showCityType = true
       cityTypeNames = ['深圳市', '全省其他']
     }
@@ -112,7 +112,7 @@ Page({
 
     // 校验
     if (d.baseTypeIndex < 0) return wx.showToast({ title: '请选择缴费基数类型', icon: 'none' })
-    if (d.baseTypeIndex === 2 && !d.averageIndexInput) return wx.showToast({ title: '请输入平均缴费指数', icon: 'none' })
+    if (d.baseTypeIndex === 1 && !d.averageIndexInput) return wx.showToast({ title: '请输入平均缴费指数', icon: 'none' })
     if (!d.accountBalanceInput) return wx.showToast({ title: '请输入个人账户余额', icon: 'none' })
 
     // 读取 step1 数据
@@ -126,11 +126,11 @@ Page({
     if (d.showCityType) {
       if (d.cityTypeIndex === 0) {
         // 根据省份设置 cityType
-        if (step1.provinceIndex === 13) cityType = 'zz'  // 郑州
-        else if (step1.provinceIndex === 15) cityType = 'cc'  // 长春
-        else if (step1.provinceIndex === 16) cityType = 'shenyang'  // 沈阳
-        else if (step1.provinceIndex === 18) cityType = 'sz'  // 深圳
-      } else if (d.cityTypeIndex === 1 && step1.provinceIndex === 16) {
+        if (step1.provinceIndex === 15) cityType = 'zz'  // 河南郑州
+        else if (step1.provinceIndex === 6) cityType = 'cc'  // 吉林长春
+        else if (step1.provinceIndex === 5) cityType = 'shenyang'  // 辽宁沈阳
+        else if (step1.provinceIndex === 18) cityType = 'sz'  // 广东深圳
+      } else if (d.cityTypeIndex === 1 && step1.provinceIndex === 5) {
         // 辽宁特殊情况：index=1 是大连市
         cityType = 'dalian'  // 大连
       } else {
