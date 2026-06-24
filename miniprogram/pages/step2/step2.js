@@ -1,9 +1,8 @@
 // pages/step2/step2.js - 缴费信息页
 const app = getApp()
 
-// 2025年计发基数（元/月），按省份索引 [0-30]
-// 数据来源：data/provinces/*.js 的 PROV_BASE 最新年份值
-
+// 计发基数选择配置（前端使用）
+const { CITY_TYPE_CONFIG, DOUBLE_BASE_PROVINCES } = require('../../data/base-rates')
 
 // ==================== 历年记账利率（用于估算个人账户余额）====================
 // 2016年及以后：全国统一记账利率（人社部公布）
@@ -56,19 +55,18 @@ const RETIRE_TYPE_MAP = [
 
 Page({
   data: {
-    // 缴费基数类型：0=灵活就业，1=按实际指数
-    baseTypeNames: ['灵活就业', '按实际缴费指数'],
+    // 人员类型：从step1获取，决定是否显示缴费档次
+    isFlexible: false,  // 是否灵活就业
 
     // 日期起始年份（与 step1 保持一致）
     _BIRTH_START: 1960,
     _WORK_START: 1980,
-    baseTypeIndex: -1,
 
     // 灵活就业缴费档次
     levelNames: ['60%', '80%', '100%', '150%', '200%', '250%', '300%'],
     levelIndex: -1,
 
-    // 历年缴费指数（按实际指数时填写）
+    // 本人平均缴费指数
     averageIndexInput: '',
 
     // 双指数省份相关
@@ -76,7 +74,11 @@ Page({
     transIndexInput: '',   // 过渡性养老金指数
     oldIndexInput: '',      // 老办法指数
 
-    // 双基数省份相关（河南郑州、吉林长春）
+    // 计发基数选择（双基数省份）
+    showBaseRate: false,    // 是否显示计发基数选择
+    baseRateNames: [],      // 计发基数选项名称
+    baseRateValues: [],     // 计发基数选项值
+    baseRateIndex: -1,      // 当前选择索引
 
     // 个人账户余额
     accountBalanceInput: '',
@@ -94,30 +96,51 @@ Page({
       return
     }
 
+    // 判断是否为灵活就业（根据step1的retireTypeIndex）
+    const isFlexible = step1.retireTypeIndex >= 3  // 3=灵活就业男, 4=灵活就业女
+    this.setData({ isFlexible })
+
     // 判断是否为双指数省份，控制过渡指数输入框显示
     const isDoubleIndex = DOUBLE_INDEX_PROVINCES.includes(step1.provinceIndex)
     this.setData({ showDoubleIndex: isDoubleIndex })
 
-    // 恢复已填数据（城市选择等）
+    // 计发基数选择（双基数省份）
+    let showBaseRate = false
+    let baseRateNames = []
+    let baseRateValues = []
+    let baseRateIndex = -1
+    if (DOUBLE_BASE_PROVINCES.includes(step1.provinceIndex)) {
+      showBaseRate = true
+      const config = CITY_TYPE_CONFIG[step1.provinceIndex]
+      baseRateNames = config.names
+      baseRateValues = config.values
+      // 恢复已选：从step1的cityTypeIndex
+      baseRateIndex = step1.cityTypeIndex >= 0 ? step1.cityTypeIndex : 0
+    }
+
+    // 恢复已填数据
     const saved = wx.getStorageSync('form_step2') || {}
     this.setData({
-      baseTypeIndex: saved.baseTypeIndex ?? -1,
       levelIndex: saved.levelIndex ?? -1,
       averageIndexInput: saved.averageIndexInput || '',
       accountBalanceInput: saved.accountBalanceInput || '',
-      cityTypeIndex: step1.cityTypeIndex >= 0 ? step1.cityTypeIndex : -1,
-      showCityType: step1.showCityType || false,
+      transIndexInput: saved.transIndexInput || '',
+      oldIndexInput: saved.oldIndexInput || '',
+      // 计发基数选择
+      showBaseRate,
+      baseRateNames,
+      baseRateValues,
+      baseRateIndex,
     })
   },
-  // 选择缴费基数类型
-  onBaseTypeChange(e) {
-    const index = Number(e.detail.value)
-    this.setData({ baseTypeIndex: index })
-  },
-
   // 选择缴费档次（灵活就业）
   onLevelChange(e) {
     this.setData({ levelIndex: Number(e.detail.value) })
+  },
+
+  // 选择计发基数（双基数省份）
+  onBaseRateChange(e) {
+    this.setData({ baseRateIndex: Number(e.detail.value) })
   },
 
 
@@ -170,8 +193,8 @@ Page({
     const d = this.data
 
     // 前端校验
-    if (d.baseTypeIndex < 0) return wx.showToast({ title: '请选择缴费基数类型', icon: 'none' })
-    if (d.baseTypeIndex === 1 && !d.averageIndexInput) return wx.showToast({ title: '请输入平均缴费指数', icon: 'none' })
+    if (d.isFlexible && d.levelIndex < 0) return wx.showToast({ title: '请选择缴费档次', icon: 'none' })
+    if (!d.isFlexible && !d.averageIndexInput) return wx.showToast({ title: '请输入本人平均缴费指数', icon: 'none' })
 
     const step1 = wx.getStorageSync('form_step1')
     if (!step1) return wx.showToast({ title: '请先填写个人信息', icon: 'none' })
@@ -206,22 +229,16 @@ Page({
 
     // 4. 平均缴费指数：灵活就业档次 → 数值，或直接用用户输入值
     let averageIndex
-    if (d.baseTypeIndex === 0 && d.levelIndex >= 0) {
+    if (d.isFlexible && d.levelIndex >= 0) {
       averageIndex = LEVEL_PERCENTS[d.levelIndex]
     } else {
       averageIndex = parseFloat(d.averageIndexInput) || 0
     }
 
-    // 5. 双基数城市类型（从 form_step1 读取）
-    const _step1 = wx.getStorageSync('form_step1') || {}
+    // 5. 双基数城市类型（从 baseRateIndex 读取）
     let cityType = null
-    if (_step1.cityTypeIndex != null && _step1.cityTypeIndex >= 0) {
-      if (step1.provinceIndex === 15) cityType = _step1.cityTypeIndex === 0 ? 'zz' : 'prov'     // 河南
-      else if (step1.provinceIndex === 6) cityType = _step1.cityTypeIndex === 0 ? 'cc' : 'prov'  // 吉林
-      else if (step1.provinceIndex === 5) {                                                    // 辽宁
-        cityType = _step1.cityTypeIndex === 0 ? 'shenyang' : _step1.cityTypeIndex === 1 ? 'dalian' : 'prov'
-      }
-      else if (step1.provinceIndex === 18) cityType = _step1.cityTypeIndex === 0 ? 'sz' : 'prov' // 广东
+    if (d.showBaseRate && d.baseRateIndex >= 0) {
+      cityType = d.baseRateValues[d.baseRateIndex]
     }
 
     console.log('[onCalculate] 映射后参数:', { province, gender, birthDate, workStartDate, averageIndex, cityType })
@@ -250,12 +267,17 @@ Page({
 
       if (res.result && res.result.success) {
         // 存缓存时包一层 _raw，兼容 result.js 的数据结构检测
+        // 城市标签（用于结果页显示）
+        let cityLabel = ''
+        if (d.showBaseRate && d.baseRateIndex >= 0) {
+          cityLabel = d.baseRateNames[d.baseRateIndex] || ''
+        }
         wx.setStorageSync('calc_result', {
           _raw: res.result.data,
           retirePlan: step1.retirePlan || 'normal',
           averageIndex: averageIndex || null,       // 传给结果页显示
           provinceName: PROVINCE_NAMES[step1.provinceIndex] || '',
-          cityLabel: step1.cityLabel || ''
+          cityLabel: cityLabel
         })
         wx.navigateTo({ url: '/pages/result/result' })
       } else {
@@ -273,8 +295,8 @@ Page({
   // 估算个人账户余额（供用户参考，可手动修改）
   async onEstimateBalance() {
     const d = this.data
-    if (d.baseTypeIndex < 0) return wx.showToast({ title: '请先选择缴费基数类型', icon: 'none' })
-    if (d.baseTypeIndex === 1 && !d.averageIndexInput) return wx.showToast({ title: '请先输入平均缴费指数', icon: 'none' })
+    if (d.isFlexible && d.levelIndex < 0) return wx.showToast({ title: '请先选择缴费档次', icon: 'none' })
+    if (!d.isFlexible && !d.averageIndexInput) return wx.showToast({ title: '请先输入本人平均缴费指数', icon: 'none' })
 
     const step1 = wx.getStorageSync('form_step1')
     if (!step1) return wx.showToast({ title: '请先填写个人信息', icon: 'none' })
@@ -298,20 +320,16 @@ Page({
     }
 
     let averageIndex
-    if (d.baseTypeIndex === 0 && d.levelIndex >= 0) {
+    if (d.isFlexible && d.levelIndex >= 0) {
       averageIndex = LEVEL_PERCENTS[d.levelIndex]
     } else {
       averageIndex = parseFloat(d.averageIndexInput) || 0
     }
 
+    // 双基数城市类型（从 baseRateIndex 读取）
     let cityType = null
-    if (d.showCityType && d.cityTypeIndex >= 0) {
-      if (step1.provinceIndex === 15) cityType = d.cityTypeIndex === 0 ? 'zz' : 'prov'
-      else if (step1.provinceIndex === 6) cityType = d.cityTypeIndex === 0 ? 'cc' : 'prov'
-      else if (step1.provinceIndex === 5) {
-        cityType = d.cityTypeIndex === 0 ? 'shenyang' : d.cityTypeIndex === 1 ? 'dalian' : 'prov'
-      }
-      else if (step1.provinceIndex === 18) cityType = d.cityTypeIndex === 0 ? 'sz' : 'prov'
+    if (d.showBaseRate && d.baseRateIndex >= 0) {
+      cityType = d.baseRateValues[d.baseRateIndex]
     }
 
     wx.showLoading({ title: '估算中...' })
