@@ -91,6 +91,14 @@
   color: var(--color-danger);
 }
 
+.picker-content.readonly {
+  color: var(--color-text-secondary);
+  background: #F5F5F5;
+  padding: 26rpx 28rpx;
+  border-radius: 48rpx;
+  border: 2rpx solid #E8E8E8;
+}
+
 /* 箭头图标 */
 .picker-arrow {
   font-size: 20rpx;

@@ -2,7 +2,7 @@
 const app = getApp()
 
 // 计发基数选择配置（前端使用）
-const { CITY_TYPE_CONFIG, DOUBLE_BASE_PROVINCES } = require('../../data/base-rates')
+const { CITY_TYPE_CONFIG, DOUBLE_BASE_PROVINCES, PROV_BASE_LATEST } = require('../../data/base-rates')
 
 // ==================== 历年记账利率（用于估算个人账户余额）====================
 // 2016年及以后：全国统一记账利率（人社部公布）
@@ -74,8 +74,8 @@ Page({
     transIndexInput: '',   // 过渡性养老金指数
     oldIndexInput: '',      // 老办法指数
 
-    // 计发基数选择（双基数省份）
-    showBaseRate: false,    // 是否显示计发基数选择
+    // 计发基数选择（所有省份都显示）
+    baseRateIndex: 0,       // 当前选择的计发基数索引
     baseRateNames: [],      // 计发基数选项名称
     baseRateValues: [],     // 计发基数选项值
     baseRateIndex: -1,      // 当前选择索引
@@ -104,18 +104,24 @@ Page({
     const isDoubleIndex = DOUBLE_INDEX_PROVINCES.includes(step1.provinceIndex)
     this.setData({ showDoubleIndex: isDoubleIndex })
 
-    // 计发基数选择（双基数省份）
-    let showBaseRate = false
+    // 计发基数选择（所有省份都显示）
     let baseRateNames = []
     let baseRateValues = []
-    let baseRateIndex = -1
+    let baseRateIndex = 0
+
+    const provinceBase = PROV_BASE_LATEST[step1.provinceIndex] || 0
     if (DOUBLE_BASE_PROVINCES.includes(step1.provinceIndex)) {
-      showBaseRate = true
+      // 双基数省份：显示城市选项
       const config = CITY_TYPE_CONFIG[step1.provinceIndex]
       baseRateNames = config.names
       baseRateValues = config.values
       // 恢复已选：从step1的cityTypeIndex
       baseRateIndex = step1.cityTypeIndex >= 0 ? step1.cityTypeIndex : 0
+    } else {
+      // 单基数省份：显示"全省统一计发基数"
+      baseRateNames = [`全省统一计发基数 (${provinceBase}元/月)`]
+      baseRateValues = ['prov']
+      baseRateIndex = 0
     }
 
     // 恢复已填数据
@@ -127,7 +133,6 @@ Page({
       transIndexInput: saved.transIndexInput || '',
       oldIndexInput: saved.oldIndexInput || '',
       // 计发基数选择
-      showBaseRate,
       baseRateNames,
       baseRateValues,
       baseRateIndex,
@@ -237,7 +242,7 @@ Page({
 
     // 5. 双基数城市类型（从 baseRateIndex 读取）
     let cityType = null
-    if (d.showBaseRate && d.baseRateIndex >= 0) {
+    if (d.baseRateIndex >= 0) {
       cityType = d.baseRateValues[d.baseRateIndex]
     }
 
@@ -269,7 +274,7 @@ Page({
         // 存缓存时包一层 _raw，兼容 result.js 的数据结构检测
         // 城市标签（用于结果页显示）
         let cityLabel = ''
-        if (d.showBaseRate && d.baseRateIndex >= 0) {
+        if (d.baseRateIndex >= 0) {
           cityLabel = d.baseRateNames[d.baseRateIndex] || ''
         }
         wx.setStorageSync('calc_result', {
@@ -328,7 +333,7 @@ Page({
 
     // 双基数城市类型（从 baseRateIndex 读取）
     let cityType = null
-    if (d.showBaseRate && d.baseRateIndex >= 0) {
+    if (d.baseRateIndex >= 0) {
       cityType = d.baseRateValues[d.baseRateIndex]
     }
 

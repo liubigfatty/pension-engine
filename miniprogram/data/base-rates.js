@@ -2,6 +2,42 @@
 // 各省市计发基数选择配置（前端使用）
 // 用于step2页面显示计发基数选择
 
+// 2024/2025年计发基数（元/月），按省份索引 [0-30]
+// 数据来源：data/provinces/*.js 的 PROV_BASE 最新年份值
+const PROV_BASE_LATEST = [
+  12477, // [0] beijing (2025)
+  8762,  // [1] tianjin (2025)
+  7483,  // [2] hebei (2025)
+  7324,  // [3] shanxi (2025)
+  8348,  // [4] neimenggu (2025)
+  7121,  // [5] liaoning (2023)
+  7394,  // [6] jilin (2025)
+  7705,  // [7] heilongjiang (2025)
+  12636, // [8] shanghai (2025)
+  9049,  // [9] jiangsu (2025)
+  8559,  // [10] zhejiang (2025)
+  8077,  // [11] anhui (2025)
+  8009,  // [12] fujian (2025)
+  7123,  // [13] jiangxi (2025)
+  7908,  // [14] shandong (2025)
+  6738,  // [15] henan (2025)
+  6665,  // [16] hubei (2025)
+  7060,  // [17] hunan (2025)
+  9905,  // [18] guangdong (2025)
+  7052,  // [19] guangxi (2025)
+  8375,  // [20] hainan (2025)
+  8405,  // [21] chongqing (2025)
+  8289,  // [22] sichuan (2025)
+  7490,  // [23] guizhou (2025)
+  7263,  // [24] yunnan (2025)
+  11892, // [25] xizang (2025)
+  7959,  // [26] shaanxi (2025)
+  7822,  // [27] gansu (2025)
+  9144,  // [28] qinghai (2025)
+  8448,  // [29] ningxia (2025)
+  8582,  // [30] xinjiang (2025)
+]
+
 // 双基数省份配置：省份索引 → 城市选项
 // 与 step1.js 的 DOUBLE_BASE_PROVINCES 对应
 const CITY_TYPE_CONFIG = {
@@ -31,6 +67,7 @@ const CITY_TYPE_CONFIG = {
 const DOUBLE_BASE_PROVINCES = [15, 6, 5, 18]
 
 module.exports = {
+  PROV_BASE_LATEST,
   CITY_TYPE_CONFIG,
   DOUBLE_BASE_PROVINCES
 }
