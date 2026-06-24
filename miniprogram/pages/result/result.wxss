@@ -229,6 +229,7 @@
 .disclaimer text {
   font-size: 24rpx;
   color: #AAAAAA;
+}
 /* ════════════ 分享预览弹窗 ══════════ */
 .share-preview-mask {
   position: fixed;
