@@ -12,7 +12,7 @@
   <!-- 正常结果展示 -->
   <block wx:if="{{hasValidData}}">
 
-    <!-- 金额主卡片（蓝色渐变） -->
+    <!-- 金额主卡片（深色渐变） -->
     <view class="amount-card">
       <text class="amount-card-label">每月可领取养老金</text>
       <view class="amount-card-row">
@@ -89,16 +89,40 @@
 
     <!-- 操作按钮（上下排列） -->
     <view class="btn-area">
-      <button class="btn-share" bindtap="showShareMenu">分享结果</button>
+      <button class="btn-share" bindtap="onShareResult">分享结果</button>
       <button class="btn-report" bindtap="goReport">查看详细退休计划报告</button>
     </view>
-
-    <!-- 隐藏的原生分享按钮（用于触发 onShareAppMessage） -->
-    <button id="nativeShareBtn" open-type="share" style="position:fixed;left:-9999px;opacity:0;width:1px;height:1px;"></button>
 
     <!-- 声明 -->
     <view class="disclaimer">
       <text>计算结果仅供参考，实际待遇以社保部门核定为准</text>
+    </view>
+
+    <!-- 分享图预览弹窗 -->
+    <view class="share-preview-mask" wx:if="{{showSharePreview}}" bindtap="closeSharePreview">
+      <view class="share-preview-body" catchtap="stopProp">
+        <!-- 顶部栏 -->
+        <view class="share-preview-header">
+          <text class="share-preview-title">分享图片预览</text>
+          <view class="share-preview-close" bindtap="closeSharePreview">✕</view>
+        </view>
+
+        <!-- 图片区域（可滚动） -->
+        <scroll-view class="share-preview-scroll" scroll-y="true">
+          <image
+            class="share-preview-img"
+            src="{{shareImagePath}}"
+            mode="widthFix"
+            bindtap="onShareImagePreview"
+          />
+        </scroll-view>
+
+        <!-- 底部操作栏 -->
+        <view class="share-preview-footer">
+          <button class="share-preview-btn save" bindtap="saveShareImage">保存到相册</button>
+          <button class="share-preview-btn share" open-type="share">发送给朋友</button>
+        </view>
+      </view>
     </view>
 
     <!-- 隐藏Canvas，用于生成分享图 -->

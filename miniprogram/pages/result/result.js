@@ -20,13 +20,16 @@ function calcExactAge(birthYear, birthMonth, retireYear, retireMonth) {
 
 Page({
   data: {
-    hasValidData: true,   // 数据是否有效（ Step3 未成功计算时为 false）
+    hasValidData: true,
     result: {},
     provinceName: '',
     cityLabel: '',
     showDetail: true,
-    // 精确退休年龄
     exactAge: '',
+
+    // 分享图预览
+    showSharePreview: false,
+    shareImagePath: '',
   },
 
   onLoad() {
@@ -235,51 +238,16 @@ Page({
   },
 
   /**
-   * 显示分享操作菜单（替代原生 open-type="share"）
-   * 三个选项：发送给朋友、收藏、保存到相册
+   * 点击"分享结果"：生成图片 → 全屏预览
    */
-  showShareMenu() {
-    wx.showActionSheet({
-      itemList: ['发送给朋友', '收藏', '保存到相册'],
-      success: (res) => {
-        switch (res.tapIndex) {
-          case 0: // 发送给朋友 — 触发原生分享
-            // 先确保图片已生成，再触发分享
-            this._ensureShareImage().then(() => {
-              // 通过模拟按钮点击触发分享
-              this._triggerNativeShare()
-            })
-            break
-          case 1: // 收藏
-            this._addFavorite()
-            break
-          case 2: // 保存到相册 — 按需生成 + 保存
-            this._generateAndSave()
-            break
-        }
-      }
-    })
-  },
-
-  /**
-   * 确保分享图已生成（返回 Promise，已缓存则直接返回）
-   */
-  _ensureShareImage() {
-    if (this._shareImageReady && this.data.shareImagePath) {
-      return Promise.resolve(this.data.shareImagePath)
-    }
-    return this._generateShareImageAsync()
-  },
-
-  /**
-   * 生成并保存到相册（用户点"保存到相册"时调用）
-   */
-  _generateAndSave() {
-    wx.showLoading({ title: '生成图片中...', mask: true })
-
-    this._ensureShareImage().then((filePath) => {
+  onShareResult() {
+    wx.showLoading({ title: '生成分享图...', mask: true })
+    this._generateShareImageIfNeeded().then((filePath) => {
       wx.hideLoading()
-      this._saveToAlbum(filePath)
+      this.setData({
+        showSharePreview: true,
+        shareImagePath: filePath,
+      })
     }).catch(() => {
       wx.hideLoading()
       wx.showToast({ title: '图片生成失败', icon: 'none' })
@@ -287,9 +255,17 @@ Page({
   },
 
   /**
-   * 保存图片到相册
+   * 关闭分享预览
    */
-  _saveToAlbum(filePath) {
+  closeSharePreview() {
+    this.setData({ showSharePreview: false })
+  },
+
+  /**
+   * 分享预览中：保存到相册
+   */
+  saveShareImage() {
+    const filePath = this.data.shareImagePath
     if (!filePath) {
       wx.showToast({ title: '图片未生成', icon: 'none' })
       return
@@ -303,7 +279,7 @@ Page({
         if (err.errMsg && err.errMsg.includes('auth deny')) {
           wx.showModal({
             title: '需要相册权限',
-            content: '请在设置中开启相册权限，以便保存分享图',
+            content: '请在设置中开启相册权限',
             confirmText: '去设置',
             success: (res) => {
               if (res.confirm) wx.openSetting()
@@ -317,74 +293,37 @@ Page({
   },
 
   /**
-   * 收藏小程序/页面
+   * 分享预览中：长按图片 → 全屏预览（原生支持发送给朋友）
    */
-  _addFavorite() {
-    // 微信收藏 API（如果支持）
-    try {
-      const pages = getCurrentPages()
-      const currentPage = pages[pages.length - 1]
-      if (wx.addFavorite) {
-        wx.addFavorite({
-          webviewUrl: '',
-          success: () => wx.showToast({ title: '收藏成功', icon: 'success' }),
-          fail: () => wx.showToast({ title: '收藏失败，请长按收藏', icon: 'none' })
-        })
-      } else {
-        wx.showToast({ title: '请使用右上角菜单收藏', icon: 'none', duration: 2000 })
-      }
-    } catch (e) {
-      wx.showToast({ title: '请使用右上角菜单收藏', icon: 'none', duration: 2000 })
-    }
-  },
-
-  /**
-   * 触发原生微信分享
-   * 通过创建临时 button 元素并触发 open-type="share"
-   */
-  _triggerNativeShare() {
-    // 方案：直接用页面级 onShareAppMessage 的数据，
-    // 实际上微信会在调用此方法后自动弹出分享面板
-    // 这里我们通过设置标记位让系统知道要分享
-    wx.showShareMenu({
-      withShareTicket: true,
-      menus: ['shareAppMessage']
+  onShareImagePreview() {
+    const filePath = this.data.shareImagePath
+    if (!filePath) return
+    wx.previewImage({
+      urls: [filePath],
+      current: filePath,
     })
-    // 注意：实际触发原生分享需要在 WXML 中有一个 open-type="share" 按钮
-    // 我们在 WXML 中保留一个隐藏的 share-button
-  },
-
-  onShareAppMessage() {
-    const d = this.data
-    return {
-      title: `养老金测算：我每月预计领${d.totalAmount || '--'}元`,
-      path: '/pages/index/index',
-      imageUrl: d.shareImagePath || ''
-    }
-  },
-
-  // 分享到朋友圈（微信 7.0.12+ 支持）
-  onShareTimeline() {
-    const d = this.data
-    return {
-      title: `养老金测算：我每月预计领${d.totalAmount || '--'}元 · ${d.provinceName || ''}`,
-      query: '',
-      imageUrl: d.shareImagePath || ''
-    }
   },
 
   /**
-   * 生成分享图（Canvas 2D）— 返回 Promise，支持按需调用
-   * 和结果展示页视觉完全一致，不依赖小程序码
+   * 确保分享图已生成（返回 Promise，已缓存则直接返回）
    */
-  _generateShareImageAsync() {
+  _generateShareImageIfNeeded() {
+    if (this._shareImageReady && this.data.shareImagePath) {
+      return Promise.resolve(this.data.shareImagePath)
+    }
+    return this._drawShareImage()
+  },
+
+  /**
+   * 绘制分享图（Canvas 2D）— 返回 Promise<tempFilePath>
+   */
+  _drawShareImage() {
     return new Promise((resolve, reject) => {
       const query = this.createSelectorQuery()
       query.select('#shareCanvas')
         .fields({ node: true, size: true })
         .exec((res) => {
           if (!res || !res[0] || !res[0].node) {
-            console.error('[share] canvas not found')
             reject(new Error('canvas not found'))
             return
           }
@@ -395,7 +334,7 @@ Page({
           canvas.height = 1400 * dpr
           ctx.scale(dpr, dpr)
 
-          // 直接绘制
+          // 绘制分享图内容
           this._drawShare(ctx, this.data)
 
           // 导出临时文件
@@ -404,9 +343,8 @@ Page({
             fileType: 'png',
             quality: 1,
             success: (res) => {
-              this.setData({ shareImagePath: res.tempFilePath })
               this._shareImageReady = true
-              console.log('[share] 分享图已生成:', res.tempFilePath)
+              this.setData({ shareImagePath: res.tempFilePath })
               resolve(res.tempFilePath)
             },
             fail: (err) => {
@@ -416,11 +354,6 @@ Page({
           })
         })
     })
-  },
-
-  // 保留旧方法名作为兼容入口（内部不再自动调用）
-  generateShareImage() {
-    this._generateShareImageAsync()
   },
 
   /**
@@ -626,5 +559,34 @@ Page({
     ctx.arcTo(x, y + h, x, y, r)
     ctx.arcTo(x, y, x + w, y, r)
     ctx.closePath()
+  },
+
+  /**
+   * 阻止事件冒泡（分享预览弹窗用）
+   */
+  stopProp() {},
+
+  /**
+   * 原生分享给朋友（open-type="share" 按钮触发）
+   */
+  onShareAppMessage() {
+    const d = this.data
+    return {
+      title: `养老金测算：我每月预计领${d.totalAmount || '--'}元`,
+      path: '/pages/index/index',
+      imageUrl: d.shareImagePath || ''
+    }
+  },
+
+  /**
+   * 分享到朋友圈（微信 7.0.12+ 支持）
+   */
+  onShareTimeline() {
+    const d = this.data
+    return {
+      title: `养老金测算：我每月预计领${d.totalAmount || '--'}元 · ${d.provinceName || ''}`,
+      query: '',
+      imageUrl: d.shareImagePath || ''
+    }
   },
 })
