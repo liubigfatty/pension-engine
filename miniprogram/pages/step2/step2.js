@@ -114,8 +114,8 @@ Page({
       // 恢复已选：从step1的cityTypeIndex
       baseRateIndex = step1.cityTypeIndex >= 0 ? step1.cityTypeIndex : 0
     } else {
-      // 单基数省份：显示"全省统一计发基数"
-      baseRateNames = [`全省统一计发基数 (${provinceBase}元/月)`]
+      // 单基数省份：显示"全省统一计发基数"（不显示具体数额，引擎会估算到退休年份）
+      baseRateNames = ['全省统一计发基数']
       baseRateValues = ['prov']
       baseRateIndex = 0
     }

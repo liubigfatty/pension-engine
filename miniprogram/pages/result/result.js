@@ -504,7 +504,7 @@ Page({
     params.push({ label: '平均缴费指数', value: String(d.averageIndex || '--') })
     params.push({ label: '个人账户余额', value: (d.accountBalance || '--') + ' 元' })
     params.push({ label: '计发月数', value: String(d.months || '--') })
-    params.push({ label: '退休地计发基数', value: (d.baseNumber || '--') + ' 元' })
+    params.push({ label: '退休地计发基数', value: (d.cityLabel || '--') })
 
     const paramCardH = params.length * 56 + 32
     ctx.fillStyle = C.white

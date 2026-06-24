@@ -105,7 +105,7 @@
         </view>
         <view class="card-row">
           <text class="card-label">退休地计发基数</text>
-          <text class="card-value">{{baseNumber != null ? baseNumber + ' 元' : '--'}}</text>
+          <text class="card-value">{{cityLabel || '--'}}</text>
         </view>
       </view>
     </view>
