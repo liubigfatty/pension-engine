@@ -178,6 +178,22 @@
 
 .btn-report::after { border: none; }
 
+/* 分享查看模式："我也来算一下"按钮 */
+.btn-calculate {
+  width: 100%;
+  background: linear-gradient(135deg, #8B7355 0%, #A08566 100%);
+  color: #FFFFFF !important;
+  border: none;
+  border-radius: 48rpx;
+  padding: 28rpx 0;
+  font-size: 32rpx;
+  font-weight: 600;
+  letter-spacing: 4rpx;
+  box-shadow: 0 8rpx 24rpx rgba(139,115,85,0.35);
+}
+
+.btn-calculate::after { border: none; }
+
 .error-tip {
   display: flex;
   flex-direction: column;

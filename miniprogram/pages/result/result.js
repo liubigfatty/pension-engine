@@ -32,8 +32,31 @@ Page({
     shareImagePath: '',
   },
 
-  onLoad() {
-    // 优先从缓存读取计算结果（step2 存到 calc_result）
+  onLoad(options) {
+    // 检测是否是分享卡片进来的（裂变路径）
+    if (options.share === '1') {
+      // 分享查看模式：显示分享者的结果 + "我也来算一下"按钮
+      this.setData({
+        hasValidData: true,
+        isShareView: true,
+        showDetail: false,
+        totalAmount: options.total || '',
+        provinceName: decodeURIComponent(options.province || ''),
+        cityLabel: options.city ? decodeURIComponent(options.city) : '',
+        retirementType: options.retireType || 'normal',
+        retireAge: decodeURIComponent(options.retireAge || ''),
+        shareData: {
+          provinceName: decodeURIComponent(options.province || ''),
+          cityLabel: options.city ? decodeURIComponent(options.city) : '',
+          totalAmount: options.total || '',
+          retireType: options.retireType || 'normal',
+          retireAge: decodeURIComponent(options.retireAge || ''),
+        }
+      })
+      return  // 不执行正常计算流程
+    }
+
+    // 正常流程：优先从缓存读取计算结果（step2 存到 calc_result）
     const r = wx.getStorageSync('calc_result') || app.globalData.calcResult || {}
 
     // 调试：打印原始数据（上线前可删除）
@@ -223,6 +246,13 @@ Page({
 
   onRecalculate() {
     wx.navigateBack({ delta: 3 })
+  },
+
+  /**
+   * 分享查看模式下：点"我也来算一下" → 跳到首页
+   */
+  goCalculate() {
+    wx.reLaunch({ url: '/pages/index/index' })
   },
 
   /**
@@ -568,12 +598,19 @@ Page({
 
   /**
    * 原生分享给朋友（open-type="share" 按钮触发）
+   * 分享小程序卡片，带关键结果参数（支持裂变）
    */
   onShareAppMessage() {
     const d = this.data
+    // 如果是分享查看模式，分享的是原分享者的数据（从 shareData 取）
+    const share = d.isShareView ? d.shareData : d
+    const province = (share.provinceName || '').replace(/\s+/g, '')
+    const city = (share.cityLabel || '').replace(/\s+/g, '')
+    const title = `我每月预计领${share.totalAmount || d.totalAmount}元养老金，你呢？`
+    const path = `/pages/result/result?share=1&province=${encodeURIComponent(province)}&city=${encodeURIComponent(city)}&total=${share.totalAmount || d.totalAmount}&retireType=${share.retirementType || d.retirementType}&retireAge=${encodeURIComponent(share.retireAge || d.retireAge)}`
     return {
-      title: `养老金测算：我每月预计领${d.totalAmount || '--'}元`,
-      path: '/pages/index/index',
+      title: title,
+      path: path,
       imageUrl: d.shareImagePath || ''
     }
   },
