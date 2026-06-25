@@ -31,8 +31,8 @@ const NATIONAL_INTEREST_RATES = {
   2018: 0.0829,   // 8.29%
   2019: 0.0761,   // 7.61%
   2020: 0.0604,   // 6.04%
-  2021: 0.0535,   // 5.35%（已按官方数据修正）
-  2022: 0.0612,   // 6.12%
+  2021: 0.0669,   // 6.69%（全国统一值）
+  2022: 0.0397,   // 3.97%（全国统一值）
   2023: 0.0397,   // 3.97%
   2024: 0.0262,   // 2.62%
   2025: 0.0150    // 1.50%
@@ -1110,7 +1110,15 @@ function getBase(city, year, config, sourceField = 'base_rates') {
     }
   }
 
-  // 3. 所有年份都大于查询年份 → 回退到最后已知年份
+  // 3. 所有年份都大于查询年份 → 回退到最早已知年份（查询年份早于数据开始）
+  const firstCityYear = cityKeys[0]
+  const firstProvYear = provKeys[0]
+  if (year < (firstCityYear != null ? firstCityYear : firstProvYear)) {
+    // 查询年份早于数据范围，用最早已知值
+    if (cityRates && firstCityYear != null) return cityRates[firstCityYear]
+    return provRates[firstProvYear] || 0
+  }
+  // 4. 所有年份都小于查询年份 → 回退到最后已知年份（查询年份晚于数据结束）
   const lastCityYear = cityKeys[cityKeys.length - 1]
   const lastProvYear = provKeys[provKeys.length - 1]
   if (lastCityYear > lastProvYear) {

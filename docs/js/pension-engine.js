@@ -16,23 +16,64 @@
 // ==================== 全国统一个人账户记账利率表（2016年起） ====================
 
 /**
- * 全国统一的养老保险个人账户记账利率（2016年起由人社部、财政部统一公布）
- * 数据来源：人社部、财政部官方文件
+ * 全国统一的养老保险个人账户记账利率
+ * 数据来源：人社部、财政部官方文件 / 剪刀财经整理
  * 采用复利计算
  *
- * 2016年之前由各省自行制定，数据在省份配置文件的 interest_rates 字段中
+ * 2016年起全国统一执行；2016年之前各省自行制定但数值相近
+ * 完整数据覆盖 1996-2025 年
  */
+
+// 2016年起全国统一利率（人社部、财政部公布）
 const NATIONAL_INTEREST_RATES = {
-  2016: 0.0831,
-  2017: 0.0712,
-  2018: 0.0829,
-  2019: 0.0761,
-  2020: 0.0604,
-  2021: 0.0669,
-  2022: 0.0612,
-  2023: 0.0397,
-  2024: 0.0262,
-  2025: 0.0150
+  2016: 0.0831,   // 8.31%
+  2017: 0.0712,   // 7.12%
+  2018: 0.0829,   // 8.29%
+  2019: 0.0761,   // 7.61%
+  2020: 0.0604,   // 6.04%
+  2021: 0.0669,   // 6.69%（全国统一值）
+  2022: 0.0397,   // 3.97%（全国统一值）
+  2023: 0.0397,   // 3.97%
+  2024: 0.0262,   // 2.62%
+  2025: 0.0150    // 1.50%
+}
+
+// 2016年之前全国记账利率（官方/权威来源）
+// 数据来源：剪刀财经整理《缴费基数&记账利率 1996-2025年》
+// 注：2016年前各省自行制定，此处为全国通用参考值
+const NATIONAL_PRE2016_INTEREST_RATES = {
+  1996: 0.0804,   // 8.04%
+  1997: 0.0567,   // 5.67%
+  1998: 0.0447,   // 4.47%
+  1999: 0.0225,   // 2.25%
+  2000: 0.0225,   // 2.25%
+  2001: 0.0225,   // 2.25%
+  2002: 0.0225,   // 2.25%
+  2003: 0.0198,   // 1.98%
+  2004: 0.0198,   // 1.98%
+  2005: 0.0225,   // 2.25%
+  2006: 0.0252,   // 2.52%
+  2007: 0.0414,   // 4.14%
+  2008: 0.0414,   // 4.14%
+  2009: 0.0225,   // 2.25%
+  2010: 0.0225,   // 2.25%
+  2011: 0.0350,   // 3.50%
+  2012: 0.0350,   // 3.50%
+  2013: 0.0300,   // 3.00%
+  2014: 0.0350,   // 3.50%
+  2015: 0.0350    // 3.50%
+}
+
+// 国家标准计发月数表（国发〔2005〕38号）
+// 键名格式："50.0"（与 getRetireMonths 的 keyStr 一致）
+const DEFAULT_MONTHLY_PAYMENT_MONTHS = {
+  "40.0": 233, "41.0": 230, "42.0": 226, "43.0": 223, "44.0": 220,
+  "45.0": 216, "46.0": 212, "47.0": 208, "48.0": 204, "49.0": 199,
+  "50.0": 195, "51.0": 190, "52.0": 185, "53.0": 180, "54.0": 175,
+  "55.0": 170, "56.0": 164, "57.0": 158, "58.0": 152, "59.0": 145,
+  "60.0": 139, "61.0": 132, "62.0": 125, "63.0": 117, "64.0": 109,
+  "65.0": 101, "66.0": 93,  "67.0": 84,  "68.0": 75,  "69.0": 65,
+  "70.0": 56,
 }
 
 // ==================== 核心计算函数 ====================
@@ -242,10 +283,10 @@ function calcPersonalAccountPension(city, avgIndex, retireDate, startInfo, confi
     return { amount: 0, balance: 0, description: '无缴费起始信息' }
   }
 
-  // 确定个人账户实际开始时间
+  // 确定个人账户实际开始时间（孰晚原则：取较晚的日期）
   let accStart = { ...accountStart }
-  if (actualStart.year < accStart.year ||
-      (actualStart.year === accStart.year && actualStart.month < accStart.month)) {
+  if (actualStart.year > accStart.year ||
+      (actualStart.year === accStart.year && actualStart.month > accStart.month)) {
     accStart = { ...actualStart }
   }
 
@@ -261,20 +302,26 @@ function calcPersonalAccountPension(city, avgIndex, retireDate, startInfo, confi
   let fMonth = accStart.month
 
   // 第一年（可能只有部分月份）
+  // 计息规则：上年末余额计息，本年存入额不计当年利息
   let firstMonths = 12 - fMonth + 1
   if (firstMonths > 0 && firstMonths < 12) {
-    const baseY = getBase(city, fYear, config)
+    const baseY = getBase(city, fYear, config, 'avg_salary_history')
+    || getBase(city, fYear, config)
     const monthPayY = baseY * avgIndex * 0.08
     const accRateY = getAccRate(fYear, config)
-    totalAcc = (totalAcc + monthPayY * firstMonths) * (1 + accRateY)
+    // 正确：上年末余额计息 + 本年存入（不计当年利息）
+    totalAcc = totalAcc * (1 + accRateY) + monthPayY * firstMonths
   }
 
   // 中间年份（完整年度，复利计息）
+  // 计息规则：上年末余额计息，本年存入额不计当年利息
   for (let y = fYear + 1; y < retireDate.year; y++) {
-    const baseYear = getBase(city, y, config)
+    const baseYear = getBase(city, y, config, 'avg_salary_history')
+      || getBase(city, y, config)
     const annualPay = baseYear * avgIndex * 0.08 * 12
     const accRate = getAccRate(y, config)
-    totalAcc = (totalAcc + annualPay) * (1 + accRate)
+    // 正确：上年末余额计息 + 本年存入（不计当年利息）
+    totalAcc = totalAcc * (1 + accRate) + annualPay
   }
 
   // 最后一年（从退休月初到退休月，按月计提并单利计息）
@@ -337,11 +384,14 @@ function calcTransitionalPension(params) {
     // G实用 Z实指数（transIndex），可能与基础养老金指数不同
     const zshiIdx = (transIndex != null && transIndex > 0) ? transIndex : avgIndex
     const G_shi  = provBase * preAcct * zshiIdx * coef
+        // transitionalPension.amount = G同 + G实（合计，不再分开）
     const amount  = Math.round((G_tong + G_shi) * 100) / 100
-    const desc   = 'G同' + (sightYears || 0).toFixed(2) + '年×1.0=' + G_tong.toFixed(2)
-                    + ' + G实' + preAcct.toFixed(2) + '年×指数' + avgIndex.toFixed(4) + '=' + G_shi.toFixed(2)
-                    + '，系数' + (coef * 100).toFixed(1) + '%'
-    return { amount, description: desc }
+    // _gShiAmount: G实的值，由调用者加到total里（不显示为独立子项）
+    const _gShiAmount = Math.round(G_shi * 100) / 100
+    const desc   = 'G同:' + (sightYears || 0).toFixed(2) + '年×1.0=' + G_tong.toFixed(2)
+                    + '；G实:' + preAcct.toFixed(2) + '年×指数' + zshiIdx.toFixed(4) + '=' + G_shi.toFixed(2)
+                    + '；系数' + (coef * 100).toFixed(1) + '%'
+    return { amount, _gShiAmount, description: desc }
   }
 
   // 上海特殊公式（沪人社规〔2021〕32号）：
@@ -765,7 +815,7 @@ function calcAdjustmentFund(params) {
  * @returns {number} 计发月数
  */
 function getRetireMonths(ageExact, config) {
-  const table = config.monthly_payment_months || {}
+  const table = config.monthly_payment_months || DEFAULT_MONTHLY_PAYMENT_MONTHS
 
   // 将精确年龄四舍五入到小数点后1位（月份），用于直接查表
   // 注意：表键格式为 "50.0"、"51.1" 等（有小数点），需确保格式一致
@@ -775,7 +825,11 @@ function getRetireMonths(ageExact, config) {
 
   if (table[keyStr] !== undefined) return table[keyStr]
 
-  // 回退默认值
+  // 非整数年龄（如54.5岁）：四舍五入取整后再查一次
+  const roundKey = Math.round(ageExact) + '.0'
+  if (table[roundKey] !== undefined) return table[roundKey]
+
+  // 兜底：返回60岁对应值（最常用）
   return 139
 }
 
@@ -988,8 +1042,8 @@ function getBase(city, year, config, sourceField = 'base_rates') {
   // 2. 新格式（JS模块）：config.PROV_BASE, config.CC_BASE
   let allRates = config[sourceField] || {};
   
-  // 如果是新格式，构建base_rates对象
-  if (config.PROV_BASE || config.CC_BASE) {
+  // 如果是新格式，构建base_rates对象（仅当 sourceField 为 base_rates 时）
+  if ((config.PROV_BASE || config.CC_BASE) && sourceField === 'base_rates') {
     allRates = {
       prov: config.PROV_BASE || {},
     };
@@ -1004,7 +1058,30 @@ function getBase(city, year, config, sourceField = 'base_rates') {
   }
   
   const provRates = allRates['prov'] || (sourceField === 'avg_salary_history' ? allRates : {});
-  const cityRates = allRates[city];
+  // 城市名归一化：尝试多种匹配方式
+  let cityKey = city;
+  if (cityKey && allRates[cityKey] === undefined) {
+    // 方式1：去掉末尾的"省"或"市"
+    const normalized = city.replace(/[省市]$/, '');
+    if (allRates[normalized] !== undefined) {
+      cityKey = normalized;
+    } else {
+      // 方式2：尝试拼音键（如 shenyang、dalian）
+      const lower = city.toLowerCase();
+      const foundKey = Object.keys(allRates).find(k => k.toLowerCase() === lower);
+      if (foundKey) {
+        cityKey = foundKey;
+      } else {
+        // 方式3：尝试去掉"省"/"市"后再查拼音
+        const normalizedLower = normalized.toLowerCase();
+        const foundKey2 = Object.keys(allRates).find(k => k.toLowerCase() === normalizedLower);
+        if (foundKey2) {
+          cityKey = foundKey2;
+        }
+      }
+    }
+  }
+  const cityRates = cityKey && allRates[cityKey] !== undefined ? allRates[cityKey] : null;
 
   // 1. 精确年份匹配
   if (cityRates && cityRates[year] !== undefined) return cityRates[year]
@@ -1033,7 +1110,15 @@ function getBase(city, year, config, sourceField = 'base_rates') {
     }
   }
 
-  // 3. 所有年份都大于查询年份 → 回退到最后已知年份
+  // 3. 所有年份都大于查询年份 → 回退到最早已知年份（查询年份早于数据开始）
+  const firstCityYear = cityKeys[0]
+  const firstProvYear = provKeys[0]
+  if (year < (firstCityYear != null ? firstCityYear : firstProvYear)) {
+    // 查询年份早于数据范围，用最早已知值
+    if (cityRates && firstCityYear != null) return cityRates[firstCityYear]
+    return provRates[firstProvYear] || 0
+  }
+  // 4. 所有年份都小于查询年份 → 回退到最后已知年份（查询年份晚于数据结束）
   const lastCityYear = cityKeys[cityKeys.length - 1]
   const lastProvYear = provKeys[provKeys.length - 1]
   if (lastCityYear > lastProvYear) {
@@ -1060,8 +1145,8 @@ function getAccRate(year, config) {
     return NATIONAL_INTEREST_RATES[lastYear]
   }
 
-  // 2016年之前：使用省份配置（由各省自行制定）
-  const table = config.interest_rates || {}
+  // 2016年之前：优先使用省份配置，无则用全国统一估算值
+  const table = config.interest_rates || NATIONAL_PRE2016_INTEREST_RATES
   if (table[year] !== undefined) return table[year]
 
   // 后向查找
@@ -1297,9 +1382,8 @@ function calculate(config, inputData) {
   const flexDate = getRetireDate(data.birth.year, data.birth.month, flexTotalMonths)
 
   // ===== 确定城市 =====
-  // cc=长春, sz=深圳, xining=西宁, zz=郑州, 其他=prov
-  const szCities = ['cc', 'sz', 'xining', 'zz']
-  const city = szCities.includes(data.cityType) ? data.cityType : 'prov'
+  // 只要 cityType 不是 'prov'，就尝试用它查 base_rates（支持 shenyang/dalian 等）
+  const city = (data.cityType && data.cityType !== 'prov') ? data.cityType : 'prov'
   const hasSight = data.work.year < config.account_start?.year ||
     (data.work.year === config.account_start?.year && data.work.month < config.account_start?.month)
 
@@ -1331,6 +1415,19 @@ function calculate(config, inputData) {
   // 也支持用户显式指定（用于官方核定表验证场景）
   if (data.preAccountYearsInput != null) {
     preAccountYears = parseFloat(data.preAccountYearsInput)
+  }
+
+  // 北京特殊：自动计算建账前实际缴费年限（用于G实）
+
+  // 北京特殊：自动计算建账前实际缴费年限（用于G实）
+  // preAccountYears = max(工作起始, 建账时间) 到 cutoff_date 的年数
+  // 例如：1995-11工作，account_start=1992-10，cutoff=1998-06 → preAccountYears=1995-11~1998-06 ≈ 2.58年
+  if (preAccountYears === null && (config.province === 'bj' || config.province === 'beijing')) {
+    console.log('[engine] 北京 preAccountYears 自动计算: work=', data.work, 'accountStart=', accountStartConfigured, 'cutoff=', config.cutoff_date)
+    const cutoffConfigured = config.cutoff_date || { year: 1998, month: 6 }
+    const preStart = (data.work.year < accountStartConfigured.year || (data.work.year === accountStartConfigured.year && data.work.month < accountStartConfigured.month)) ? accountStartConfigured : data.work
+    preAccountYears = calcYears(preStart, cutoffConfigured)
+    console.log('[engine] 北京 preAccountYears 计算结果:', preAccountYears)
   }
 
   // ===== 省份特殊取整规则 =====
@@ -1640,7 +1737,7 @@ function calculate(config, inputData) {
 
     // 元数据
     metaData: {
-      name: data.name,
+      name: config.name || data.name,
       city: data.cityType,
       avgIndex: data.avgIndex,
       totalYears,

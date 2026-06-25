@@ -218,6 +218,7 @@ function getEngineConfig() {
 
   return {    account_start: ACCOUNT_START,
     cutoff_date: CUTOFF_DATE,
+    base_rates: { prov: PROV_BASE },
 
     province: PROV_TAG,
  modules: modules,
