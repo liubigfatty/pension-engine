@@ -9,6 +9,25 @@ cloud.init({
 // 云函数入口
 exports.main = async (event) => {
   try {
+    // ❗ 调试模式：返回当前云函数代码版本信息（不下发到前端，在控制台日志查看）
+    if (event._debug) {
+      const provModule = require(`./provinces/${event.province || 'jilin'}.js`)
+      const cfg = provModule.getEngineConfig()
+      return {
+        success: true,
+        _debug: {
+          hasAvgSalaryHistory: !!cfg.avg_salary_history,
+          avgSalary1998: cfg.avg_salary_history?.[1998],
+          avgSalary2020: cfg.avg_salary_history?.[2020],
+          accountStartYear: cfg.account_start?.year,
+          rate2021: engine.getAccRate(2021, cfg),
+          rate2022: engine.getAccRate(2022, cfg),
+          baseRates1998: engine.getBase('prov', 1998, cfg),
+          baseRates2020: engine.getBase('prov', 2020, cfg, 'avg_salary_history') || engine.getBase('prov', 2020, cfg),
+        }
+      }
+    }
+
     const { province, cityType, gender, identity, genderType, birthDate, workStartDate, averageIndex, personalAccount, extras, estimateOnly } = event
 
     // 参数校验（personalAccount 不再必填，不填则引擎自动估算）
