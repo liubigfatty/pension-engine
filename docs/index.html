@@ -630,6 +630,20 @@ function toggleDropdown(type) {
     : type === 'province' ? document.getElementById('provinceSelect')
     : document.getElementById('citySelect');
   if (box) box.classList.add('open');
+
+  // 自动检测位置：如果下拉框超出视口底部，改为向上弹出
+  setTimeout(() => {
+    const rect = dd.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - rect.top;
+    const spaceAbove = rect.top - (rect.height - 240);
+    if (spaceBelow < rect.height && spaceAbove > rect.height) {
+      dd.style.top = 'auto';
+      dd.style.bottom = 'calc(100% + 4px)';
+    } else {
+      dd.style.top = 'calc(100% + 4px)';
+      dd.style.bottom = 'auto';
+    }
+  }, 0);
 }
 
 function closeAllDropdowns() {
