@@ -16,58 +16,237 @@
 // ==================== 全国统一个人账户记账利率表（2016年起） ====================
 
 /**
- * 全国统一的养老保险个人账户记账利率（2016年起由人社部、财政部统一公布）
- * 数据来源：人社部、财政部官方文件
+ * 全国统一的养老保险个人账户记账利率
+ * 数据来源：人社部、财政部官方文件 / 剪刀财经整理
  * 采用复利计算
  *
- * 2016年之前由各省自行制定，数据在省份配置文件的 interest_rates 字段中
+ * 2016年起全国统一执行；2016年之前各省自行制定但数值相近
+ * 完整数据覆盖 1996-2025 年
  */
+
+// 2016年起全国统一利率（人社部、财政部公布）
 const NATIONAL_INTEREST_RATES = {
-  2016: 0.0831,
-  2017: 0.0712,
-  2018: 0.0829,
-  2019: 0.0761,
-  2020: 0.0604,
-  2021: 0.0669,
-  2022: 0.0397,
-  2023: 0.0397,
-  2024: 0.0262,
-  2025: 0.0150
+  2016: 0.0831,   // 8.31%
+  2017: 0.0712,   // 7.12%
+  2018: 0.0829,   // 8.29%
+  2019: 0.0761,   // 7.61%
+  2020: 0.0604,   // 6.04%
+  2021: 0.0669,   // 6.69%（全国统一值）
+  2022: 0.0397,   // 3.97%（全国统一值）
+  2023: 0.0397,   // 3.97%
+  2024: 0.0262,   // 2.62%
+  2025: 0.0150    // 1.50%
+}
+
+// 2016年之前全国记账利率（官方/权威来源）
+// 数据来源：剪刀财经整理《缴费基数&记账利率 1996-2025年》
+// 注：2016年前各省自行制定，此处为全国通用参考值
+const NATIONAL_PRE2016_INTEREST_RATES = {
+  1996: 0.0804,   // 8.04%
+  1997: 0.0567,   // 5.67%
+  1998: 0.0447,   // 4.47%
+  1999: 0.0225,   // 2.25%
+  2000: 0.0225,   // 2.25%
+  2001: 0.0225,   // 2.25%
+  2002: 0.0225,   // 2.25%
+  2003: 0.0198,   // 1.98%
+  2004: 0.0198,   // 1.98%
+  2005: 0.0225,   // 2.25%
+  2006: 0.0252,   // 2.52%
+  2007: 0.0414,   // 4.14%
+  2008: 0.0414,   // 4.14%
+  2009: 0.0225,   // 2.25%
+  2010: 0.0225,   // 2.25%
+  2011: 0.0350,   // 3.50%
+  2012: 0.0350,   // 3.50%
+  2013: 0.0300,   // 3.00%
+  2014: 0.0350,   // 3.50%
+  2015: 0.0350    // 3.50%
 }
 
 // 官方计发月数表（精确到月）- 国发〔2005〕38号配套标准
 // key = 从0岁开始的总月数（如600=50岁0月, 601=50岁1月, ...）
 const STANDARD_MONTHLY_PAYMENT_MONTHS = {
-  "600": 195, "601": 194.6, "602": 194.2, "603": 193.8, "604": 193.3, "605": 192.9,
-  "606": 192.5, "607": 192.1, "608": 191.7, "609": 191.3, "610": 190.8, "611": 190.4,
-  "612": 190, "613": 189.6, "614": 189.2, "615": 188.8, "616": 188.3, "617": 187.9,
-  "618": 187.5, "619": 187.1, "620": 186.7, "621": 186.3, "622": 185.8, "623": 185.4,
-  "624": 185, "625": 184.6, "626": 184.2, "627": 183.8, "628": 183.3, "629": 182.9,
-  "630": 182.5, "631": 182.1, "632": 181.7, "633": 181.3, "634": 180.8, "635": 180.4,
-  "636": 180, "637": 179.6, "638": 179.2, "639": 178.8, "640": 178.3, "641": 177.9,
-  "642": 177.5, "643": 177.1, "644": 176.7, "645": 176.3, "646": 175.8, "647": 175.4,
-  "648": 175, "649": 174.6, "650": 174.2, "651": 173.8, "652": 173.3, "653": 172.9,
-  "654": 172.5, "655": 172.1, "656": 171.7, "657": 171.3, "658": 170.8, "659": 170.4,
-  "660": 170, "661": 169.6, "662": 169.2, "663": 168.8, "664": 168.3, "665": 167.9,
-  "666": 167.5, "667": 167.1, "668": 166.7, "669": 166.3, "670": 165.8, "671": 165.4,
-  "672": 164, "673": 163.5, "674": 163, "675": 162.5, "676": 162, "677": 161.5,
-  "678": 161, "679": 160.5, "680": 160, "681": 159.5, "682": 159, "683": 158.5,
-  "684": 158, "685": 157.5, "686": 157, "687": 156.5, "688": 156, "689": 155.5,
-  "690": 155, "691": 154.5, "692": 154, "693": 153.5, "694": 153, "695": 152.5,
-  "696": 152, "697": 151.4, "698": 150.8, "699": 150.3, "700": 149.7, "701": 149.1,
-  "702": 148.5, "703": 147.9, "704": 147.3, "705": 146.8, "706": 146.2, "707": 145.6,
-  "708": 145, "709": 144.5, "710": 144, "711": 143.5, "712": 143, "713": 142.5,
-  "714": 142, "715": 141.5, "716": 141, "717": 140.5, "718": 140, "719": 139.5,
-  "720": 139, "721": 138.4, "722": 137.8, "723": 137.3, "724": 136.7, "725": 136.1,
-  "726": 135.5, "727": 134.9, "728": 134.3, "729": 133.8, "730": 133.2, "731": 132.6,
-  "732": 132, "733": 131.4, "734": 130.8, "735": 130.3, "736": 129.7, "737": 129.1,
-  "738": 128.5, "739": 127.9, "740": 127.3, "741": 126.8, "742": 126.2, "743": 125.6,
-  "744": 125, "745": 124.3, "746": 123.7, "747": 123, "748": 122.3, "749": 121.7,
-  "750": 121, "751": 120.3, "752": 119.7, "753": 119, "754": 118.3, "755": 117.7,
-  "756": 117, "757": 116.3, "758": 115.7, "759": 115, "760": 114.3, "761": 113.7,
-  "762": 113, "763": 112.3, "764": 111.7, "765": 111, "766": 110.3, "767": 109.7,
-  "768": 109, "769": 108.3, "770": 107.7, "771": 107, "772": 106.3, "773": 105.7,
-  "774": 105, "775": 104.3, "776": 103.7, "777": 103, "778": 102.3, "779": 101.7,
+  "600": 195,
+  "601": 194.6,
+  "602": 194.2,
+  "603": 193.8,
+  "604": 193.3,
+  "605": 192.9,
+  "606": 192.5,
+  "607": 192.1,
+  "608": 191.7,
+  "609": 191.3,
+  "610": 190.8,
+  "611": 190.4,
+  "612": 190,
+  "613": 189.6,
+  "614": 189.2,
+  "615": 188.8,
+  "616": 188.3,
+  "617": 187.9,
+  "618": 187.5,
+  "619": 187.1,
+  "620": 186.7,
+  "621": 186.3,
+  "622": 185.8,
+  "623": 185.4,
+  "624": 185,
+  "625": 184.6,
+  "626": 184.2,
+  "627": 183.8,
+  "628": 183.3,
+  "629": 182.9,
+  "630": 182.5,
+  "631": 182.1,
+  "632": 181.7,
+  "633": 181.3,
+  "634": 180.8,
+  "635": 180.4,
+  "636": 180,
+  "637": 179.6,
+  "638": 179.2,
+  "639": 178.8,
+  "640": 178.3,
+  "641": 177.9,
+  "642": 177.5,
+  "643": 177.1,
+  "644": 176.7,
+  "645": 176.3,
+  "646": 175.8,
+  "647": 175.4,
+  "648": 175,
+  "649": 174.6,
+  "650": 174.2,
+  "651": 173.8,
+  "652": 173.3,
+  "653": 172.9,
+  "654": 172.5,
+  "655": 172.1,
+  "656": 171.7,
+  "657": 171.3,
+  "658": 170.8,
+  "659": 170.4,
+  "660": 170,
+  "661": 169.6,
+  "662": 169.2,
+  "663": 168.8,
+  "664": 168.3,
+  "665": 167.9,
+  "666": 167.5,
+  "667": 167.1,
+  "668": 166.7,
+  "669": 166.3,
+  "670": 165.8,
+  "671": 165.4,
+  "672": 164,
+  "673": 163.5,
+  "674": 163,
+  "675": 162.5,
+  "676": 162,
+  "677": 161.5,
+  "678": 161,
+  "679": 160.5,
+  "680": 160,
+  "681": 159.5,
+  "682": 159,
+  "683": 158.5,
+  "684": 158,
+  "685": 157.5,
+  "686": 157,
+  "687": 156.5,
+  "688": 156,
+  "689": 155.5,
+  "690": 155,
+  "691": 154.5,
+  "692": 154,
+  "693": 153.5,
+  "694": 153,
+  "695": 152.5,
+  "696": 152,
+  "697": 151.4,
+  "698": 150.8,
+  "699": 150.3,
+  "700": 149.7,
+  "701": 149.1,
+  "702": 148.5,
+  "703": 147.9,
+  "704": 147.3,
+  "705": 146.8,
+  "706": 146.2,
+  "707": 145.6,
+  "708": 145,
+  "709": 144.5,
+  "710": 144,
+  "711": 143.5,
+  "712": 143,
+  "713": 142.5,
+  "714": 142,
+  "715": 141.5,
+  "716": 141,
+  "717": 140.5,
+  "718": 140,
+  "719": 139.5,
+  "720": 139,
+  "721": 138.4,
+  "722": 137.8,
+  "723": 137.3,
+  "724": 136.7,
+  "725": 136.1,
+  "726": 135.5,
+  "727": 134.9,
+  "728": 134.3,
+  "729": 133.8,
+  "730": 133.2,
+  "731": 132.6,
+  "732": 132,
+  "733": 131.4,
+  "734": 130.8,
+  "735": 130.3,
+  "736": 129.7,
+  "737": 129.1,
+  "738": 128.5,
+  "739": 127.9,
+  "740": 127.3,
+  "741": 126.8,
+  "742": 126.2,
+  "743": 125.6,
+  "744": 125,
+  "745": 124.3,
+  "746": 123.7,
+  "747": 123,
+  "748": 122.3,
+  "749": 121.7,
+  "750": 121,
+  "751": 120.3,
+  "752": 119.7,
+  "753": 119,
+  "754": 118.3,
+  "755": 117.7,
+  "756": 117,
+  "757": 116.3,
+  "758": 115.7,
+  "759": 115,
+  "760": 114.3,
+  "761": 113.7,
+  "762": 113,
+  "763": 112.3,
+  "764": 111.7,
+  "765": 111,
+  "766": 110.3,
+  "767": 109.7,
+  "768": 109,
+  "769": 108.3,
+  "770": 107.7,
+  "771": 107,
+  "772": 106.3,
+  "773": 105.7,
+  "774": 105,
+  "775": 104.3,
+  "776": 103.7,
+  "777": 103,
+  "778": 102.3,
+  "779": 101.7,
   "780": 101
 }
 
@@ -278,10 +457,10 @@ function calcPersonalAccountPension(city, avgIndex, retireDate, startInfo, confi
     return { amount: 0, balance: 0, description: '无缴费起始信息' }
   }
 
-  // 确定个人账户实际开始时间
+  // 确定个人账户实际开始时间（孰晚原则：取较晚的日期）
   let accStart = { ...accountStart }
-  if (actualStart.year < accStart.year ||
-      (actualStart.year === accStart.year && actualStart.month < accStart.month)) {
+  if (actualStart.year > accStart.year ||
+      (actualStart.year === accStart.year && actualStart.month > accStart.month)) {
     accStart = { ...actualStart }
   }
 
@@ -297,20 +476,26 @@ function calcPersonalAccountPension(city, avgIndex, retireDate, startInfo, confi
   let fMonth = accStart.month
 
   // 第一年（可能只有部分月份）
+  // 计息规则：上年末余额计息，本年存入额不计当年利息
   let firstMonths = 12 - fMonth + 1
   if (firstMonths > 0 && firstMonths < 12) {
-    const baseY = getBase(city, fYear, config)
+    const baseY = getBase(city, fYear, config, 'avg_salary_history')
+    || getBase(city, fYear, config)
     const monthPayY = baseY * avgIndex * 0.08
     const accRateY = getAccRate(fYear, config)
-    totalAcc = (totalAcc + monthPayY * firstMonths) * (1 + accRateY)
+    // 正确：上年末余额计息 + 本年存入（不计当年利息）
+    totalAcc = totalAcc * (1 + accRateY) + monthPayY * firstMonths
   }
 
   // 中间年份（完整年度，复利计息）
+  // 计息规则：上年末余额计息，本年存入额不计当年利息
   for (let y = fYear + 1; y < retireDate.year; y++) {
-    const baseYear = getBase(city, y, config)
+    const baseYear = getBase(city, y, config, 'avg_salary_history')
+      || getBase(city, y, config)
     const annualPay = baseYear * avgIndex * 0.08 * 12
     const accRate = getAccRate(y, config)
-    totalAcc = (totalAcc + annualPay) * (1 + accRate)
+    // 正确：上年末余额计息 + 本年存入（不计当年利息）
+    totalAcc = totalAcc * (1 + accRate) + annualPay
   }
 
   // 最后一年（从退休月初到退休月，按月计提并单利计息）
@@ -373,11 +558,14 @@ function calcTransitionalPension(params) {
     // G实用 Z实指数（transIndex），可能与基础养老金指数不同
     const zshiIdx = (transIndex != null && transIndex > 0) ? transIndex : avgIndex
     const G_shi  = provBase * preAcct * zshiIdx * coef
+        // transitionalPension.amount = G同 + G实（合计，不再分开）
     const amount  = Math.round((G_tong + G_shi) * 100) / 100
-    const desc   = 'G同' + (sightYears || 0).toFixed(2) + '年×1.0=' + G_tong.toFixed(2)
-                    + ' + G实' + preAcct.toFixed(2) + '年×指数' + avgIndex.toFixed(4) + '=' + G_shi.toFixed(2)
-                    + '，系数' + (coef * 100).toFixed(1) + '%'
-    return { amount, description: desc }
+    // _gShiAmount: G实的值，由调用者加到total里（不显示为独立子项）
+    const _gShiAmount = Math.round(G_shi * 100) / 100
+    const desc   = 'G同:' + (sightYears || 0).toFixed(2) + '年×1.0=' + G_tong.toFixed(2)
+                    + '；G实:' + preAcct.toFixed(2) + '年×指数' + zshiIdx.toFixed(4) + '=' + G_shi.toFixed(2)
+                    + '；系数' + (coef * 100).toFixed(1) + '%'
+    return { amount, _gShiAmount, description: desc }
   }
 
   // 上海特殊公式（沪人社规〔2021〕32号）：
@@ -640,6 +828,40 @@ function calcSpecialAddition(params) {
       amount: addition,
       description: `艰苦边远地区增发：月增 ${addition} 元`
     }
+  } else if (mod.type === 'plateau') {
+    // 西藏高原补贴养老金
+    // 依据：藏政发〔2006〕37号、藏劳社办〔2007〕6号
+    // 公式：本人指数化月平均缴费工资 × 高原补贴比例 + 固定补贴
+    const totalWorkYears = params?.context?.totalWorkYears || 0
+    const avgIndex = params?.context?.avgIndex || 1
+    const retBase = params?.context?.retBase || params?.context?.provBase || 0
+    const indexedSalary = retBase * avgIndex
+
+    // 高原补贴比例
+    let ratio = 0
+    if (totalWorkYears >= 20) {
+      ratio = 0.15
+    } else if (totalWorkYears >= 15) {
+      ratio = 0.10
+    } else if (totalWorkYears >= 10) {
+      ratio = 0.05
+    }
+
+    const plateauAmount = indexedSalary * ratio
+    // 固定补贴：交通费30 + 取暖防寒费39.88 + 过渡期福利金260
+    const fixedSubsidies = 30 + 39.88 + 260
+    const totalAmount = Math.round((plateauAmount + fixedSubsidies) * 100) / 100
+
+    let ratioDesc = ''
+    if (totalWorkYears >= 20) ratioDesc = '20年以上'
+    else if (totalWorkYears >= 15) ratioDesc = '15年~20年'
+    else if (totalWorkYears >= 10) ratioDesc = '10年~15年'
+    else ratioDesc = '不满10年'
+
+    return {
+      amount: totalAmount,
+      description: `高原补贴: ${ratioDesc}(${Math.round(ratio*100)}%)×${indexedSalary.toFixed(2)}=${plateauAmount.toFixed(2)}元 + 交通费30+取暖费39.88+福利金260=${fixedSubsidies.toFixed(2)}元 = ${totalAmount.toFixed(2)}元`
+    }
   } else if (mod.type === 'intellectual') {
     // 知识分子补贴（宁夏）：工龄补贴 + 地区补贴
     // 仅在输入中标记 intellectual=true 时生效
@@ -802,13 +1024,13 @@ function calcAdjustmentFund(params) {
  */
 function getRetireMonths(ageExact, config) {
   const table = config.monthly_payment_months || STANDARD_MONTHLY_PAYMENT_MONTHS
-
+  
   // 将年龄转换为总月数（精确到月），避免浮点问题
   const totalMonths = Math.round(ageExact * 12)
   const key = String(totalMonths)
-
+  
   if (table[key] !== undefined) return table[key]
-
+  
   // 超出50-65岁范围，兜底返回60岁（139个月）
   return 139
 }
@@ -824,8 +1046,8 @@ function getRetireMonths(ageExact, config) {
 function getDelayMonths(birthYear, birthMonth, type, config) {
   // 防御：config 可能未传入
   config = config || {};
-  // 女性工人（50岁退休）不受延迟退休政策影响
-  if (type === 'fw50' || type === 'fw') return 0;
+  // 女性工人（50岁退休）- 启用延迟退休（详见国办发〔2025〕5号）
+  if (type === 'fw50') type = 'fw';  // fw50 映射到 fw 走延迟规则
   // 检查延迟退休政策是否生效（以退休日期为准）
   // effective_date格式：YYYY-MM-DD
   const delayConfig = config.delay_retirement || {}
@@ -1022,8 +1244,8 @@ function getBase(city, year, config, sourceField = 'base_rates') {
   // 2. 新格式（JS模块）：config.PROV_BASE, config.CC_BASE
   let allRates = config[sourceField] || {};
   
-  // 如果是新格式，构建base_rates对象
-  if (config.PROV_BASE || config.CC_BASE) {
+  // 如果是新格式，构建base_rates对象（仅当 sourceField 为 base_rates 时）
+  if ((config.PROV_BASE || config.CC_BASE) && sourceField === 'base_rates') {
     allRates = {
       prov: config.PROV_BASE || {},
     };
@@ -1038,17 +1260,39 @@ function getBase(city, year, config, sourceField = 'base_rates') {
   }
   
   const provRates = allRates['prov'] || (sourceField === 'avg_salary_history' ? allRates : {});
-  const cityRates = allRates[city];
+  // 城市名归一化：尝试多种匹配方式
+  let cityKey = city;
+  if (cityKey && allRates[cityKey] === undefined) {
+    // 方式1：去掉末尾的"省"或"市"
+    const normalized = city.replace(/[省市]$/, '');
+    if (allRates[normalized] !== undefined) {
+      cityKey = normalized;
+    } else {
+      // 方式2：尝试拼音键（如 shenyang、dalian）
+      const lower = city.toLowerCase();
+      const foundKey = Object.keys(allRates).find(k => k.toLowerCase() === lower);
+      if (foundKey) {
+        cityKey = foundKey;
+      } else {
+        // 方式3：尝试去掉"省"/"市"后再查拼音
+        const normalizedLower = normalized.toLowerCase();
+        const foundKey2 = Object.keys(allRates).find(k => k.toLowerCase() === normalizedLower);
+        if (foundKey2) {
+          cityKey = foundKey2;
+        }
+      }
+    }
+  }
+  const cityRates = cityKey && allRates[cityKey] !== undefined ? allRates[cityKey] : null;
 
   // 1. 精确年份匹配
   if (cityRates && cityRates[year] !== undefined) return cityRates[year]
   if (provRates[year] !== undefined) return provRates[year]
 
-  // 2. 向前回退到最近年份（城市表优先，再查全省）
+  // 2. 向前回退到最近年份，若晚于该年则按2.0%社平增长率外推（城市表优先，再查全省）
   const cityKeys = cityRates ? Object.keys(cityRates).map(Number).sort((a, b) => a - b) : []
   const provKeys = Object.keys(provRates).map(Number).sort((a, b) => a - b)
 
-  // 找到最近年份后，若晚于该年则按2.0%社平增长率外推
   const GROWTH_RATE = config.growth_rate != null ? config.growth_rate : 0.02
 
   // 从城市表向前找
@@ -1068,7 +1312,15 @@ function getBase(city, year, config, sourceField = 'base_rates') {
     }
   }
 
-  // 3. 所有年份都大于查询年份 → 回退到最后已知年份
+  // 3. 所有年份都大于查询年份 → 回退到最早已知年份（查询年份早于数据开始）
+  const firstCityYear = cityKeys[0]
+  const firstProvYear = provKeys[0]
+  if (year < (firstCityYear != null ? firstCityYear : firstProvYear)) {
+    // 查询年份早于数据范围，用最早已知值
+    if (cityRates && firstCityYear != null) return cityRates[firstCityYear]
+    return provRates[firstProvYear] || 0
+  }
+  // 4. 所有年份都小于查询年份 → 回退到最后已知年份（查询年份晚于数据结束）
   const lastCityYear = cityKeys[cityKeys.length - 1]
   const lastProvYear = provKeys[provKeys.length - 1]
   if (lastCityYear > lastProvYear) {
@@ -1095,8 +1347,8 @@ function getAccRate(year, config) {
     return NATIONAL_INTEREST_RATES[lastYear]
   }
 
-  // 2016年之前：使用省份配置（由各省自行制定）
-  const table = config.interest_rates || {}
+  // 2016年之前：优先使用省份配置，无则用全国统一估算值
+  const table = config.interest_rates || NATIONAL_PRE2016_INTEREST_RATES
   if (table[year] !== undefined) return table[year]
 
   // 后向查找
@@ -1332,9 +1584,8 @@ function calculate(config, inputData) {
   const flexDate = getRetireDate(data.birth.year, data.birth.month, flexTotalMonths)
 
   // ===== 确定城市 =====
-  // cc=长春, sz=深圳, xining=西宁, zz=郑州, 其他=prov
-  const szCities = ['cc', 'sz', 'xining', 'zz']
-  const city = szCities.includes(data.cityType) ? data.cityType : 'prov'
+  // 只要 cityType 不是 'prov'，就尝试用它查 base_rates（支持 shenyang/dalian 等）
+  const city = (data.cityType && data.cityType !== 'prov') ? data.cityType : 'prov'
   const hasSight = data.work.year < config.account_start?.year ||
     (data.work.year === config.account_start?.year && data.work.month < config.account_start?.month)
 
@@ -1366,6 +1617,19 @@ function calculate(config, inputData) {
   // 也支持用户显式指定（用于官方核定表验证场景）
   if (data.preAccountYearsInput != null) {
     preAccountYears = parseFloat(data.preAccountYearsInput)
+  }
+
+  // 北京特殊：自动计算建账前实际缴费年限（用于G实）
+
+  // 北京特殊：自动计算建账前实际缴费年限（用于G实）
+  // preAccountYears = max(工作起始, 建账时间) 到 cutoff_date 的年数
+  // 例如：1995-11工作，account_start=1992-10，cutoff=1998-06 → preAccountYears=1995-11~1998-06 ≈ 2.58年
+  if (preAccountYears === null && (config.province === 'bj' || config.province === 'beijing')) {
+    console.log('[engine] 北京 preAccountYears 自动计算: work=', data.work, 'accountStart=', accountStartConfigured, 'cutoff=', config.cutoff_date)
+    const cutoffConfigured = config.cutoff_date || { year: 1998, month: 6 }
+    const preStart = (data.work.year < accountStartConfigured.year || (data.work.year === accountStartConfigured.year && data.work.month < accountStartConfigured.month)) ? accountStartConfigured : data.work
+    preAccountYears = calcYears(preStart, cutoffConfigured)
+    console.log('[engine] 北京 preAccountYears 计算结果:', preAccountYears)
   }
 
   // ===== 省份特殊取整规则 =====
@@ -1514,7 +1778,9 @@ function calculate(config, inputData) {
       zzBase: zzBaseVal,
       avgIndex: data.avgIndex,
       localPensionYears: data.localPensionYears,
-      pre1992LocalYears: data.pre1992LocalYears
+      pre1992LocalYears: data.pre1992LocalYears,
+      retBase: retBase,
+      provBase: provBase
     },
     city,
     szModules: config.sz_modules,
@@ -1675,7 +1941,7 @@ function calculate(config, inputData) {
 
     // 元数据
     metaData: {
-      name: data.name,
+      name: config.name || data.name,
       city: data.cityType,
       avgIndex: data.avgIndex,
       totalYears,
@@ -1752,20 +2018,7 @@ function formatResult(result) {
   }
 }
 
-// ═══════════════════════════════════════════════════════
-//  浏览器包装
-// ═══════════════════════════════════════════════════════
-if (typeof window !== 'undefined') { window.PensionEngine = {
-  calculate, calcBasicPension, calcExtraPension,
-  calcPersonalAccountPension, calcTransitionalPension,
-  calcSpecialAddition, calcAdjustmentFund,
-  getRetireMonths, getDelayMonths, getRetireTotalMonths,
-  getRetireDate, getAgeStr, getDateStr, getMinYears,
-  getBase, getAccRate,
-  calcYears, parseInput, formatMoney, getModuleName, formatResult
-}; }
-
-if (typeof module !== 'undefined') { module.exports = {
+module.exports = {
   // 核心入口
   calculate,
 
@@ -1796,7 +2049,10 @@ if (typeof module !== 'undefined') { module.exports = {
   formatMoney,
   getModuleName,
   formatResult
-}; }
+}
+
+// 浏览器兼容包装
+if (typeof window !== 'undefined') { window.PensionEngine = module.exports; }
 
 // ============================================================
 // 灵活就业人员养老金计算
